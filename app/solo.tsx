@@ -6,6 +6,7 @@ import { PrimaryButton } from '../src/components/ui/button';
 import { Card } from '../src/components/ui/card';
 import { LoadingScreen } from '../src/components/ui/loading-screen';
 import { Screen } from '../src/components/ui/screen';
+import { difficultyConfig } from '../src/features/content/difficulty-config';
 import { createQuizFeedbackState } from '../src/features/quiz/quiz-feedback';
 import { useSoloRound } from '../src/features/quiz/use-solo-round';
 import { useAppStore } from '../src/state/app-store';
@@ -23,6 +24,7 @@ export default function SoloRoute() {
     },
     mode,
   });
+  const difficultyLabel = t(difficultyConfig[round.difficulty].translationKey);
 
   if (round.isRoomMode && !round.isLoading && (!round.currentRoom || !round.currentRoomRound)) {
     return <Redirect href="/rooms" />;
@@ -61,6 +63,7 @@ export default function SoloRoute() {
         <Text style={styles.kicker}>
           {round.isRoomMode ? t('solo.roomModeLabel') : t('solo.modeLabel')}
         </Text>
+        <Text style={styles.difficultyLabel}>{difficultyLabel}</Text>
         <Text style={styles.progressTitle}>
           {t('solo.progress', { current: round.currentIndex + 1, total: round.questions.length })}
         </Text>
@@ -75,7 +78,9 @@ export default function SoloRoute() {
       <Card highlight style={styles.questionCard}>
         <View style={styles.timerRow}>
           <Text style={styles.timerLabel}>{t('solo.timer')}</Text>
-          <Text style={styles.timerValue}>{round.timeLeft}s</Text>
+          <Text style={styles.timerValue}>
+            {round.timeLeft}s / {round.timeLimit}s
+          </Text>
         </View>
         <Text style={styles.questionPrompt}>{round.question.prompt}</Text>
       </Card>
@@ -145,6 +150,11 @@ const styles = StyleSheet.create({
   progressTitle: {
     color: colors.textPrimary,
     fontSize: typography.h2,
+    fontWeight: '800',
+  },
+  difficultyLabel: {
+    color: colors.highlight,
+    fontSize: typography.caption,
     fontWeight: '800',
   },
   progressTrack: {

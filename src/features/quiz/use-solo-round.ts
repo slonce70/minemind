@@ -9,11 +9,10 @@ import {
 } from '../rooms/live-room-service';
 import { useAppStore } from '../../state/app-store';
 import { isSupabaseConfigured } from '../../lib/supabase';
+import { difficultyConfig } from '../content/difficulty-config';
 import { startLiveSoloRound } from './live-quiz-service';
 import { buildQuizResult, getSoloQuestionSet } from './quiz-service';
 import type { QuizAnswerMap } from './types';
-
-const QUESTION_TIME_LIMIT = 18;
 
 export function useSoloRound(params: {
   locale: string;
@@ -31,6 +30,8 @@ export function useSoloRound(params: {
   const setActiveRoom = useAppStore((state) => state.setActiveRoom);
   const setActiveRoomRound = useAppStore((state) => state.setActiveRoomRound);
   const clearActiveRound = useAppStore((state) => state.clearActiveRound);
+  const roundDifficulty = activeRoom?.difficulty ?? activeRoomRound?.difficulty ?? selectedDifficulty;
+  const questionTimeLimit = difficultyConfig[roundDifficulty].timerSeconds;
   const [questions, setQuestions] = useState(() =>
     params.mode === 'room' && activeRoomRound ? activeRoomRound.questions : []
   );
@@ -39,7 +40,7 @@ export function useSoloRound(params: {
   );
   const [loadError, setLoadError] = useState<string | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(QUESTION_TIME_LIMIT);
+  const [timeLeft, setTimeLeft] = useState(questionTimeLimit);
   const [answerMap, setAnswerMap] = useState<QuizAnswerMap>({});
   const [isAwaitingResults, setIsAwaitingResults] = useState(false);
   const [isRevealed, setIsRevealed] = useState(false);
@@ -154,6 +155,7 @@ export function useSoloRound(params: {
   const finishRound = async () => {
     const provisionalResult = buildQuizResult(questions, answerMap);
     const result = buildQuizResult(questions, answerMap, {
+      difficulty: roundDifficulty,
       mode: isRoomMode ? 'room' : 'solo',
       roomCode: currentRoom?.roomCode,
       standings: isRoomMode
@@ -202,7 +204,7 @@ export function useSoloRound(params: {
       setSelectedIndex(null);
       setIsRevealed(false);
       setIsSubmittingAnswer(false);
-      setTimeLeft(QUESTION_TIME_LIMIT);
+      setTimeLeft(questionTimeLimit);
       return;
     }
 
@@ -268,6 +270,10 @@ export function useSoloRound(params: {
   };
 
   useEffect(() => {
+    setTimeLeft(questionTimeLimit);
+  }, [questionTimeLimit]);
+
+  useEffect(() => {
     if (!question || isRevealed) {
       return undefined;
     }
@@ -290,6 +296,7 @@ export function useSoloRound(params: {
   return {
     answerMap,
     currentIndex,
+    difficulty: roundDifficulty,
     currentRoom,
     currentRoomRound,
     handleAnswer,
@@ -306,5 +313,6 @@ export function useSoloRound(params: {
     retryFinalize: () => void finishRound(),
     selectedIndex,
     timeLeft,
+    timeLimit: questionTimeLimit,
   };
 }

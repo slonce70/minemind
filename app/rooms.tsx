@@ -4,10 +4,14 @@ import { useTranslation } from 'react-i18next';
 import { RoomLobbyView } from '../src/features/rooms/room-lobby-view';
 import { useRoomLobby } from '../src/features/rooms/use-room-lobby';
 import { Screen } from '../src/components/ui/screen';
+import { difficultyConfig } from '../src/features/content/difficulty-config';
 import { isSupabaseConfigured } from '../src/lib/supabase';
+import { useAppStore } from '../src/state/app-store';
 
 export default function RoomsRoute() {
   const { t } = useTranslation();
+  const selectedDifficulty = useAppStore((state) => state.selectedDifficulty);
+  const setSelectedDifficulty = useAppStore((state) => state.setSelectedDifficulty);
   const lobby = useRoomLobby({
     genericError: t('rooms.genericError'),
   });
@@ -21,6 +25,12 @@ export default function RoomsRoute() {
       <Stack.Screen options={{ headerShown: false }} />
       <RoomLobbyView
         activeRoom={lobby.activeRoom}
+        difficultyStrings={{
+          easy: t(difficultyConfig.easy.translationKey),
+          medium: t(difficultyConfig.medium.translationKey),
+          hard: t(difficultyConfig.hard.translationKey),
+        }}
+        selectedDifficulty={selectedDifficulty}
         errorMessage={lobby.errorMessage}
         isBusy={lobby.isBusy}
         isOfflineMode={!isSupabaseConfigured}
@@ -33,6 +43,7 @@ export default function RoomsRoute() {
           lobby.handleLeaveRoom();
           router.replace('/home');
         }}
+        onSelectDifficulty={setSelectedDifficulty}
         onStartBattle={() => {
           void lobby.handleStartBattle().then((didStart) => {
             if (didStart) {
@@ -53,6 +64,8 @@ export default function RoomsRoute() {
           }),
           addDemoPlayers: t('rooms.addDemoPlayers'),
           createRoom: t('rooms.createRoom'),
+          difficultyHint: t('rooms.difficultyHint'),
+          difficultyLabel: t('rooms.difficultyLabel'),
           heroEyebrow: t('rooms.eyebrow'),
           joinRoomAction: t('rooms.joinRoomAction'),
           joinRoomPlaceholder: t('rooms.joinRoomPlaceholder'),

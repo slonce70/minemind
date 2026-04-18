@@ -11,13 +11,20 @@ import { appTheme, colors, radii, spacing, typography } from '../../theme/tokens
 
 type ButtonProps = PressableProps & {
   label: string;
+  selected?: boolean;
   style?: StyleProp<ViewStyle>;
 };
 
-export function PrimaryButton({ label, style, ...props }: ButtonProps) {
+export function PrimaryButton({ label, selected = false, style, ...props }: ButtonProps) {
   return (
     <Pressable
-      style={({ pressed }) => [styles.base, styles.primary, pressed && styles.pressed, style]}
+      style={({ pressed }) => [
+        styles.base,
+        styles.primary,
+        selected && styles.primarySelected,
+        pressed && styles.pressed,
+        style,
+      ]}
       {...props}
     >
       <Text style={[styles.label, styles.primaryLabel]}>{label}</Text>
@@ -25,13 +32,21 @@ export function PrimaryButton({ label, style, ...props }: ButtonProps) {
   );
 }
 
-export function SecondaryButton({ label, style, ...props }: ButtonProps) {
+export function SecondaryButton({ label, selected = false, style, ...props }: ButtonProps) {
   return (
     <Pressable
-      style={({ pressed }) => [styles.base, styles.secondary, pressed && styles.pressed, style]}
+      style={({ pressed }) => [
+        styles.base,
+        styles.secondary,
+        selected && styles.secondarySelected,
+        pressed && styles.pressed,
+        style,
+      ]}
       {...props}
     >
-      <Text style={[styles.label, styles.secondaryLabel]}>{label}</Text>
+      <Text style={[styles.label, styles.secondaryLabel, selected && styles.secondarySelectedLabel]}>
+        {label}
+      </Text>
     </Pressable>
   );
 }
@@ -52,10 +67,17 @@ const styles = StyleSheet.create({
     backgroundColor: colors.highlight,
     boxShadow: '0 10px 24px rgba(255, 216, 77, 0.22)',
   },
+  primarySelected: {
+    boxShadow: '0 12px 28px rgba(255, 216, 77, 0.28)',
+  },
   secondary: {
     backgroundColor: colors.surfaceRaised,
     borderColor: colors.border,
     borderWidth: 1,
+  },
+  secondarySelected: {
+    backgroundColor: 'rgba(255, 216, 77, 0.14)',
+    borderColor: colors.highlight,
   },
   label: {
     fontSize: typography.body,
@@ -67,5 +89,8 @@ const styles = StyleSheet.create({
   },
   secondaryLabel: {
     color: colors.textPrimary,
+  },
+  secondarySelectedLabel: {
+    color: colors.highlight,
   },
 });

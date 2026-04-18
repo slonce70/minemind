@@ -3,12 +3,16 @@ import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { PrimaryButton, SecondaryButton } from '../../components/ui/button';
 import { Card } from '../../components/ui/card';
 import { avatarLookup } from '../profile/avatar-presets';
+import type { ContentDifficulty } from '../content/types';
+import { DifficultySelector } from '../home/difficulty-selector';
 import type { ActiveRoom } from './types';
 import { colors, spacing, typography } from '../../theme/tokens';
 import { deriveRoomLobbyState } from './room-lobby-state';
 
 type RoomLobbyViewProps = {
   activeRoom?: ActiveRoom;
+  difficultyStrings: Record<ContentDifficulty, string>;
+  selectedDifficulty: ContentDifficulty;
   errorMessage?: string | null;
   isBusy: boolean;
   isOfflineMode: boolean;
@@ -18,6 +22,7 @@ type RoomLobbyViewProps = {
   onCreateRoom: () => void;
   onJoinRoom: () => void;
   onLeaveRoom: () => void;
+  onSelectDifficulty: (difficulty: ContentDifficulty) => void;
   onStartBattle: () => void;
   onToggleReady: () => void;
   roomActionLabel: string;
@@ -26,6 +31,8 @@ type RoomLobbyViewProps = {
     activeRoomCopy: string;
     addDemoPlayers: string;
     createRoom: string;
+    difficultyHint: string;
+    difficultyLabel: string;
     heroEyebrow: string;
     joinRoomAction: string;
     joinRoomPlaceholder: string;
@@ -45,6 +52,8 @@ type RoomLobbyViewProps = {
 
 export function RoomLobbyView({
   activeRoom,
+  difficultyStrings,
+  selectedDifficulty,
   errorMessage,
   isBusy,
   isOfflineMode,
@@ -54,6 +63,7 @@ export function RoomLobbyView({
   onCreateRoom,
   onJoinRoom,
   onLeaveRoom,
+  onSelectDifficulty,
   onStartBattle,
   onToggleReady,
   roomActionLabel,
@@ -67,6 +77,13 @@ export function RoomLobbyView({
         <Text style={styles.eyebrow}>{strings.heroEyebrow}</Text>
         <Text style={styles.title}>{strings.title}</Text>
         <Text style={styles.subtitle}>{strings.subtitle}</Text>
+        <Text style={styles.helper}>{strings.difficultyHint}</Text>
+        <DifficultySelector
+          label={strings.difficultyLabel}
+          onSelect={onSelectDifficulty}
+          selectedDifficulty={activeRoom?.difficulty ?? selectedDifficulty}
+          strings={difficultyStrings}
+        />
       </Card>
 
       {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
@@ -169,6 +186,11 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     fontSize: typography.body,
     lineHeight: 24,
+  },
+  helper: {
+    color: colors.textMuted,
+    fontSize: typography.caption,
+    lineHeight: 20,
   },
   sectionTitle: {
     color: colors.textPrimary,

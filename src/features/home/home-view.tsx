@@ -3,10 +3,14 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Card } from '../../components/ui/card';
 import { PrimaryButton, SecondaryButton } from '../../components/ui/button';
 import { StatPill } from '../../components/ui/stat-pill';
+import type { ContentDifficulty } from '../content/types';
+import { DifficultySelector } from './difficulty-selector';
 import type { QuizResultSummary } from '../quiz/types';
 import { colors, spacing, typography } from '../../theme/tokens';
 
 type HomeViewProps = {
+  difficultyLabel: string;
+  difficultyStrings: Record<ContentDifficulty, string>;
   hasActiveRoom: boolean;
   lastResult?: QuizResultSummary;
   leaderboardEntries: Array<{ name: string; score: number }>;
@@ -17,10 +21,14 @@ type HomeViewProps = {
   onPlaySolo: () => void;
   onResetProfile: () => void;
   onRoomAction: () => void;
+  onSelectDifficulty: (difficulty: ContentDifficulty) => void;
   roomActionLabel: string;
+  selectedDifficulty: ContentDifficulty;
   strings: {
     activeRoomTitle: string;
     activeRoomCopy: string;
+    difficultyHelper: string;
+    difficultySelectorLabel: string;
     leaderboardTitle: string;
     localeLabel: string;
     modeLabel: string;
@@ -40,6 +48,8 @@ type HomeViewProps = {
 };
 
 export function HomeView({
+  difficultyLabel,
+  difficultyStrings,
   hasActiveRoom,
   lastResult,
   leaderboardEntries,
@@ -50,7 +60,9 @@ export function HomeView({
   onPlaySolo,
   onResetProfile,
   onRoomAction,
+  onSelectDifficulty,
   roomActionLabel,
+  selectedDifficulty,
   strings,
 }: HomeViewProps) {
   return (
@@ -62,7 +74,15 @@ export function HomeView({
         <View style={styles.heroStats}>
           <StatPill label={strings.localeLabel} value={localeLabel} />
           <StatPill label={strings.modeLabel} value={modeLabel} />
+          <StatPill label={strings.difficultySelectorLabel} value={difficultyLabel} />
         </View>
+        <Text style={styles.selectorCopy}>{strings.difficultyHelper}</Text>
+        <DifficultySelector
+          label={strings.difficultySelectorLabel}
+          onSelect={onSelectDifficulty}
+          selectedDifficulty={selectedDifficulty}
+          strings={difficultyStrings}
+        />
         <PrimaryButton label={strings.primaryCardTitle} onPress={onPlaySolo} />
       </Card>
 
@@ -139,6 +159,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.sm,
+  },
+  selectorCopy: {
+    color: colors.textMuted,
+    fontSize: typography.caption,
+    lineHeight: 20,
   },
   sectionTitle: {
     color: colors.textPrimary,
