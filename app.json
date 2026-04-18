@@ -1,8 +1,9 @@
 {
   "expo": {
-    "name": "minecraft_victorine",
-    "slug": "minecraft_victorine",
-    "version": "1.0.0",
+    "name": "MineMind",
+    "slug": "minemind",
+    "scheme": "minemind",
+    "version": "0.1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -12,9 +13,11 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.alina.minemind"
     },
     "android": {
+      "package": "com.alina.minemind",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -25,6 +28,14 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-localization",
+      "expo-secure-store"
+    ],
+    "experiments": {
+      "typedRoutes": true
     }
   }
 }
