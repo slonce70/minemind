@@ -43,6 +43,7 @@ export function buildQuizResult(
   questions: QuizQuestion[],
   answers: QuizAnswerMap,
   options?: {
+    difficulty?: ContentDifficulty;
     mode?: 'room' | 'solo';
     roomCode?: string;
     standings?: QuizResultSummary['standings'];
@@ -86,6 +87,7 @@ export function buildQuizResult(
     breakdown,
     completedAt: new Date().toISOString(),
     correctAnswers,
+    difficulty: options?.difficulty,
     mode: options?.mode ?? 'solo',
     questionCount: questions.length,
     roomCode: options?.roomCode,

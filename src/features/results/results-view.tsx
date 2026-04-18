@@ -8,6 +8,7 @@ import type { QuizResultSummary } from '../quiz/types';
 import { colors, spacing, typography } from '../../theme/tokens';
 
 type ResultsViewProps = {
+  difficultyLabel: string;
   onBackHome: () => void;
   onPlayAgain: () => void;
   result: QuizResultSummary;
@@ -16,6 +17,7 @@ type ResultsViewProps = {
     backHome: string;
     bestStreak: string;
     correctShort: string;
+    difficulty: string;
     insights: string;
     learned: string;
     playAgain: string;
@@ -27,7 +29,7 @@ type ResultsViewProps = {
   };
 };
 
-export function ResultsView({ onBackHome, onPlayAgain, result, strings }: ResultsViewProps) {
+export function ResultsView({ difficultyLabel, onBackHome, onPlayAgain, result, strings }: ResultsViewProps) {
   return (
     <Screen scrollable>
       <Card highlight style={styles.hero}>
@@ -40,6 +42,7 @@ export function ResultsView({ onBackHome, onPlayAgain, result, strings }: Result
             label={strings.accuracyLabel}
             value={`${result.correctAnswers}/${result.questionCount}`}
           />
+          <StatPill label={strings.difficulty} value={difficultyLabel} />
         </View>
         {result.roomCode ? <Text style={styles.roomCode}>{strings.roomCodePrefix} {result.roomCode}</Text> : null}
       </Card>

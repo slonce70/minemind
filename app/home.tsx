@@ -2,6 +2,7 @@ import { Redirect, Stack, router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
 import { Screen } from '../src/components/ui/screen';
+import { difficultyConfig } from '../src/features/content/difficulty-config';
 import { HomeView } from '../src/features/home/home-view';
 import { leaderboardPreview, minecraftCategory } from '../src/features/quiz/mock-data';
 import { isSupabaseConfigured } from '../src/lib/supabase';
@@ -14,6 +15,8 @@ export default function HomeRoute() {
   const activeRoom = useAppStore((state) => state.activeRoom);
   const activeRoomRound = useAppStore((state) => state.activeRoomRound);
   const resetProfile = useAppStore((state) => state.resetProfile);
+  const selectedDifficulty = useAppStore((state) => state.selectedDifficulty);
+  const setSelectedDifficulty = useAppStore((state) => state.setSelectedDifficulty);
 
   if (!profile) {
     return <Redirect href="/onboarding" />;
@@ -23,6 +26,12 @@ export default function HomeRoute() {
     <Screen scrollable>
       <Stack.Screen options={{ headerShown: false }} />
       <HomeView
+        difficultyLabel={t(difficultyConfig[selectedDifficulty].translationKey)}
+        difficultyStrings={{
+          easy: t(difficultyConfig.easy.translationKey),
+          medium: t(difficultyConfig.medium.translationKey),
+          hard: t(difficultyConfig.hard.translationKey),
+        }}
         hasActiveRoom={Boolean(activeRoom)}
         lastResult={lastResult}
         leaderboardEntries={leaderboardPreview}
@@ -40,12 +49,16 @@ export default function HomeRoute() {
             ? router.push('/solo?mode=room')
             : router.push('/rooms')
         }
+        onSelectDifficulty={setSelectedDifficulty}
         roomActionLabel={activeRoom ? t('home.resumeRoom') : t('home.privateRooms')}
+        selectedDifficulty={selectedDifficulty}
         strings={{
           activeRoomCopy: activeRoom
             ? t('home.activeRoomCopy', { code: activeRoom.roomCode, count: activeRoom.participants.length })
             : t('home.roomCardCopy'),
           activeRoomTitle: t('home.activeRoom'),
+          difficultyHelper: t('home.difficultyHint'),
+          difficultySelectorLabel: t('home.difficultyLabel'),
           leaderboardTitle: t('home.leaderboardPreview'),
           localeLabel: t('home.locale'),
           modeLabel: t('home.mode'),
