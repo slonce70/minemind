@@ -1,0 +1,49 @@
+[
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "The crafting table unlocks the 3x3 grid needed for many important recipes.",
+      "ru": "Верстак открывает сетку 3x3, поэтому без него недоступны многие важные рецепты.",
+      "uk": "Верстак відкриває сітку 3x3, тому без нього багато важливих рецептів недоступні."
+    },
+    "id": "crafting-table-basics",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Furnace",
+        "ru": "Печь",
+        "uk": "Піч"
+      },
+      {
+        "en": "Crafting Table",
+        "ru": "Верстак",
+        "uk": "Верстак"
+      },
+      {
+        "en": "Chest",
+        "ru": "Сундук",
+        "uk": "Скриня"
+      },
+      {
+        "en": "Bed",
+        "ru": "Кровать",
+        "uk": "Ліжко"
+      }
+    ],
+    "prompt": {
+      "en": "Which block do players usually need to craft most recipes in Minecraft?",
+      "ru": "Какой блок чаще всего нужен, чтобы создавать большинство рецептов в Minecraft?",
+      "uk": "Який блок найчастіше потрібен, щоб створювати більшість рецептів у Minecraft?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "crafting",
+      "blocks",
+      "basics"
+    ],
+    "topicId": "crafting-and-smelting"
+  }
+]
