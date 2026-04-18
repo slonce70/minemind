@@ -6,6 +6,8 @@ import { StatPill } from '../../components/ui/stat-pill';
 import type { ContentDifficulty } from '../content/types';
 import { DifficultySelector } from './difficulty-selector';
 import type { QuizResultSummary } from '../quiz/types';
+import { BadgeChip } from '../ui/badge-chip';
+import { WorldBackground } from '../ui/world-background';
 import { colors, spacing, typography } from '../../theme/tokens';
 
 type HomeViewProps = {
@@ -68,22 +70,25 @@ export function HomeView({
   return (
     <View style={styles.container}>
       <Card highlight style={styles.heroCard}>
-        <Text style={styles.heroEyebrow}>{strings.modeSelectorCopy}</Text>
-        <Text style={styles.heroTitle}>{strings.title.replace('{{name}}', nickname)}</Text>
-        <Text style={styles.heroSubtitle}>{strings.primaryCardCopy}</Text>
-        <View style={styles.heroStats}>
-          <StatPill label={strings.localeLabel} value={localeLabel} />
-          <StatPill label={strings.modeLabel} value={modeLabel} />
-          <StatPill label={strings.difficultySelectorLabel} value={difficultyLabel} />
-        </View>
-        <Text style={styles.selectorCopy}>{strings.difficultyHelper}</Text>
-        <DifficultySelector
-          label={strings.difficultySelectorLabel}
-          onSelect={onSelectDifficulty}
-          selectedDifficulty={selectedDifficulty}
-          strings={difficultyStrings}
-        />
-        <PrimaryButton label={strings.primaryCardTitle} onPress={onPlaySolo} />
+        <WorldBackground style={styles.worldCard} variant="overworld">
+          <Text style={styles.heroEyebrow}>{strings.modeSelectorCopy}</Text>
+          <Text style={styles.heroTitle}>{strings.title.replace('{{name}}', nickname)}</Text>
+          <Text style={styles.heroSubtitle}>{strings.primaryCardCopy}</Text>
+          <BadgeChip icon="pickaxe" label={difficultyLabel} tone="warning" />
+          <View style={styles.heroStats}>
+            <StatPill label={strings.localeLabel} value={localeLabel} />
+            <StatPill label={strings.modeLabel} value={modeLabel} />
+            <StatPill label={strings.difficultySelectorLabel} value={difficultyLabel} />
+          </View>
+          <Text style={styles.selectorCopy}>{strings.difficultyHelper}</Text>
+          <DifficultySelector
+            label={strings.difficultySelectorLabel}
+            onSelect={onSelectDifficulty}
+            selectedDifficulty={selectedDifficulty}
+            strings={difficultyStrings}
+          />
+          <PrimaryButton label={strings.primaryCardTitle} onPress={onPlaySolo} />
+        </WorldBackground>
       </Card>
 
       <Card>
@@ -136,7 +141,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   heroCard: {
-    paddingTop: spacing.xl,
+    padding: 0,
   },
   heroEyebrow: {
     color: colors.highlight,
@@ -159,6 +164,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.sm,
+  },
+  worldCard: {
+    gap: spacing.sm,
+    padding: spacing.lg,
+    paddingTop: spacing.xl,
   },
   selectorCopy: {
     color: colors.textMuted,

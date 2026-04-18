@@ -4,6 +4,9 @@ import { PrimaryButton, SecondaryButton } from '../../components/ui/button';
 import { Card } from '../../components/ui/card';
 import { Screen } from '../../components/ui/screen';
 import { StatPill } from '../../components/ui/stat-pill';
+import { BadgeChip } from '../ui/badge-chip';
+import { WorldBackground } from '../ui/world-background';
+import { getResultBadgeModel } from './result-badges';
 import type { QuizResultSummary } from '../quiz/types';
 import { colors, spacing, typography } from '../../theme/tokens';
 
@@ -15,6 +18,11 @@ type ResultsViewProps = {
   strings: {
     accuracyLabel: string;
     backHome: string;
+    badges: {
+      netherPerfect: string;
+      perfectClear: string;
+      standardClear: string;
+    };
     bestStreak: string;
     correctShort: string;
     difficulty: string;
@@ -30,21 +38,37 @@ type ResultsViewProps = {
 };
 
 export function ResultsView({ difficultyLabel, onBackHome, onPlayAgain, result, strings }: ResultsViewProps) {
+  const badge = getResultBadgeModel({
+    difficulty: result.difficulty ?? 'medium',
+    perfectRound: result.correctAnswers === result.questionCount,
+  });
+  const badgeLabel = {
+    'nether-pro-perfect': strings.badges.netherPerfect,
+    'perfect-clear': strings.badges.perfectClear,
+    'standard-clear': strings.badges.standardClear,
+  }[badge.id] ?? strings.badges.standardClear;
+
   return (
     <Screen scrollable>
       <Card highlight style={styles.hero}>
-        <Text style={styles.kicker}>{strings.subtitle}</Text>
-        <Text style={styles.title}>{strings.title}</Text>
-        <View style={styles.heroStats}>
-          <StatPill label={strings.score} value={String(result.score)} />
-          <StatPill label={strings.bestStreak} value={String(result.bestStreak)} />
-          <StatPill
-            label={strings.accuracyLabel}
-            value={`${result.correctAnswers}/${result.questionCount}`}
-          />
-          <StatPill label={strings.difficulty} value={difficultyLabel} />
-        </View>
-        {result.roomCode ? <Text style={styles.roomCode}>{strings.roomCodePrefix} {result.roomCode}</Text> : null}
+        <WorldBackground
+          style={styles.worldCard}
+          variant={badge.id === 'nether-pro-perfect' ? 'nether' : 'overworld'}
+        >
+          <Text style={styles.kicker}>{strings.subtitle}</Text>
+          <Text style={styles.title}>{strings.title}</Text>
+          <BadgeChip icon={badge.icon} label={badgeLabel} tone={badge.tone} />
+          <View style={styles.heroStats}>
+            <StatPill label={strings.score} value={String(result.score)} />
+            <StatPill label={strings.bestStreak} value={String(result.bestStreak)} />
+            <StatPill
+              label={strings.accuracyLabel}
+              value={`${result.correctAnswers}/${result.questionCount}`}
+            />
+            <StatPill label={strings.difficulty} value={difficultyLabel} />
+          </View>
+          {result.roomCode ? <Text style={styles.roomCode}>{strings.roomCodePrefix} {result.roomCode}</Text> : null}
+        </WorldBackground>
       </Card>
 
       <View style={styles.podiumRow}>
@@ -86,7 +110,7 @@ export function ResultsView({ difficultyLabel, onBackHome, onPlayAgain, result, 
 
 const styles = StyleSheet.create({
   hero: {
-    paddingTop: spacing.xl,
+    padding: 0,
   },
   kicker: {
     color: colors.highlight,
@@ -104,6 +128,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.sm,
+  },
+  worldCard: {
+    gap: spacing.sm,
+    padding: spacing.lg,
+    paddingTop: spacing.xl,
   },
   roomCode: {
     color: colors.textSecondary,

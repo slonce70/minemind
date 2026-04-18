@@ -1,4 +1,5 @@
 import type { AppLocale } from '../../lib/locale';
+import { difficultyConfig } from '../content/difficulty-config';
 import { loadMinecraftQuestionBank } from '../content/content-loader';
 import { selectQuestionRound } from '../content/content-selection';
 import type { ContentDifficulty, ContentQuestionRecord } from '../content/types';
@@ -50,10 +51,11 @@ export function buildQuizResult(
   }
 ): QuizResultSummary {
   let correctAnswers = 0;
-  let score = 0;
+  let baseScore = 0;
   let currentStreak = 0;
   let bestStreak = 0;
   let speedBonus = 0;
+  const multiplier = options?.difficulty ? difficultyConfig[options.difficulty].scoreMultiplier : 1;
 
   const breakdown = questions.map((question) => {
     const answer = answers[question.id];
@@ -68,7 +70,7 @@ export function buildQuizResult(
       currentStreak += 1;
       bestStreak = Math.max(bestStreak, currentStreak);
       speedBonus += questionSpeedBonus;
-      score += 100 + questionSpeedBonus;
+      baseScore += 100;
     } else {
       currentStreak = 0;
     }
@@ -91,7 +93,7 @@ export function buildQuizResult(
     mode: options?.mode ?? 'solo',
     questionCount: questions.length,
     roomCode: options?.roomCode,
-    score,
+    score: Math.round((baseScore + speedBonus) * multiplier),
     speedBonus,
     standings:
       options?.standings ??
@@ -99,7 +101,7 @@ export function buildQuizResult(
         {
           isPlayer: true,
           name: 'You',
-          score,
+          score: Math.round((baseScore + speedBonus) * multiplier),
         },
       ],
   };

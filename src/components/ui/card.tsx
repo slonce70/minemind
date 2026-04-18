@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderColor: colors.border,
     borderRadius: radii.xl,
-    borderWidth: 1,
+    borderWidth: 2,
     gap: appTheme.layout.screenGap,
     marginBottom: spacing.md,
     padding: spacing.lg,
@@ -27,6 +27,6 @@ const styles = StyleSheet.create({
   },
   highlight: {
     borderColor: colors.highlight,
-    backgroundColor: 'rgba(22, 30, 46, 0.94)',
+    backgroundColor: 'rgba(18, 34, 22, 0.94)',
   },
 });

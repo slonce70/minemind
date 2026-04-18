@@ -54,7 +54,8 @@ export function SecondaryButton({ label, selected = false, style, ...props }: Bu
 const styles = StyleSheet.create({
   base: {
     alignItems: 'center',
-    borderRadius: radii.full,
+    borderRadius: radii.lg,
+    borderWidth: 2,
     justifyContent: 'center',
     minHeight: appTheme.layout.controlHeight,
     paddingHorizontal: spacing.lg,
@@ -65,6 +66,7 @@ const styles = StyleSheet.create({
   },
   primary: {
     backgroundColor: colors.highlight,
+    borderColor: 'rgba(51, 35, 10, 0.24)',
     boxShadow: '0 10px 24px rgba(255, 216, 77, 0.22)',
   },
   primarySelected: {
@@ -73,7 +75,6 @@ const styles = StyleSheet.create({
   secondary: {
     backgroundColor: colors.surfaceRaised,
     borderColor: colors.border,
-    borderWidth: 1,
   },
   secondarySelected: {
     backgroundColor: 'rgba(255, 216, 77, 0.14)',
