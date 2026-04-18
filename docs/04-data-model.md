@@ -1,0 +1,66 @@
+# Data Model
+
+## Core Entities
+- `guest_profiles`
+  - `id`
+  - `nickname`
+  - `avatar_id`
+  - `locale`
+- `quiz_categories`
+  - `id`
+  - `slug`
+  - `title`
+  - `status`
+- `question_packs`
+  - `id`
+  - `category_id`
+  - `locale`
+  - `age_band`
+  - `difficulty`
+- `questions`
+  - `id`
+  - `pack_id`
+  - `prompt`
+  - `option_a..d`
+  - `correct_option`
+  - `explanation`
+  - `sort_order`
+- `rooms`
+  - `id`
+  - `room_code`
+  - `host_id`
+  - `status`
+  - `current_round_id`
+- `room_participants`
+  - `room_id`
+  - `player_id`
+  - `ready_state`
+- `round_sessions`
+  - `id`
+  - `room_id`
+  - `question_ids`
+  - `started_at`
+  - `ends_at`
+- `answer_submissions`
+  - `round_id`
+  - `player_id`
+  - `question_id`
+  - `selected_option`
+  - `time_left_ms`
+- `match_results`
+  - `round_id`
+  - `player_id`
+  - `score`
+  - `rank`
+  - `correct_count`
+- `leaderboard_entries`
+  - `scope`
+  - `player_id`
+  - `score`
+
+## Server Authority
+- room creation
+- join validation
+- round start
+- score finalize
+- leaderboard writes
