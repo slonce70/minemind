@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import { minecraftCategory } from '../src/features/quiz/mock-data';
+import { resources } from '../src/i18n/resources';
 import { appTheme } from '../src/theme/tokens';
 
 test('app theme exposes bottom-safe shell tokens and interaction states', () => {
@@ -14,4 +15,12 @@ test('app theme exposes bottom-safe shell tokens and interaction states', () => 
 
 test('home metadata stays aligned with the documented round size', () => {
   assert.equal(minecraftCategory.roundQuestionCount, 8);
+});
+
+test('critical home and rooms copy exists in every supported locale', () => {
+  for (const locale of ['uk', 'en', 'ru'] as const) {
+    assert.ok(resources[locale].translation.home.playSolo);
+    assert.ok(resources[locale].translation.rooms.title);
+    assert.ok(resources[locale].translation.results.title);
+  }
 });

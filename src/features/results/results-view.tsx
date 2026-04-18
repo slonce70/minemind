@@ -15,7 +15,9 @@ type ResultsViewProps = {
     accuracyLabel: string;
     backHome: string;
     bestStreak: string;
+    correctShort: string;
     insights: string;
+    learned: string;
     playAgain: string;
     roomCodePrefix: string;
     score: string;
@@ -66,7 +68,7 @@ export function ResultsView({ onBackHome, onPlayAgain, result, strings }: Result
           <View key={entry.questionId} style={styles.insightRow}>
             <Text style={styles.insightPrompt}>{entry.prompt}</Text>
             <Text style={[styles.insightStatus, entry.isCorrect ? styles.correct : styles.wrong]}>
-              {entry.isCorrect ? 'Correct' : 'Learned'}
+              {entry.isCorrect ? strings.correctShort : strings.learned}
             </Text>
             <Text style={styles.insightExplanation}>{entry.explanation}</Text>
           </View>

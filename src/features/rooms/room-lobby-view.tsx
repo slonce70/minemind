@@ -32,6 +32,9 @@ type RoomLobbyViewProps = {
     joinRoomTitle: string;
     leaveRoom: string;
     lobbyTitle: string;
+    loading: string;
+    notReady: string;
+    ready: string;
     readySummary: string;
     startBattle: string;
     subtitle: string;
@@ -96,7 +99,9 @@ export function RoomLobbyView({
                     </View>
                     <View style={styles.participantMeta}>
                       <Text style={styles.participantName}>{participant.name}</Text>
-                      <Text style={styles.participantState}>{participant.ready ? 'Ready' : 'Not ready'}</Text>
+                      <Text style={styles.participantState}>
+                        {participant.ready ? strings.ready : strings.notReady}
+                      </Text>
                     </View>
                   </View>
                 );
@@ -106,11 +111,11 @@ export function RoomLobbyView({
 
           {isOfflineMode ? <PrimaryButton label={strings.addDemoPlayers} onPress={onAddDemoPlayers} /> : null}
           <SecondaryButton
-            label={isBusy ? '...' : strings.toggleReady}
+            label={isBusy ? strings.loading : strings.toggleReady}
             onPress={onToggleReady}
           />
           <PrimaryButton
-            label={isBusy ? '...' : roomActionLabel}
+            label={isBusy ? strings.loading : roomActionLabel}
             onPress={onStartBattle}
           />
           <SecondaryButton label={strings.leaveRoom} onPress={onLeaveRoom} />
@@ -118,7 +123,7 @@ export function RoomLobbyView({
       ) : (
         <>
           <PrimaryButton
-            label={isBusy ? '...' : strings.createRoom}
+            label={isBusy ? strings.loading : strings.createRoom}
             onPress={onCreateRoom}
           />
           <Card>
@@ -134,7 +139,7 @@ export function RoomLobbyView({
               value={joinCode}
             />
             <PrimaryButton
-              label={isBusy ? '...' : strings.joinRoomAction}
+              label={isBusy ? strings.loading : strings.joinRoomAction}
               onPress={onJoinRoom}
             />
           </Card>
