@@ -72,6 +72,11 @@ export const resources = {
       },
       results: {
         backHome: 'Назад на головну',
+        badges: {
+          netherPerfect: 'Nether Pro без помилок',
+          perfectClear: 'Ідеальний прохід',
+          standardClear: 'Чисте проходження',
+        },
         bestStreak: 'Найкраща серія',
         correct: 'Правильні відповіді',
         correctShort: 'Влучно',
@@ -217,6 +222,11 @@ export const resources = {
       },
       results: {
         backHome: 'Back home',
+        badges: {
+          netherPerfect: 'Nether Pro perfect',
+          perfectClear: 'Perfect clear',
+          standardClear: 'Standard clear',
+        },
         bestStreak: 'Best streak',
         correct: 'Correct answers',
         correctShort: 'Sharp',
@@ -362,6 +372,11 @@ export const resources = {
       },
       results: {
         backHome: 'Назад домой',
+        badges: {
+          netherPerfect: 'Nether Pro без ошибок',
+          perfectClear: 'Идеальное прохождение',
+          standardClear: 'Чистое прохождение',
+        },
         bestStreak: 'Лучшая серия',
         correct: 'Правильные ответы',
         correctShort: 'Точно',

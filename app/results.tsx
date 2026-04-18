@@ -25,6 +25,11 @@ export default function ResultsRoute() {
         strings={{
           accuracyLabel: t('results.correct'),
           backHome: t('results.backHome'),
+          badges: {
+            netherPerfect: t('results.badges.netherPerfect'),
+            perfectClear: t('results.badges.perfectClear'),
+            standardClear: t('results.badges.standardClear'),
+          },
           bestStreak: t('results.bestStreak'),
           correctShort: t('results.correctShort'),
           difficulty: t('results.difficulty'),

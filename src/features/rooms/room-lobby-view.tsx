@@ -5,6 +5,8 @@ import { Card } from '../../components/ui/card';
 import { avatarLookup } from '../profile/avatar-presets';
 import type { ContentDifficulty } from '../content/types';
 import { DifficultySelector } from '../home/difficulty-selector';
+import { BadgeChip } from '../ui/badge-chip';
+import { WorldBackground } from '../ui/world-background';
 import type { ActiveRoom } from './types';
 import { colors, spacing, typography } from '../../theme/tokens';
 import { deriveRoomLobbyState } from './room-lobby-state';
@@ -74,16 +76,23 @@ export function RoomLobbyView({
   return (
     <View style={styles.container}>
       <Card highlight>
-        <Text style={styles.eyebrow}>{strings.heroEyebrow}</Text>
-        <Text style={styles.title}>{strings.title}</Text>
-        <Text style={styles.subtitle}>{strings.subtitle}</Text>
-        <Text style={styles.helper}>{strings.difficultyHint}</Text>
-        <DifficultySelector
-          label={strings.difficultyLabel}
-          onSelect={onSelectDifficulty}
-          selectedDifficulty={activeRoom?.difficulty ?? selectedDifficulty}
-          strings={difficultyStrings}
-        />
+        <WorldBackground style={styles.worldCard} variant="cave">
+          <Text style={styles.eyebrow}>{strings.heroEyebrow}</Text>
+          <Text style={styles.title}>{strings.title}</Text>
+          <Text style={styles.subtitle}>{strings.subtitle}</Text>
+          <BadgeChip
+            icon="block"
+            label={difficultyStrings[activeRoom?.difficulty ?? selectedDifficulty]}
+            tone="warning"
+          />
+          <Text style={styles.helper}>{strings.difficultyHint}</Text>
+          <DifficultySelector
+            label={strings.difficultyLabel}
+            onSelect={onSelectDifficulty}
+            selectedDifficulty={activeRoom?.difficulty ?? selectedDifficulty}
+            strings={difficultyStrings}
+          />
+        </WorldBackground>
       </Card>
 
       {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
@@ -191,6 +200,10 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontSize: typography.caption,
     lineHeight: 20,
+  },
+  worldCard: {
+    gap: spacing.sm,
+    padding: spacing.lg,
   },
   sectionTitle: {
     color: colors.textPrimary,

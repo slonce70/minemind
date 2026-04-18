@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
+import { iconMap } from '../src/features/ui/icon-map';
+import { themeArt } from '../src/features/ui/theme-art';
 import { minecraftCategory } from '../src/features/quiz/mock-data';
 import { resources } from '../src/i18n/resources';
 import { appTheme } from '../src/theme/tokens';
@@ -23,4 +25,11 @@ test('critical home and rooms copy exists in every supported locale', () => {
     assert.ok(resources[locale].translation.rooms.title);
     assert.ok(resources[locale].translation.results.title);
   }
+});
+
+test('fantasy layer exposes themed backgrounds and icon markers', () => {
+  assert.ok(themeArt.overworld);
+  assert.ok(themeArt.nether);
+  assert.ok(iconMap.pickaxe);
+  assert.ok(iconMap.trophy);
 });
