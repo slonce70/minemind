@@ -6,37 +6,37 @@
     "difficulty": "easy",
     "explanation": {
       "en": "The crafting table unlocks the 3x3 grid needed for many important recipes.",
-      "ru": "Верстак открывает сетку 3x3, поэтому без него недоступны многие важные рецепты.",
-      "uk": "Верстак відкриває сітку 3x3, тому без нього багато важливих рецептів недоступні."
+      "uk": "Верстак відкриває сітку 3x3, тому без нього багато важливих рецептів недоступні.",
+      "ru": "Верстак открывает сетку 3x3, поэтому без него недоступны многие важные рецепты."
     },
     "id": "crafting-table-basics",
     "isActive": true,
     "options": [
       {
         "en": "Furnace",
-        "ru": "Печь",
-        "uk": "Піч"
+        "uk": "Піч",
+        "ru": "Печь"
       },
       {
         "en": "Crafting Table",
-        "ru": "Верстак",
-        "uk": "Верстак"
+        "uk": "Верстак",
+        "ru": "Верстак"
       },
       {
         "en": "Chest",
-        "ru": "Сундук",
-        "uk": "Скриня"
+        "uk": "Скриня",
+        "ru": "Сундук"
       },
       {
         "en": "Bed",
-        "ru": "Кровать",
-        "uk": "Ліжко"
+        "uk": "Ліжко",
+        "ru": "Кровать"
       }
     ],
     "prompt": {
       "en": "Which block do players usually need to craft most recipes in Minecraft?",
-      "ru": "Какой блок чаще всего нужен, чтобы создавать большинство рецептов в Minecraft?",
-      "uk": "Який блок найчастіше потрібен, щоб створювати більшість рецептів у Minecraft?"
+      "uk": "Який блок найчастіше потрібен, щоб створювати більшість рецептів у Minecraft?",
+      "ru": "Какой блок чаще всего нужен, чтобы создавать большинство рецептов в Minecraft?"
     },
     "sourceVersion": "minecraft-v1",
     "tags": [
@@ -45,5 +45,2778 @@
       "basics"
     ],
     "topicId": "crafting-and-smelting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "A furnace smelts ores and food as long as it has something to burn.",
+      "uk": "Піч переплавляє руди й готує їжу, якщо в неї покласти паливо.",
+      "ru": "Печь переплавляет руды и готовит еду, если в неё положить топливо."
+    },
+    "id": "furnace-smelts-raw-iron",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Furnace",
+        "uk": "Піч",
+        "ru": "Печь"
+      },
+      {
+        "en": "Anvil",
+        "uk": "Ковадло",
+        "ru": "Наковальня"
+      },
+      {
+        "en": "Barrel",
+        "uk": "Бочка",
+        "ru": "Бочка"
+      },
+      {
+        "en": "Composter",
+        "uk": "Компостер",
+        "ru": "Компостер"
+      }
+    ],
+    "prompt": {
+      "en": "Which block turns raw iron into iron ingots when you add fuel?",
+      "uk": "Який блок перетворює необроблене залізо на злитки, якщо додати паливо?",
+      "ru": "Какой блок превращает сырое железо в слитки, если добавить топливо?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "crafting",
+      "smelting",
+      "iron"
+    ],
+    "topicId": "crafting-and-smelting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "Sticks are a core ingredient for tools, weapons, torches, and many other recipes.",
+      "uk": "Палиці є основним інгредієнтом для інструментів, зброї, смолоскипів і багатьох інших рецептів.",
+      "ru": "Палки являются основным ингредиентом для инструментов, оружия, факелов и многих других рецептов."
+    },
+    "id": "sticks-from-planks",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Stick",
+        "uk": "Палиця",
+        "ru": "Палка"
+      },
+      {
+        "en": "Bowl",
+        "uk": "Миска",
+        "ru": "Миска"
+      },
+      {
+        "en": "Button",
+        "uk": "Кнопка",
+        "ru": "Кнопка"
+      },
+      {
+        "en": "Ladder",
+        "uk": "Драбина",
+        "ru": "Лестница"
+      }
+    ],
+    "prompt": {
+      "en": "Which simple item made from planks is used in many tool recipes?",
+      "uk": "Який простий предмет із дощок використовується в багатьох рецептах інструментів?",
+      "ru": "Какой простой предмет из досок используется во многих рецептах инструментов?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "crafting",
+      "materials",
+      "tools"
+    ],
+    "topicId": "crafting-and-smelting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 2,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "Stone breaks fastest with a pickaxe, and that is the tool that drops cobblestone.",
+      "uk": "Камінь найшвидше ламається кайлом, і саме цей інструмент дає кругляк.",
+      "ru": "Камень быстрее всего ломается киркой, и именно этот инструмент даёт булыжник."
+    },
+    "id": "pickaxe-mines-stone",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Shovel",
+        "uk": "Лопата",
+        "ru": "Лопата"
+      },
+      {
+        "en": "Axe",
+        "uk": "Сокира",
+        "ru": "Топор"
+      },
+      {
+        "en": "Pickaxe",
+        "uk": "Кайло",
+        "ru": "Кирка"
+      },
+      {
+        "en": "Hoe",
+        "uk": "Мотика",
+        "ru": "Мотыга"
+      }
+    ],
+    "prompt": {
+      "en": "Which tool do you need to mine stone and collect cobblestone?",
+      "uk": "Який інструмент потрібен, щоб добути камінь і отримати кругляк?",
+      "ru": "Какой инструмент нужен, чтобы добыть камень и получить булыжник?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "crafting",
+      "tools",
+      "mining"
+    ],
+    "topicId": "crafting-and-smelting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "Smelting sand gives glass, a handy block for windows and bright builds.",
+      "uk": "Переплавлення піску дає скло, зручний блок для вікон і світлих будівель.",
+      "ru": "Переплавка песка даёт стекло, удобный блок для окон и светлых построек."
+    },
+    "id": "sand-smelts-into-glass",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Clay",
+        "uk": "Глина",
+        "ru": "Глина"
+      },
+      {
+        "en": "Glass",
+        "uk": "Скло",
+        "ru": "Стекло"
+      },
+      {
+        "en": "Gravel",
+        "uk": "Гравій",
+        "ru": "Гравий"
+      },
+      {
+        "en": "Quartz",
+        "uk": "Кварц",
+        "ru": "Кварц"
+      }
+    ],
+    "prompt": {
+      "en": "What do you get when sand is smelted in a furnace?",
+      "uk": "Що вийде, якщо переплавити пісок у печі?",
+      "ru": "Что получится, если переплавить песок в печи?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "smelting",
+      "blocks",
+      "glass"
+    ],
+    "topicId": "crafting-and-smelting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 2,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "A chest uses eight planks around an empty center slot in the crafting grid.",
+      "uk": "Для скрині потрібно вісім дощок навколо порожньої клітинки в центрі сітки.",
+      "ru": "Для сундука нужно восемь досок вокруг пустой клетки в центре сетки."
+    },
+    "id": "chest-needs-eight-planks",
+    "isActive": true,
+    "options": [
+      {
+        "en": "6",
+        "uk": "6",
+        "ru": "6"
+      },
+      {
+        "en": "7",
+        "uk": "7",
+        "ru": "7"
+      },
+      {
+        "en": "8",
+        "uk": "8",
+        "ru": "8"
+      },
+      {
+        "en": "9",
+        "uk": "9",
+        "ru": "9"
+      }
+    ],
+    "prompt": {
+      "en": "How many wooden planks are used to craft a chest?",
+      "uk": "Скільки деревʼяних дощок потрібно, щоб створити скриню?",
+      "ru": "Сколько деревянных досок нужно, чтобы создать сундук?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "crafting",
+      "storage",
+      "recipes"
+    ],
+    "topicId": "crafting-and-smelting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "A blast furnace is made for ores and metal gear, so it works faster than a normal furnace.",
+      "uk": "Плавильна піч створена для руд і металевого спорядження, тому працює швидше за звичайну піч.",
+      "ru": "Плавильная печь создана для руд и металлического снаряжения, поэтому работает быстрее обычной печи."
+    },
+    "id": "blast-furnace-smelts-ore-fast",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Blast Furnace",
+        "uk": "Плавильна піч",
+        "ru": "Плавильная печь"
+      },
+      {
+        "en": "Smoker",
+        "uk": "Коптильня",
+        "ru": "Коптильня"
+      },
+      {
+        "en": "Stonecutter",
+        "uk": "Каменеріз",
+        "ru": "Камнерез"
+      },
+      {
+        "en": "Cartography Table",
+        "uk": "Картографічний стіл",
+        "ru": "Стол картографа"
+      }
+    ],
+    "prompt": {
+      "en": "Which station smelts ore faster than a regular furnace?",
+      "uk": "Яка станція переплавляє руду швидше за звичайну піч?",
+      "ru": "Какая станция переплавляет руду быстрее обычной печи?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "smelting",
+      "stations",
+      "ore"
+    ],
+    "topicId": "crafting-and-smelting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 2,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "A compass recipe uses redstone dust in the center with iron ingots around it.",
+      "uk": "У рецепті компаса в центрі лежить редстоуновий пил, а навколо нього залізні злитки.",
+      "ru": "В рецепте компаса в центре лежит редстоуновая пыль, а вокруг неё железные слитки."
+    },
+    "id": "compass-needs-redstone",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Glowstone Dust",
+        "uk": "Пил світлокаменю",
+        "ru": "Пыль светокамня"
+      },
+      {
+        "en": "Blaze Powder",
+        "uk": "Вогняний порошок",
+        "ru": "Огненный порошок"
+      },
+      {
+        "en": "Redstone Dust",
+        "uk": "Редстоуновий пил",
+        "ru": "Редстоуновая пыль"
+      },
+      {
+        "en": "Gunpowder",
+        "uk": "Порох",
+        "ru": "Порох"
+      }
+    ],
+    "prompt": {
+      "en": "Which red mineral is needed with iron ingots to craft a compass?",
+      "uk": "Який червоний мінерал потрібен разом із залізними злитками, щоб створити компас?",
+      "ru": "Какой красный минерал нужен вместе с железными слитками, чтобы создать компас?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "crafting",
+      "navigation",
+      "redstone"
+    ],
+    "topicId": "crafting-and-smelting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "Sleeping in a bed skips the night and usually sets your respawn point nearby.",
+      "uk": "Сон у ліжку пропускає ніч і зазвичай встановлює поруч нову точку відродження.",
+      "ru": "Сон в кровати пропускает ночь и обычно устанавливает рядом новую точку возрождения."
+    },
+    "id": "bed-sets-respawn",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Bed",
+        "uk": "Ліжко",
+        "ru": "Кровать"
+      },
+      {
+        "en": "Boat",
+        "uk": "Човен",
+        "ru": "Лодка"
+      },
+      {
+        "en": "Banner",
+        "uk": "Прапор",
+        "ru": "Флаг"
+      },
+      {
+        "en": "Chest",
+        "uk": "Скриня",
+        "ru": "Сундук"
+      }
+    ],
+    "prompt": {
+      "en": "Which item lets you sleep and set your respawn point in the Overworld?",
+      "uk": "Який предмет дозволяє спати й встановити точку відродження у звичайному світі?",
+      "ru": "Какой предмет позволяет спать и установить точку возрождения в обычном мире?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "survival",
+      "beds",
+      "respawn"
+    ],
+    "topicId": "survival-basics"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "Food fills the hunger bar, which helps you sprint and recover health.",
+      "uk": "Їжа заповнює шкалу голоду, що допомагає спринтувати й відновлювати здоровʼя.",
+      "ru": "Еда заполняет шкалу голода, что помогает спринтовать и восстанавливать здоровье."
+    },
+    "id": "eating-refills-hunger",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Armor Bar",
+        "uk": "Шкала броні",
+        "ru": "Шкала брони"
+      },
+      {
+        "en": "Hunger Bar",
+        "uk": "Шкала голоду",
+        "ru": "Шкала голода"
+      },
+      {
+        "en": "Experience Bar",
+        "uk": "Шкала досвіду",
+        "ru": "Шкала опыта"
+      },
+      {
+        "en": "Air Bar",
+        "uk": "Шкала повітря",
+        "ru": "Шкала воздуха"
+      }
+    ],
+    "prompt": {
+      "en": "Which bar is refilled when you eat food?",
+      "uk": "Яка шкала поповнюється, коли ти їси їжу?",
+      "ru": "Какая шкала пополняется, когда ты ешь еду?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "survival",
+      "food",
+      "hunger"
+    ],
+    "topicId": "survival-basics"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "Torches brighten dark places so you can see better and make caves safer.",
+      "uk": "Смолоскипи освітлюють темні місця, щоб було краще видно й безпечніше ходити печерами.",
+      "ru": "Факелы освещают тёмные места, чтобы было лучше видно и безопаснее ходить по пещерам."
+    },
+    "id": "torch-lights-caves",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Torch",
+        "uk": "Смолоскип",
+        "ru": "Факел"
+      },
+      {
+        "en": "Door",
+        "uk": "Двері",
+        "ru": "Дверь"
+      },
+      {
+        "en": "Saddle",
+        "uk": "Сідло",
+        "ru": "Седло"
+      },
+      {
+        "en": "Bucket",
+        "uk": "Відро",
+        "ru": "Ведро"
+      }
+    ],
+    "prompt": {
+      "en": "What do players often place to light up dark caves?",
+      "uk": "Що гравці часто ставлять, щоб освітити темні печери?",
+      "ru": "Что игроки часто ставят, чтобы осветить тёмные пещеры?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "survival",
+      "light",
+      "caves"
+    ],
+    "topicId": "survival-basics"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "A shield is great for defense because it can stop arrows and many melee hits.",
+      "uk": "Щит чудово підходить для захисту, бо може зупиняти стріли й багато ударів у ближньому бою.",
+      "ru": "Щит отлично подходит для защиты, потому что может останавливать стрелы и многие удары в ближнем бою."
+    },
+    "id": "shield-blocks-attacks",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Shield",
+        "uk": "Щит",
+        "ru": "Щит"
+      },
+      {
+        "en": "Clock",
+        "uk": "Годинник",
+        "ru": "Часы"
+      },
+      {
+        "en": "Map",
+        "uk": "Мапа",
+        "ru": "Карта"
+      },
+      {
+        "en": "Compass",
+        "uk": "Компас",
+        "ru": "Компас"
+      }
+    ],
+    "prompt": {
+      "en": "Which item can block many attacks when you raise it?",
+      "uk": "Який предмет може заблокувати багато атак, якщо його підняти?",
+      "ru": "Какой предмет может заблокировать много атак, если его поднять?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "survival",
+      "defense",
+      "combat"
+    ],
+    "topicId": "survival-basics"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 2,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "A normal compass points to the world spawn, not to your current base or bed.",
+      "uk": "Звичайний компас показує на точку появи світу, а не на твою базу чи ліжко.",
+      "ru": "Обычный компас показывает на точку появления мира, а не на твою базу или кровать."
+    },
+    "id": "compass-points-to-world-spawn",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Your bed",
+        "uk": "Твоє ліжко",
+        "ru": "Твоя кровать"
+      },
+      {
+        "en": "The nearest village",
+        "uk": "Найближче село",
+        "ru": "Ближайшая деревня"
+      },
+      {
+        "en": "World spawn",
+        "uk": "Точка появи світу",
+        "ru": "Точка появления мира"
+      },
+      {
+        "en": "The Nether portal",
+        "uk": "Портал у Незер",
+        "ru": "Портал в Незер"
+      }
+    ],
+    "prompt": {
+      "en": "In the Overworld, what does a regular compass point toward?",
+      "uk": "У звичайному світі на що вказує звичайний компас?",
+      "ru": "В обычном мире на что указывает обычный компас?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "survival",
+      "navigation",
+      "spawn"
+    ],
+    "topicId": "survival-basics"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "Phantoms are a reminder to rest, because they start appearing after too many sleepless nights.",
+      "uk": "Фантоми нагадують про відпочинок, бо зʼявляються після надто великої кількості безсонних ночей.",
+      "ru": "Фантомы напоминают об отдыхе, потому что появляются после слишком большого числа бессонных ночей."
+    },
+    "id": "phantom-comes-after-no-sleep",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Bee",
+        "uk": "Бджола",
+        "ru": "Пчела"
+      },
+      {
+        "en": "Phantom",
+        "uk": "Фантом",
+        "ru": "Фантом"
+      },
+      {
+        "en": "Parrot",
+        "uk": "Папуга",
+        "ru": "Попугай"
+      },
+      {
+        "en": "Bat",
+        "uk": "Кажан",
+        "ru": "Летучая мышь"
+      }
+    ],
+    "prompt": {
+      "en": "Which flying mob may swoop down after you skip sleep for many nights?",
+      "uk": "Який літаючий моб може нападати зверху, якщо багато ночей не спати?",
+      "ru": "Какой летающий моб может нападать сверху, если много ночей не спать?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "survival",
+      "sleep",
+      "mobs"
+    ],
+    "topicId": "survival-basics"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "A honey bottle removes Poison, so it is a handy item to carry on some adventures.",
+      "uk": "Пляшечка меду знімає отруєння, тож це корисний предмет для деяких пригод.",
+      "ru": "Бутылочка мёда снимает отравление, поэтому это полезный предмет для некоторых приключений."
+    },
+    "id": "honey-bottle-clears-poison",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Bottle o' Honey",
+        "uk": "Пляшечка меду",
+        "ru": "Бутылочка мёда"
+      },
+      {
+        "en": "Apple",
+        "uk": "Яблуко",
+        "ru": "Яблоко"
+      },
+      {
+        "en": "Cookie",
+        "uk": "Печиво",
+        "ru": "Печенье"
+      },
+      {
+        "en": "Spider Eye",
+        "uk": "Павуче око",
+        "ru": "Паучий глаз"
+      }
+    ],
+    "prompt": {
+      "en": "Which simple item can remove the Poison effect without using milk?",
+      "uk": "Який простий предмет може зняти ефект отруєння без молока?",
+      "ru": "Какой простой предмет может снять эффект отравления без молока?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "survival",
+      "effects",
+      "items"
+    ],
+    "topicId": "survival-basics"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "A lava source block becomes obsidian when water flows onto it.",
+      "uk": "Джерело лави стає обсидіаном, коли на нього потрапляє вода.",
+      "ru": "Источник лавы становится обсидианом, когда на него попадает вода."
+    },
+    "id": "obsidian-from-water-and-lava",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Obsidian",
+        "uk": "Обсидіан",
+        "ru": "Обсидиан"
+      },
+      {
+        "en": "Clay",
+        "uk": "Глина",
+        "ru": "Глина"
+      },
+      {
+        "en": "Basalt",
+        "uk": "Базальт",
+        "ru": "Базальт"
+      },
+      {
+        "en": "Bricks",
+        "uk": "Цегла",
+        "ru": "Кирпичи"
+      }
+    ],
+    "prompt": {
+      "en": "What block forms when water touches a lava source block?",
+      "uk": "Який блок утворюється, коли вода торкається джерела лави?",
+      "ru": "Какой блок образуется, когда вода касается источника лавы?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "blocks",
+      "lava",
+      "water"
+    ],
+    "topicId": "blocks-and-building"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "Sand is a gravity block, so it drops when the block below it disappears.",
+      "uk": "Пісок є гравітаційним блоком, тому падає, коли зникає блок під ним.",
+      "ru": "Песок является гравитационным блоком, поэтому падает, когда исчезает блок под ним."
+    },
+    "id": "sand-falls-with-gravity",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Bookshelf",
+        "uk": "Книжкова шафа",
+        "ru": "Книжная полка"
+      },
+      {
+        "en": "Sand",
+        "uk": "Пісок",
+        "ru": "Песок"
+      },
+      {
+        "en": "Stone Bricks",
+        "uk": "Камʼяна цегла",
+        "ru": "Каменные кирпичи"
+      },
+      {
+        "en": "Oak Planks",
+        "uk": "Дубові дошки",
+        "ru": "Дубовые доски"
+      }
+    ],
+    "prompt": {
+      "en": "Which block falls down if there is no block under it?",
+      "uk": "Який блок падає вниз, якщо під ним немає опори?",
+      "ru": "Какой блок падает вниз, если под ним нет опоры?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "blocks",
+      "gravity",
+      "building"
+    ],
+    "topicId": "blocks-and-building"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "Glass lets light in and helps you see outside while keeping your base closed off.",
+      "uk": "Скло пропускає світло й дозволяє бачити назовні, водночас закриваючи базу.",
+      "ru": "Стекло пропускает свет и позволяет видеть наружу, при этом закрывая базу."
+    },
+    "id": "glass-is-see-through",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Cobblestone",
+        "uk": "Кругляк",
+        "ru": "Булыжник"
+      },
+      {
+        "en": "Glass",
+        "uk": "Скло",
+        "ru": "Стекло"
+      },
+      {
+        "en": "Wool",
+        "uk": "Вовна",
+        "ru": "Шерсть"
+      },
+      {
+        "en": "Terracotta",
+        "uk": "Теракота",
+        "ru": "Терракота"
+      }
+    ],
+    "prompt": {
+      "en": "Which block is easy to see through and great for windows?",
+      "uk": "Крізь який блок легко дивитися й добре робити вікна?",
+      "ru": "Сквозь какой блок легко смотреть и хорошо делать окна?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "blocks",
+      "windows",
+      "building"
+    ],
+    "topicId": "blocks-and-building"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 2,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "Ladders attach to blocks and make a quick vertical path for players.",
+      "uk": "Драбини кріпляться до блоків і створюють швидкий вертикальний шлях для гравця.",
+      "ru": "Лестницы крепятся к блокам и создают быстрый вертикальный путь для игрока."
+    },
+    "id": "ladder-climbs-wall",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Carpet",
+        "uk": "Килим",
+        "ru": "Ковёр"
+      },
+      {
+        "en": "Trapdoor",
+        "uk": "Люк",
+        "ru": "Люк"
+      },
+      {
+        "en": "Ladder",
+        "uk": "Драбина",
+        "ru": "Лестница"
+      },
+      {
+        "en": "Fence",
+        "uk": "Паркан",
+        "ru": "Забор"
+      }
+    ],
+    "prompt": {
+      "en": "Which block helps you climb straight up a wall?",
+      "uk": "Який блок допомагає піднятися просто вгору по стіні?",
+      "ru": "Какой блок помогает подняться прямо вверх по стене?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "blocks",
+      "movement",
+      "building"
+    ],
+    "topicId": "blocks-and-building"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 2,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "Slabs are great for floors, roofs, and smoother shapes because they are half-height blocks.",
+      "uk": "Плити зручні для підлог, дахів і плавніших форм, бо вони мають половинну висоту.",
+      "ru": "Плиты удобны для полов, крыш и более плавных форм, потому что имеют половинную высоту."
+    },
+    "id": "slab-is-half-block",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Wall",
+        "uk": "Стіна",
+        "ru": "Стена"
+      },
+      {
+        "en": "Pane",
+        "uk": "Панель",
+        "ru": "Панель"
+      },
+      {
+        "en": "Slab",
+        "uk": "Плита",
+        "ru": "Плита"
+      },
+      {
+        "en": "Torch",
+        "uk": "Смолоскип",
+        "ru": "Факел"
+      }
+    ],
+    "prompt": {
+      "en": "Which building piece is half as tall as a full block?",
+      "uk": "Який будівельний елемент має висоту лише половини повного блока?",
+      "ru": "Какой строительный элемент имеет высоту только половины полного блока?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "blocks",
+      "building",
+      "shapes"
+    ],
+    "topicId": "blocks-and-building"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "Pistons are the classic redstone block for pushing and moving other blocks.",
+      "uk": "Поршні є класичними редстоун-блоками для штовхання й пересування інших блоків.",
+      "ru": "Поршни являются классическими редстоун-блоками для толкания и перемещения других блоков."
+    },
+    "id": "piston-pushes-blocks",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Observer",
+        "uk": "Спостерігач",
+        "ru": "Наблюдатель"
+      },
+      {
+        "en": "Piston",
+        "uk": "Поршень",
+        "ru": "Поршень"
+      },
+      {
+        "en": "Dropper",
+        "uk": "Викидач",
+        "ru": "Выбрасыватель"
+      },
+      {
+        "en": "Comparator",
+        "uk": "Компаратор",
+        "ru": "Компаратор"
+      }
+    ],
+    "prompt": {
+      "en": "Which redstone block can push another block forward?",
+      "uk": "Який редстоун-блок може штовхати інший блок уперед?",
+      "ru": "Какой редстоун-блок может толкать другой блок вперёд?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "blocks",
+      "redstone",
+      "mechanics"
+    ],
+    "topicId": "blocks-and-building"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "Scaffolding is perfect for tall builds because it is easy to climb and remove.",
+      "uk": "Підмостки чудово підходять для високих будівель, бо на них легко лазити й прибирати їх.",
+      "ru": "Подмостки отлично подходят для высоких построек, потому что по ним легко лазать и убирать их."
+    },
+    "id": "scaffolding-climbs-fast",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Bookshelf",
+        "uk": "Книжкова шафа",
+        "ru": "Книжная полка"
+      },
+      {
+        "en": "Scaffolding",
+        "uk": "Підмостки",
+        "ru": "Подмостки"
+      },
+      {
+        "en": "Target Block",
+        "uk": "Мішень",
+        "ru": "Мишень"
+      },
+      {
+        "en": "Grindstone",
+        "uk": "Точило",
+        "ru": "Точило"
+      }
+    ],
+    "prompt": {
+      "en": "Which bamboo-based block lets builders climb up and down quickly?",
+      "uk": "Який блок із бамбука дозволяє будівельникам швидко підніматися й спускатися?",
+      "ru": "Какой блок из бамбука позволяет строителям быстро подниматься и спускаться?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "blocks",
+      "bamboo",
+      "building"
+    ],
+    "topicId": "blocks-and-building"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "Stairs connect into corner shapes, which helps roofs and pathways look smoother.",
+      "uk": "Сходи зʼєднуються в кутові форми, тому дахи й доріжки виглядають плавніше.",
+      "ru": "Ступеньки соединяются в угловые формы, поэтому крыши и дорожки выглядят плавнее."
+    },
+    "id": "stairs-make-corners",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Fence Gates",
+        "uk": "Хвіртки",
+        "ru": "Калитки"
+      },
+      {
+        "en": "Stairs",
+        "uk": "Сходи",
+        "ru": "Ступеньки"
+      },
+      {
+        "en": "Pressure Plates",
+        "uk": "Натискні плити",
+        "ru": "Нажимные плиты"
+      },
+      {
+        "en": "Glass Panes",
+        "uk": "Скляні панелі",
+        "ru": "Стеклянные панели"
+      }
+    ],
+    "prompt": {
+      "en": "Which block type can automatically change shape to make neat corners?",
+      "uk": "Який тип блока може автоматично змінювати форму, щоб робити акуратні кути?",
+      "ru": "Какой тип блока может автоматически менять форму, чтобы делать аккуратные углы?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "blocks",
+      "stairs",
+      "shapes"
+    ],
+    "topicId": "blocks-and-building"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "Creepers are dangerous because they can sneak up and explode near players or builds.",
+      "uk": "Кріпери небезпечні, бо можуть підкрастися й вибухнути біля гравця або будівлі.",
+      "ru": "Криперы опасны, потому что могут подкрасться и взорваться рядом с игроком или постройкой."
+    },
+    "id": "creeper-explodes",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Creeper",
+        "uk": "Кріпер",
+        "ru": "Крипер"
+      },
+      {
+        "en": "Sheep",
+        "uk": "Вівця",
+        "ru": "Овца"
+      },
+      {
+        "en": "Cow",
+        "uk": "Корова",
+        "ru": "Корова"
+      },
+      {
+        "en": "Squid",
+        "uk": "Спрут",
+        "ru": "Спрут"
+      }
+    ],
+    "prompt": {
+      "en": "Which hostile mob is famous for hissing and exploding?",
+      "uk": "Який ворожий моб відомий тим, що шипить і вибухає?",
+      "ru": "Какой враждебный моб известен тем, что шипит и взрывается?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "mobs",
+      "combat",
+      "creeper"
+    ],
+    "topicId": "mobs-and-combat"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "Skeletons attack from range, so cover and shields help a lot against them.",
+      "uk": "Скелети атакують здалеку, тому укриття й щит дуже допомагають проти них.",
+      "ru": "Скелеты атакуют издалека, поэтому укрытие и щит очень помогают против них."
+    },
+    "id": "skeleton-uses-bow",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Skeleton",
+        "uk": "Скелет",
+        "ru": "Скелет"
+      },
+      {
+        "en": "Slime",
+        "uk": "Слизень",
+        "ru": "Слизень"
+      },
+      {
+        "en": "Pig",
+        "uk": "Свиня",
+        "ru": "Свинья"
+      },
+      {
+        "en": "Chicken",
+        "uk": "Курка",
+        "ru": "Курица"
+      }
+    ],
+    "prompt": {
+      "en": "Which common hostile mob usually attacks with a bow?",
+      "uk": "Який поширений ворожий моб зазвичай атакує з лука?",
+      "ru": "Какой распространённый враждебный моб обычно атакует из лука?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "mobs",
+      "combat",
+      "ranged"
+    ],
+    "topicId": "mobs-and-combat"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "Spiders can climb vertical surfaces, which makes simple walls less safe at night.",
+      "uk": "Павуки можуть лазити вертикальними поверхнями, тому прості стіни вночі не завжди рятують.",
+      "ru": "Пауки могут лазать по вертикальным поверхностям, поэтому простые стены ночью не всегда спасают."
+    },
+    "id": "spider-climbs-walls",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Spider",
+        "uk": "Павук",
+        "ru": "Паук"
+      },
+      {
+        "en": "Zombie",
+        "uk": "Зомбі",
+        "ru": "Зомби"
+      },
+      {
+        "en": "Creeper",
+        "uk": "Кріпер",
+        "ru": "Крипер"
+      },
+      {
+        "en": "Dolphin",
+        "uk": "Дельфін",
+        "ru": "Дельфин"
+      }
+    ],
+    "prompt": {
+      "en": "Which common hostile mob can climb walls?",
+      "uk": "Який поширений ворожий моб уміє лазити по стінах?",
+      "ru": "Какой распространённый враждебный моб умеет лазать по стенам?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "mobs",
+      "combat",
+      "movement"
+    ],
+    "topicId": "mobs-and-combat"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "Endermen dislike water, so it can help players stay safer during a fight.",
+      "uk": "Ендермени не люблять воду, тому вона може допомогти гравцеві в бою.",
+      "ru": "Эндермены не любят воду, поэтому она может помочь игроку в бою."
+    },
+    "id": "enderman-hurt-by-water",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Iron Golem",
+        "uk": "Залізний голем",
+        "ru": "Железный голем"
+      },
+      {
+        "en": "Enderman",
+        "uk": "Ендермен",
+        "ru": "Эндермен"
+      },
+      {
+        "en": "Horse",
+        "uk": "Кінь",
+        "ru": "Лошадь"
+      },
+      {
+        "en": "Villager",
+        "uk": "Селянин",
+        "ru": "Житель"
+      }
+    ],
+    "prompt": {
+      "en": "Which tall mob takes damage from water?",
+      "uk": "Який високий моб отримує шкоду від води?",
+      "ru": "Какой высокий моб получает урон от воды?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "mobs",
+      "combat",
+      "enderman"
+    ],
+    "topicId": "mobs-and-combat"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "With the right steps, a zombie villager can become a normal villager again.",
+      "uk": "За правильних кроків зомбі-селянина можна знову перетворити на звичайного селянина.",
+      "ru": "При правильных шагах зомби-жителя можно снова превратить в обычного жителя."
+    },
+    "id": "zombie-villager-cured",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Zombie Villager",
+        "uk": "Зомбі-селянин",
+        "ru": "Зомби-житель"
+      },
+      {
+        "en": "Drowned",
+        "uk": "Потопельник",
+        "ru": "Утопленник"
+      },
+      {
+        "en": "Husk",
+        "uk": "Кадавр",
+        "ru": "Кадавр"
+      },
+      {
+        "en": "Witch",
+        "uk": "Відьма",
+        "ru": "Ведьма"
+      }
+    ],
+    "prompt": {
+      "en": "Which mob can be cured back into a villager?",
+      "uk": "Якого моба можна вилікувати назад у селянина?",
+      "ru": "Какого моба можно вылечить обратно в жителя?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "mobs",
+      "villagers",
+      "curing"
+    ],
+    "topicId": "mobs-and-combat"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "Wolves can be tamed with bones and then become loyal dog companions.",
+      "uk": "Вовків можна приручити кістками, і тоді вони стають вірними собачими друзями.",
+      "ru": "Волков можно приручить костями, и тогда они становятся верными собачьими друзьями."
+    },
+    "id": "bone-tames-wolf",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Bone",
+        "uk": "Кістка",
+        "ru": "Кость"
+      },
+      {
+        "en": "Feather",
+        "uk": "Перо",
+        "ru": "Перо"
+      },
+      {
+        "en": "String",
+        "uk": "Нитка",
+        "ru": "Нить"
+      },
+      {
+        "en": "Leather",
+        "uk": "Шкіра",
+        "ru": "Кожа"
+      }
+    ],
+    "prompt": {
+      "en": "Which item is used to tame a wolf?",
+      "uk": "Який предмет використовують, щоб приручити вовка?",
+      "ru": "Какой предмет используют, чтобы приручить волка?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "mobs",
+      "animals",
+      "taming"
+    ],
+    "topicId": "mobs-and-combat"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 2,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "Smite adds extra damage against undead enemies such as zombies and skeletons.",
+      "uk": "Smite додає додаткову шкоду по нежиті, наприклад по зомбі та скелетах.",
+      "ru": "Smite добавляет дополнительный урон по нежити, например по зомби и скелетам."
+    },
+    "id": "smite-hurts-undead",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Efficiency",
+        "uk": "Efficiency",
+        "ru": "Efficiency"
+      },
+      {
+        "en": "Fortune",
+        "uk": "Fortune",
+        "ru": "Fortune"
+      },
+      {
+        "en": "Smite",
+        "uk": "Smite",
+        "ru": "Smite"
+      },
+      {
+        "en": "Silk Touch",
+        "uk": "Silk Touch",
+        "ru": "Silk Touch"
+      }
+    ],
+    "prompt": {
+      "en": "Which enchantment is especially strong against undead mobs?",
+      "uk": "Яке зачарування особливо сильне проти нежиті?",
+      "ru": "Какое зачарование особенно сильное против нежити?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "mobs",
+      "combat",
+      "enchanting"
+    ],
+    "topicId": "mobs-and-combat"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "Cats make creepers keep their distance, which can help protect a home base.",
+      "uk": "Коти змушують кріперів триматися подалі, що допомагає захищати домашню базу.",
+      "ru": "Коты заставляют криперов держаться подальше, что помогает защищать домашнюю базу."
+    },
+    "id": "cat-scares-creepers",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Cat",
+        "uk": "Кіт",
+        "ru": "Кот"
+      },
+      {
+        "en": "Wolf",
+        "uk": "Вовк",
+        "ru": "Волк"
+      },
+      {
+        "en": "Horse",
+        "uk": "Кінь",
+        "ru": "Лошадь"
+      },
+      {
+        "en": "Axolotl",
+        "uk": "Аксолотль",
+        "ru": "Аксолотль"
+      }
+    ],
+    "prompt": {
+      "en": "Which pet helps scare creepers away from you?",
+      "uk": "Який хатній улюбленець допомагає відлякувати кріперів?",
+      "ru": "Какой домашний питомец помогает отпугивать криперов?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "mobs",
+      "pets",
+      "creeper"
+    ],
+    "topicId": "mobs-and-combat"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "Basic seeds grow into wheat, which is useful for bread, hay, and animal breeding.",
+      "uk": "Звичайне зернятко виростає в пшеницю, корисну для хліба, сіна й розведення тварин.",
+      "ru": "Обычное семечко вырастает в пшеницу, полезную для хлеба, сена и разведения животных."
+    },
+    "id": "wheat-grows-from-seeds",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Wheat",
+        "uk": "Пшениця",
+        "ru": "Пшеница"
+      },
+      {
+        "en": "Pumpkin",
+        "uk": "Гарбуз",
+        "ru": "Тыква"
+      },
+      {
+        "en": "Sugar Cane",
+        "uk": "Цукрова тростина",
+        "ru": "Сахарный тростник"
+      },
+      {
+        "en": "Cactus",
+        "uk": "Кактус",
+        "ru": "Кактус"
+      }
+    ],
+    "prompt": {
+      "en": "What crop grows from seeds found in grass?",
+      "uk": "Яка культура росте із зернят, які випадають із трави?",
+      "ru": "Какая культура растёт из семян, которые выпадают из травы?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "farming",
+      "crops",
+      "wheat"
+    ],
+    "topicId": "farming-and-animals"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "Cows are a handy farm animal because they can provide both beef and leather.",
+      "uk": "Корови корисні на фермі, бо можуть давати і яловичину, і шкіру.",
+      "ru": "Коровы полезны на ферме, потому что могут давать и говядину, и кожу."
+    },
+    "id": "cow-drops-leather",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Cow",
+        "uk": "Корова",
+        "ru": "Корова"
+      },
+      {
+        "en": "Chicken",
+        "uk": "Курка",
+        "ru": "Курица"
+      },
+      {
+        "en": "Cod",
+        "uk": "Тріска",
+        "ru": "Треска"
+      },
+      {
+        "en": "Rabbit",
+        "uk": "Кролик",
+        "ru": "Кролик"
+      }
+    ],
+    "prompt": {
+      "en": "Which animal can drop leather?",
+      "uk": "Яка тварина може дати шкіру?",
+      "ru": "Какое животное может дать кожу?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "farming",
+      "animals",
+      "materials"
+    ],
+    "topicId": "farming-and-animals"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "A hoe prepares farmland so crops can be planted and grow more easily.",
+      "uk": "Мотика готує ріллю, щоб культури можна було посадити й легше виростити.",
+      "ru": "Мотыга подготавливает грядку, чтобы культуры можно было посадить и легче вырастить."
+    },
+    "id": "hoe-makes-farmland",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Hoe",
+        "uk": "Мотика",
+        "ru": "Мотыга"
+      },
+      {
+        "en": "Shovel",
+        "uk": "Лопата",
+        "ru": "Лопата"
+      },
+      {
+        "en": "Sword",
+        "uk": "Меч",
+        "ru": "Меч"
+      },
+      {
+        "en": "Fishing Rod",
+        "uk": "Вудка",
+        "ru": "Удочка"
+      }
+    ],
+    "prompt": {
+      "en": "Which tool turns dirt into farmland for planting?",
+      "uk": "Який інструмент перетворює землю на ріллю для посадки?",
+      "ru": "Какой инструмент превращает землю в грядку для посадки?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "farming",
+      "tools",
+      "crops"
+    ],
+    "topicId": "farming-and-animals"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "Bees can help crops grow faster when they pollinate them during the day.",
+      "uk": "Бджоли можуть допомагати культурам рости швидше, коли запилюють їх удень.",
+      "ru": "Пчёлы могут помогать культурам расти быстрее, когда опыляют их днём."
+    },
+    "id": "bee-pollinates-crops",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Bee",
+        "uk": "Бджола",
+        "ru": "Пчела"
+      },
+      {
+        "en": "Bat",
+        "uk": "Кажан",
+        "ru": "Летучая мышь"
+      },
+      {
+        "en": "Parrot",
+        "uk": "Папуга",
+        "ru": "Попугай"
+      },
+      {
+        "en": "Phantom",
+        "uk": "Фантом",
+        "ru": "Фантом"
+      }
+    ],
+    "prompt": {
+      "en": "Which flying mob helps pollinate crops?",
+      "uk": "Який літаючий моб допомагає запилювати культури?",
+      "ru": "Какой летающий моб помогает опылять культуры?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "farming",
+      "bees",
+      "crops"
+    ],
+    "topicId": "farming-and-animals"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "A composter is useful on farms because extra plants can become bone meal for faster growth.",
+      "uk": "Компостер корисний на фермі, бо зайві рослини можна перетворити на кісткове борошно для швидшого росту.",
+      "ru": "Компостер полезен на ферме, потому что лишние растения можно превратить в костную муку для более быстрого роста."
+    },
+    "id": "composter-makes-bone-meal",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Composter",
+        "uk": "Компостер",
+        "ru": "Компостер"
+      },
+      {
+        "en": "Cauldron",
+        "uk": "Казан",
+        "ru": "Котёл"
+      },
+      {
+        "en": "Smoker",
+        "uk": "Коптильня",
+        "ru": "Коптильня"
+      },
+      {
+        "en": "Grindstone",
+        "uk": "Точило",
+        "ru": "Точило"
+      }
+    ],
+    "prompt": {
+      "en": "Which block can turn plant leftovers into bone meal over time?",
+      "uk": "Який блок може з часом перетворювати рослинні рештки на кісткове борошно?",
+      "ru": "Какой блок может со временем превращать растительные остатки в костную муку?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "farming",
+      "composter",
+      "bone-meal"
+    ],
+    "topicId": "farming-and-animals"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 2,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "Kelp is an underwater plant, so it keeps growing in oceans and water tanks.",
+      "uk": "Ламінарія є підводною рослиною, тому продовжує рости в океанах і водних басейнах.",
+      "ru": "Ламинария является подводным растением, поэтому продолжает расти в океанах и водных бассейнах."
+    },
+    "id": "kelp-grows-underwater",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Wheat",
+        "uk": "Пшениця",
+        "ru": "Пшеница"
+      },
+      {
+        "en": "Carrots",
+        "uk": "Морква",
+        "ru": "Морковь"
+      },
+      {
+        "en": "Kelp",
+        "uk": "Ламінарія",
+        "ru": "Ламинария"
+      },
+      {
+        "en": "Potatoes",
+        "uk": "Картопля",
+        "ru": "Картофель"
+      }
+    ],
+    "prompt": {
+      "en": "Which crop keeps growing while fully underwater?",
+      "uk": "Яка культура продовжує рости повністю під водою?",
+      "ru": "Какая культура продолжает расти полностью под водой?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "farming",
+      "water",
+      "plants"
+    ],
+    "topicId": "farming-and-animals"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "Smoke from a campfire calms bees, making honey collection much safer.",
+      "uk": "Дим від багаття заспокоює бджіл, тому мед збирати набагато безпечніше.",
+      "ru": "Дым от костра успокаивает пчёл, поэтому собирать мёд намного безопаснее."
+    },
+    "id": "campfire-calms-bees",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Campfire",
+        "uk": "Багаття",
+        "ru": "Костёр"
+      },
+      {
+        "en": "Lantern",
+        "uk": "Ліхтар",
+        "ru": "Фонарь"
+      },
+      {
+        "en": "Chest",
+        "uk": "Скриня",
+        "ru": "Сундук"
+      },
+      {
+        "en": "Bell",
+        "uk": "Дзвін",
+        "ru": "Колокол"
+      }
+    ],
+    "prompt": {
+      "en": "What should you place under a beehive to harvest honey more safely?",
+      "uk": "Що варто поставити під вуликом, щоб безпечніше збирати мед?",
+      "ru": "Что стоит поставить под ульем, чтобы безопаснее собирать мёд?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "farming",
+      "bees",
+      "honey"
+    ],
+    "topicId": "farming-and-animals"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "Librarians are great trading partners when you want useful enchantments.",
+      "uk": "Бібліотекарі є чудовими торговцями, коли потрібні корисні зачарування.",
+      "ru": "Библиотекари являются отличными торговцами, когда нужны полезные зачарования."
+    },
+    "id": "librarian-sells-books",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Librarian",
+        "uk": "Бібліотекар",
+        "ru": "Библиотекарь"
+      },
+      {
+        "en": "Farmer",
+        "uk": "Фермер",
+        "ru": "Фермер"
+      },
+      {
+        "en": "Fisherman",
+        "uk": "Рибалка",
+        "ru": "Рыбак"
+      },
+      {
+        "en": "Butcher",
+        "uk": "Мʼясник",
+        "ru": "Мясник"
+      }
+    ],
+    "prompt": {
+      "en": "Which villager job often sells enchanted books?",
+      "uk": "Яка професія селянина часто продає зачаровані книги?",
+      "ru": "Какая профессия жителя часто продаёт зачарованные книги?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "villagers",
+      "trading",
+      "books"
+    ],
+    "topicId": "villagers-and-enchanting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "Enchanting tables use lapis lazuli plus experience levels to power enchantments.",
+      "uk": "Стіл зачарувань використовує лазурит і рівні досвіду для накладання чар.",
+      "ru": "Стол зачарований использует лазурит и уровни опыта для наложения чар."
+    },
+    "id": "lapis-for-enchanting",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Diamond",
+        "uk": "Діамант",
+        "ru": "Алмаз"
+      },
+      {
+        "en": "Lapis Lazuli",
+        "uk": "Лазурит",
+        "ru": "Лазурит"
+      },
+      {
+        "en": "Prismarine",
+        "uk": "Призмарин",
+        "ru": "Призмарин"
+      },
+      {
+        "en": "Blue Ice",
+        "uk": "Синій лід",
+        "ru": "Синий лёд"
+      }
+    ],
+    "prompt": {
+      "en": "Which blue item is needed with experience to enchant gear on a table?",
+      "uk": "Який синій предмет потрібен разом із досвідом, щоб зачарувати спорядження на столі?",
+      "ru": "Какой синий предмет нужен вместе с опытом, чтобы зачаровать снаряжение на столе?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "villagers",
+      "enchanting",
+      "lapis"
+    ],
+    "topicId": "villagers-and-enchanting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "Anvils are used to combine items, rename them, and apply enchantments from books.",
+      "uk": "Ковадла використовують, щоб поєднувати предмети, перейменовувати їх і переносити чари з книг.",
+      "ru": "Наковальни используют, чтобы объединять предметы, переименовывать их и переносить чары с книг."
+    },
+    "id": "anvil-combines-enchantments",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Anvil",
+        "uk": "Ковадло",
+        "ru": "Наковальня"
+      },
+      {
+        "en": "Barrel",
+        "uk": "Бочка",
+        "ru": "Бочка"
+      },
+      {
+        "en": "Bed",
+        "uk": "Ліжко",
+        "ru": "Кровать"
+      },
+      {
+        "en": "Smoker",
+        "uk": "Коптильня",
+        "ru": "Коптильня"
+      }
+    ],
+    "prompt": {
+      "en": "Which block lets you combine enchantments from a book onto a tool?",
+      "uk": "Який блок дозволяє перенести зачарування з книги на інструмент?",
+      "ru": "Какой блок позволяет перенести зачарование с книги на инструмент?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "villagers",
+      "enchanting",
+      "anvil"
+    ],
+    "topicId": "villagers-and-enchanting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "Villagers pick jobs from nearby workstations, and the lectern creates librarians.",
+      "uk": "Селяни отримують професії від робочих блоків поруч, і кафедра робить їх бібліотекарями.",
+      "ru": "Жители получают профессии от рабочих блоков рядом, и кафедра делает их библиотекарями."
+    },
+    "id": "lectern-makes-librarian",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Lectern",
+        "uk": "Кафедра",
+        "ru": "Кафедра"
+      },
+      {
+        "en": "Cauldron",
+        "uk": "Казан",
+        "ru": "Котёл"
+      },
+      {
+        "en": "Blast Furnace",
+        "uk": "Плавильна піч",
+        "ru": "Плавильная печь"
+      },
+      {
+        "en": "Composter",
+        "uk": "Компостер",
+        "ru": "Компостер"
+      }
+    ],
+    "prompt": {
+      "en": "Which job-site block turns an unemployed villager into a librarian?",
+      "uk": "Який робочий блок перетворює безробітного селянина на бібліотекаря?",
+      "ru": "Какой рабочий блок превращает безработного жителя в библиотекаря?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "villagers",
+      "jobs",
+      "librarian"
+    ],
+    "topicId": "villagers-and-enchanting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 2,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "The grindstone belongs to the weaponsmith, who focuses on swords and axes.",
+      "uk": "Точило належить зброяру, який спеціалізується на мечах і сокирах.",
+      "ru": "Точило относится к оружейнику, который специализируется на мечах и топорах."
+    },
+    "id": "weaponsmith-uses-grindstone",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Armorer",
+        "uk": "Броняр",
+        "ru": "Бронник"
+      },
+      {
+        "en": "Toolsmith",
+        "uk": "Інструментальник",
+        "ru": "Инструментальщик"
+      },
+      {
+        "en": "Weaponsmith",
+        "uk": "Зброяр",
+        "ru": "Оружейник"
+      },
+      {
+        "en": "Cleric",
+        "uk": "Священник",
+        "ru": "Священник"
+      }
+    ],
+    "prompt": {
+      "en": "Which villager job uses a grindstone as its job-site block?",
+      "uk": "Яка професія селянина використовує точило як робочий блок?",
+      "ru": "Какая профессия жителя использует точило как рабочий блок?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "villagers",
+      "jobs",
+      "workstations"
+    ],
+    "topicId": "villagers-and-enchanting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "Mending is powerful because experience points can repair your favorite gear for you.",
+      "uk": "Mending сильне тим, що очки досвіду можуть лагодити твоє улюблене спорядження.",
+      "ru": "Mending сильное тем, что очки опыта могут чинить твоё любимое снаряжение."
+    },
+    "id": "mending-repairs-with-xp",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Thorns",
+        "uk": "Thorns",
+        "ru": "Thorns"
+      },
+      {
+        "en": "Mending",
+        "uk": "Mending",
+        "ru": "Mending"
+      },
+      {
+        "en": "Aqua Affinity",
+        "uk": "Aqua Affinity",
+        "ru": "Aqua Affinity"
+      },
+      {
+        "en": "Punch",
+        "uk": "Punch",
+        "ru": "Punch"
+      }
+    ],
+    "prompt": {
+      "en": "Which enchantment repairs an item when you collect experience?",
+      "uk": "Яке зачарування лагодить предмет, коли ти збираєш досвід?",
+      "ru": "Какое зачарование чинит предмет, когда ты получаешь опыт?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "villagers",
+      "enchanting",
+      "repair"
+    ],
+    "topicId": "villagers-and-enchanting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "A grindstone can clean off most enchantments and return a little experience to the player.",
+      "uk": "Точило може прибрати більшість чар і повернути гравцеві трохи досвіду.",
+      "ru": "Точило может убрать большинство чар и вернуть игроку немного опыта."
+    },
+    "id": "grindstone-removes-enchantments",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Grindstone",
+        "uk": "Точило",
+        "ru": "Точило"
+      },
+      {
+        "en": "Stonecutter",
+        "uk": "Каменеріз",
+        "ru": "Камнерез"
+      },
+      {
+        "en": "Beacon",
+        "uk": "Маяк",
+        "ru": "Маяк"
+      },
+      {
+        "en": "Brewing Stand",
+        "uk": "Варильна стійка",
+        "ru": "Варочная стойка"
+      }
+    ],
+    "prompt": {
+      "en": "Which block removes most enchantments from an item and gives back some experience?",
+      "uk": "Який блок знімає більшість зачарувань з предмета й повертає трохи досвіду?",
+      "ru": "Какой блок снимает большинство чар с предмета и возвращает немного опыта?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "villagers",
+      "enchanting",
+      "grindstone"
+    ],
+    "topicId": "villagers-and-enchanting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "Deserts stay dry, so players do not see normal rain there.",
+      "uk": "Пустелі залишаються сухими, тому звичайного дощу там не буває.",
+      "ru": "Пустыни остаются сухими, поэтому обычного дождя там не бывает."
+    },
+    "id": "desert-has-no-rain",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Desert",
+        "uk": "Пустеля",
+        "ru": "Пустыня"
+      },
+      {
+        "en": "Forest",
+        "uk": "Ліс",
+        "ru": "Лес"
+      },
+      {
+        "en": "Plains",
+        "uk": "Рівнини",
+        "ru": "Равнины"
+      },
+      {
+        "en": "River",
+        "uk": "Річка",
+        "ru": "Река"
+      }
+    ],
+    "prompt": {
+      "en": "In which hot biome does rain not fall?",
+      "uk": "У якому спекотному біомі не йде дощ?",
+      "ru": "В каком жарком биоме не идёт дождь?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "biomes",
+      "weather",
+      "desert"
+    ],
+    "topicId": "biomes-and-structures"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "Villages are helpful early finds because they usually bring shelter, food, and trading.",
+      "uk": "Села корисно знаходити на початку, бо там часто є укриття, їжа й торгівля.",
+      "ru": "Деревни полезно находить в начале, потому что там часто есть укрытие, еда и торговля."
+    },
+    "id": "village-has-villagers",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Village",
+        "uk": "Село",
+        "ru": "Деревня"
+      },
+      {
+        "en": "Shipwreck",
+        "uk": "Корабельна аварія",
+        "ru": "Кораблекрушение"
+      },
+      {
+        "en": "Ruined Portal",
+        "uk": "Зруйнований портал",
+        "ru": "Разрушенный портал"
+      },
+      {
+        "en": "Mineshaft",
+        "uk": "Покинута шахта",
+        "ru": "Заброшенная шахта"
+      }
+    ],
+    "prompt": {
+      "en": "Which structure often has villagers, beds, and crop fields?",
+      "uk": "У якій структурі часто є селяни, ліжка та поля з культурами?",
+      "ru": "В какой структуре часто есть жители, кровати и поля с культурами?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "biomes",
+      "structures",
+      "village"
+    ],
+    "topicId": "biomes-and-structures"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "Ocean monuments are underwater structures guarded by guardians and elder guardians.",
+      "uk": "Океанські монументи — це підводні структури, які охороняють вартові та старші вартові.",
+      "ru": "Океанские монументы — это подводные структуры, которые охраняют стражи и древние стражи."
+    },
+    "id": "ocean-monument-guardians",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Ocean Monument",
+        "uk": "Океанський монумент",
+        "ru": "Океанский монумент"
+      },
+      {
+        "en": "Igloo",
+        "uk": "Іглу",
+        "ru": "Иглу"
+      },
+      {
+        "en": "Stronghold",
+        "uk": "Фортеця",
+        "ru": "Крепость"
+      },
+      {
+        "en": "Woodland Mansion",
+        "uk": "Лісовий маєток",
+        "ru": "Лесной особняк"
+      }
+    ],
+    "prompt": {
+      "en": "Which ocean structure is home to guardians?",
+      "uk": "Яка океанська структура є домом для вартових?",
+      "ru": "Какая океанская структура является домом для стражей?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "biomes",
+      "structures",
+      "ocean"
+    ],
+    "topicId": "biomes-and-structures"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "Mangrove swamps stand out with mangrove roots, frogs, and muddy ground.",
+      "uk": "Мангрові болота вирізняються мангровим корінням, жабами та багнистою землею.",
+      "ru": "Мангровые болота выделяются мангровыми корнями, лягушками и грязной землёй."
+    },
+    "id": "mangrove-swamp-has-mud",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Savanna",
+        "uk": "Савана",
+        "ru": "Саванна"
+      },
+      {
+        "en": "Mangrove Swamp",
+        "uk": "Мангрове болото",
+        "ru": "Мангровое болото"
+      },
+      {
+        "en": "Badlands",
+        "uk": "Безплідні землі",
+        "ru": "Бесплодные земли"
+      },
+      {
+        "en": "Frozen Ocean",
+        "uk": "Замерзлий океан",
+        "ru": "Замёрзший океан"
+      }
+    ],
+    "prompt": {
+      "en": "Which biome is known for mangrove trees and lots of mud?",
+      "uk": "Який біом відомий мангровими деревами та великою кількістю багна?",
+      "ru": "Какой биом известен мангровыми деревьями и большим количеством грязи?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "biomes",
+      "swamp",
+      "mangrove"
+    ],
+    "topicId": "biomes-and-structures"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "Igloos fit snowy areas and can even hide a little surprise underneath.",
+      "uk": "Іглу пасують сніжним місцям і навіть можуть ховати маленький сюрприз унизу.",
+      "ru": "Иглу подходят снежным местам и даже могут скрывать маленький сюрприз внизу."
+    },
+    "id": "igloo-in-snowy-biomes",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Igloo",
+        "uk": "Іглу",
+        "ru": "Иглу"
+      },
+      {
+        "en": "Jungle Temple",
+        "uk": "Храм джунглів",
+        "ru": "Храм джунглей"
+      },
+      {
+        "en": "Nether Fortress",
+        "uk": "Фортеця Незеру",
+        "ru": "Крепость Незера"
+      },
+      {
+        "en": "Desert Pyramid",
+        "uk": "Пустельна піраміда",
+        "ru": "Пустынная пирамида"
+      }
+    ],
+    "prompt": {
+      "en": "Which chilly structure may appear in snowy biomes?",
+      "uk": "Яка холодна структура може зʼявитися в сніжних біомах?",
+      "ru": "Какая холодная структура может появиться в снежных биомах?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "biomes",
+      "structures",
+      "snow"
+    ],
+    "topicId": "biomes-and-structures"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "Strongholds are special because their portal room is the path to the End dimension.",
+      "uk": "Фортеці особливі тим, що їхня портал-кімната веде до виміру Край.",
+      "ru": "Крепости особенные тем, что их портал-комната ведёт в измерение Край."
+    },
+    "id": "stronghold-holds-end-portal",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Stronghold",
+        "uk": "Фортеця",
+        "ru": "Крепость"
+      },
+      {
+        "en": "Ancient City",
+        "uk": "Стародавнє місто",
+        "ru": "Древний город"
+      },
+      {
+        "en": "Village",
+        "uk": "Село",
+        "ru": "Деревня"
+      },
+      {
+        "en": "Pillager Outpost",
+        "uk": "Розбійницька застава",
+        "ru": "Аванпост разбойников"
+      }
+    ],
+    "prompt": {
+      "en": "Which underground structure contains an End Portal room?",
+      "uk": "Яка підземна структура містить кімнату з порталом у Край?",
+      "ru": "Какая подземная структура содержит комнату с порталом в Край?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "biomes",
+      "structures",
+      "end"
+    ],
+    "topicId": "biomes-and-structures"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "Mushroom fields are unusual and calm, which makes them feel extra safe to explore.",
+      "uk": "Грибні поля незвичайні й спокійні, тому там особливо безпечно досліджувати світ.",
+      "ru": "Грибные поля необычные и спокойные, поэтому там особенно безопасно исследовать мир."
+    },
+    "id": "mushroom-fields-safe-from-many-mobs",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Mushroom Fields",
+        "uk": "Грибні поля",
+        "ru": "Грибные поля"
+      },
+      {
+        "en": "Stony Peaks",
+        "uk": "Камʼянисті вершини",
+        "ru": "Каменистые вершины"
+      },
+      {
+        "en": "Taiga",
+        "uk": "Тайга",
+        "ru": "Тайга"
+      },
+      {
+        "en": "Savanna",
+        "uk": "Савана",
+        "ru": "Саванна"
+      }
+    ],
+    "prompt": {
+      "en": "Which biome is famous because many common hostile mobs do not spawn there?",
+      "uk": "Який біом відомий тим, що там не зʼявляється багато звичайних ворожих мобів?",
+      "ru": "Какой биом известен тем, что там не появляется много обычных враждебных мобов?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "biomes",
+      "mushroom",
+      "safety"
+    ],
+    "topicId": "biomes-and-structures"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "Most Nether portals are built from obsidian because it can hold the portal frame.",
+      "uk": "Більшість порталів у Незер будують з обсидіану, бо він тримає рамку порталу.",
+      "ru": "Большинство порталов в Незер строят из обсидиана, потому что он держит рамку портала."
+    },
+    "id": "nether-portal-needs-obsidian",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Obsidian",
+        "uk": "Обсидіан",
+        "ru": "Обсидиан"
+      },
+      {
+        "en": "Stone",
+        "uk": "Камінь",
+        "ru": "Камень"
+      },
+      {
+        "en": "Sandstone",
+        "uk": "Пісковик",
+        "ru": "Песчаник"
+      },
+      {
+        "en": "Copper Block",
+        "uk": "Мідний блок",
+        "ru": "Медный блок"
+      }
+    ],
+    "prompt": {
+      "en": "Which block is commonly used to build a Nether portal frame?",
+      "uk": "Який блок зазвичай використовують для рамки порталу в Незер?",
+      "ru": "Какой блок обычно используют для рамки портала в Незер?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "nether",
+      "portal",
+      "obsidian"
+    ],
+    "topicId": "nether-end-and-redstone"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 2,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "Redstone dust links switches and machines together so a circuit can work.",
+      "uk": "Редстоуновий пил зʼєднує перемикачі та механізми, щоб схема працювала.",
+      "ru": "Редстоуновая пыль соединяет переключатели и механизмы, чтобы схема работала."
+    },
+    "id": "redstone-dust-carries-power",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Sugar",
+        "uk": "Цукор",
+        "ru": "Сахар"
+      },
+      {
+        "en": "Gunpowder",
+        "uk": "Порох",
+        "ru": "Порох"
+      },
+      {
+        "en": "Redstone Dust",
+        "uk": "Редстоуновий пил",
+        "ru": "Редстоуновая пыль"
+      },
+      {
+        "en": "Glowstone Dust",
+        "uk": "Пил світлокаменю",
+        "ru": "Пыль светокамня"
+      }
+    ],
+    "prompt": {
+      "en": "What dust carries redstone power between components?",
+      "uk": "Який пил переносить редстоун-сигнал між механізмами?",
+      "ru": "Какая пыль переносит редстоун-сигнал между механизмами?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "redstone",
+      "circuits",
+      "power"
+    ],
+    "topicId": "nether-end-and-redstone"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "Ghasts float through big Nether spaces and attack by launching fireballs.",
+      "uk": "Ґасти літають у великих просторах Незеру й атакують вогняними кулями.",
+      "ru": "Гасты летают в больших пространствах Незера и атакуют огненными шарами."
+    },
+    "id": "ghast-shoots-fireballs",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Ghast",
+        "uk": "Ґаст",
+        "ru": "Гаст"
+      },
+      {
+        "en": "Piglin",
+        "uk": "Піглін",
+        "ru": "Пиглин"
+      },
+      {
+        "en": "Strider",
+        "uk": "Лавохід",
+        "ru": "Лавомер"
+      },
+      {
+        "en": "Hoglin",
+        "uk": "Хоглін",
+        "ru": "Хоглин"
+      }
+    ],
+    "prompt": {
+      "en": "Which large flying Nether mob shoots fireballs?",
+      "uk": "Який великий літаючий моб Незеру стріляє вогняними кулями?",
+      "ru": "Какой большой летающий моб Незера стреляет огненными шарами?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "nether",
+      "mobs",
+      "ghast"
+    ],
+    "topicId": "nether-end-and-redstone"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "Blazes drop blaze rods, an important ingredient for brewing and finding the End.",
+      "uk": "Іфрити дають стрижні іфрита, важливі для варіння зіль і пошуку Краю.",
+      "ru": "Ифриты дают стержни ифрита, важные для варки зелий и поиска Края."
+    },
+    "id": "blaze-drops-rods",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Blaze",
+        "uk": "Іфрит",
+        "ru": "Ифрит"
+      },
+      {
+        "en": "Magma Cube",
+        "uk": "Магмовий куб",
+        "ru": "Магмовый куб"
+      },
+      {
+        "en": "Wither Skeleton",
+        "uk": "Скелет-висушувач",
+        "ru": "Скелет-иссушитель"
+      },
+      {
+        "en": "Endermite",
+        "uk": "Ендерміт",
+        "ru": "Эндермит"
+      }
+    ],
+    "prompt": {
+      "en": "Which mob drops the rods needed for brewing stands?",
+      "uk": "Який моб дає стрижні, потрібні для варильних стійок?",
+      "ru": "Какой моб даёт стержни, нужные для варочных стоек?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "nether",
+      "brewing",
+      "blaze"
+    ],
+    "topicId": "nether-end-and-redstone"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "A lever stays in place after you flip it, so it is great for simple redstone control.",
+      "uk": "Важіль лишається в обраному положенні після перемикання, тому він зручний для простого керування схемами.",
+      "ru": "Рычаг остаётся в выбранном положении после переключения, поэтому удобен для простого управления схемами."
+    },
+    "id": "lever-toggles-circuit",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Lever",
+        "uk": "Важіль",
+        "ru": "Рычаг"
+      },
+      {
+        "en": "Cauldron",
+        "uk": "Казан",
+        "ru": "Котёл"
+      },
+      {
+        "en": "Item Frame",
+        "uk": "Рамка",
+        "ru": "Рамка"
+      },
+      {
+        "en": "Ladder",
+        "uk": "Драбина",
+        "ru": "Лестница"
+      }
+    ],
+    "prompt": {
+      "en": "Which simple switch can turn a redstone circuit on and off?",
+      "uk": "Який простий перемикач може вмикати й вимикати редстоун-схему?",
+      "ru": "Какой простой переключатель может включать и выключать редстоун-схему?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "redstone",
+      "switches",
+      "circuits"
+    ],
+    "topicId": "nether-end-and-redstone"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 2,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "Eyes of Ender fly toward a stronghold, helping players find the portal room path.",
+      "uk": "Ока Ендера летять у бік фортеці й допомагають знайти шлях до портал-кімнати.",
+      "ru": "Глаза Эндера летят в сторону крепости и помогают найти путь к портал-комнате."
+    },
+    "id": "eye-of-ender-finds-stronghold",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Fire Charge",
+        "uk": "Вогняний заряд",
+        "ru": "Огненный заряд"
+      },
+      {
+        "en": "Ender Pearl",
+        "uk": "Перлина Ендера",
+        "ru": "Жемчуг Эндера"
+      },
+      {
+        "en": "Eye of Ender",
+        "uk": "Око Ендера",
+        "ru": "Око Эндера"
+      },
+      {
+        "en": "Clock",
+        "uk": "Годинник",
+        "ru": "Часы"
+      }
+    ],
+    "prompt": {
+      "en": "Which item helps you locate a stronghold before entering the End?",
+      "uk": "Який предмет допомагає знайти фортецю перед подорожжю в Край?",
+      "ru": "Какой предмет помогает найти крепость перед путешествием в Край?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "end",
+      "navigation",
+      "stronghold"
+    ],
+    "topicId": "nether-end-and-redstone"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "Warped forests have lots of endermen and fewer dangerous piglins and hoglins than some other Nether biomes.",
+      "uk": "У викривлених лісах багато ендерменів і менше небезпечних піглінів та хоглінів, ніж у деяких інших біомах Незеру.",
+      "ru": "В искажённых лесах много эндерменов и меньше опасных пиглинов и хоглинов, чем в некоторых других биомах Незера."
+    },
+    "id": "warped-forest-many-endermen",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Basalt Deltas",
+        "uk": "Базальтові дельти",
+        "ru": "Базальтовые дельты"
+      },
+      {
+        "en": "Warped Forest",
+        "uk": "Викривлений ліс",
+        "ru": "Искажённый лес"
+      },
+      {
+        "en": "Soul Sand Valley",
+        "uk": "Долина піску душ",
+        "ru": "Долина песка душ"
+      },
+      {
+        "en": "Crimson Forest",
+        "uk": "Багряний ліс",
+        "ru": "Багровый лес"
+      }
+    ],
+    "prompt": {
+      "en": "Which Nether biome is one of the safest places to find lots of endermen?",
+      "uk": "Який біом Незеру є одним із найбезпечніших місць, де можна знайти багато ендерменів?",
+      "ru": "Какой биом Незера является одним из самых безопасных мест, где можно найти много эндерменов?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "nether",
+      "biomes",
+      "enderman"
+    ],
+    "topicId": "nether-end-and-redstone"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "A magma block creates a downward bubble column, while soul sand pushes upward.",
+      "uk": "Магмовий блок створює низхідний бульбашковий стовп, а пісок душ штовхає вгору.",
+      "ru": "Магмовый блок создаёт нисходящий пузырьковый столб, а песок душ толкает вверх."
+    },
+    "id": "magma-block-pulls-down-bubbles",
+    "isActive": true,
+    "options": [
+      {
+        "en": "Magma Block",
+        "uk": "Магмовий блок",
+        "ru": "Магмовый блок"
+      },
+      {
+        "en": "Soul Sand",
+        "uk": "Пісок душ",
+        "ru": "Песок душ"
+      },
+      {
+        "en": "Sea Lantern",
+        "uk": "Морський ліхтар",
+        "ru": "Морской фонарь"
+      },
+      {
+        "en": "Prismarine",
+        "uk": "Призмарин",
+        "ru": "Призмарин"
+      }
+    ],
+    "prompt": {
+      "en": "Which block makes a water bubble column pull players downward?",
+      "uk": "Який блок змушує водяний бульбашковий стовп тягнути гравців униз?",
+      "ru": "Какой блок заставляет водяной пузырьковый столб тянуть игроков вниз?"
+    },
+    "sourceVersion": "minecraft-v1",
+    "tags": [
+      "redstone",
+      "water",
+      "blocks"
+    ],
+    "topicId": "nether-end-and-redstone"
   }
 ]

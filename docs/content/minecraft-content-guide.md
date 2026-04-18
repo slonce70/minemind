@@ -43,6 +43,23 @@
 | `biomes-and-structures` | overworld regions and generated structures | biomes, villages, temples |
 | `nether-end-and-redstone` | dimensions and simple automation | portals, end dragon, redstone circuits |
 
+## Batch Matrix
+| Topic | Easy | Medium | Hard | Target |
+| --- | ---: | ---: | ---: | ---: |
+| Survival Basics | 15 | 15 | 15 | 45 |
+| Crafting And Smelting | 15 | 15 | 15 | 45 |
+| Blocks And Building | 15 | 15 | 15 | 45 |
+| Mobs And Combat | 15 | 15 | 15 | 45 |
+| Farming And Animals | 15 | 15 | 15 | 45 |
+| Villagers And Enchanting | 15 | 15 | 15 | 45 |
+| Biomes And Structures | 15 | 15 | 15 | 45 |
+| Nether, End, And Redstone | 15 | 15 | 15 | 45 |
+
+## Milestone A
+- First milestone target: at least `60` approved records.
+- Coverage target: all three difficulties represented and at least four topics represented.
+- Editorial preference: spread milestone records broadly across the topic matrix instead of overfilling only one area.
+
 ## Review Checklist
 - `id` is present, slug-like, and unique across the full question bank.
 - `categoryId`, `topicId`, `difficulty`, `ageBand`, `prompt`, `options`, `correctIndex`, `explanation`, `tags`, `sourceVersion`, and `isActive` are present.
