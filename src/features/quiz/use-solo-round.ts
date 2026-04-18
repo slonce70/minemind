@@ -27,6 +27,7 @@ export function useSoloRound(params: {
   const activeRoom = useAppStore((state) => state.activeRoom);
   const activeRoomRound = useAppStore((state) => state.activeRoomRound);
   const leaveRoom = useAppStore((state) => state.leaveRoom);
+  const selectedDifficulty = useAppStore((state) => state.selectedDifficulty);
   const setActiveRoom = useAppStore((state) => state.setActiveRoom);
   const setActiveRoomRound = useAppStore((state) => state.setActiveRoomRound);
   const clearActiveRound = useAppStore((state) => state.clearActiveRound);
@@ -106,17 +107,24 @@ export function useSoloRound(params: {
       setIsLoading(true);
       setLoadError(null);
 
-      try {
-        const nextQuestions = isSupabaseConfigured
-          ? await startLiveSoloRound(params.locale as 'uk' | 'en' | 'ru')
-          : getSoloQuestionSet(params.locale as 'uk' | 'en' | 'ru', 8);
+        try {
+          const fallbackDifficulty = currentRoom?.difficulty ?? selectedDifficulty;
+          const nextQuestions = isSupabaseConfigured
+            ? await startLiveSoloRound(params.locale as 'uk' | 'en' | 'ru')
+            : getSoloQuestionSet(params.locale as 'uk' | 'en' | 'ru', 8, fallbackDifficulty);
 
         if (isMounted) {
           setQuestions(nextQuestions);
         }
       } catch (error) {
         if (isMounted) {
-          setQuestions(getSoloQuestionSet(params.locale as 'uk' | 'en' | 'ru', 8));
+          setQuestions(
+            getSoloQuestionSet(
+              params.locale as 'uk' | 'en' | 'ru',
+              8,
+              currentRoom?.difficulty ?? selectedDifficulty
+            )
+          );
           setLoadError(error instanceof Error ? error.message : params.messages.loadError);
         }
       } finally {
@@ -131,7 +139,7 @@ export function useSoloRound(params: {
     return () => {
       isMounted = false;
     };
-  }, [activeRoomRound, currentRoom, isRoomMode, params.locale, params.messages.loadError, setActiveRoom, setActiveRoomRound]);
+  }, [activeRoomRound, currentRoom, isRoomMode, params.locale, params.messages.loadError, selectedDifficulty, setActiveRoom, setActiveRoomRound]);
 
   useEffect(() => {
     if (!currentRoom) {

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { buildQuizResult } from '../src/features/quiz/quiz-service';
+import { buildQuizResult, getSoloQuestionSet } from '../src/features/quiz/quiz-service';
 import type { QuizAnswerMap, QuizQuestion } from '../src/features/quiz/types';
 
 const sampleQuestions: QuizQuestion[] = [
@@ -92,4 +92,20 @@ test('buildQuizResult keeps player standings and speed bonus in the result model
 
   assert.equal(result.standings[0].isPlayer, true);
   assert.equal(result.speedBonus, 90);
+});
+
+test('getSoloQuestionSet returns localized questions for the requested difficulty', () => {
+  const round = getSoloQuestionSet('uk', 8, 'medium', 'stable-seed');
+
+  assert.equal(round.length, 8);
+  assert.ok(round.every((question) => typeof question.prompt === 'string'));
+  assert.ok(round.every((question) => question.options.length === 4));
+  assert.ok(round.some((question) => question.prompt.includes('Minecraft') || question.prompt.includes('майн')));
+});
+
+test('getSoloQuestionSet stays deterministic for the same seed', () => {
+  const first = getSoloQuestionSet('en', 8, 'medium', 'stable-seed').map((question) => question.id);
+  const second = getSoloQuestionSet('en', 8, 'medium', 'stable-seed').map((question) => question.id);
+
+  assert.deepEqual(first, second);
 });
