@@ -6,6 +6,7 @@ import {
 } from '../../lib/api-contracts';
 import { toPlayerSafeErrorMessage } from '../shared/app-copy';
 import { getAuthenticatedUser, invokeSupabaseFunction } from '../../lib/supabase';
+import { createDefaultRoomMatchSettings } from './room-match-settings';
 import type { QuizResultSummary, QuizQuestion } from '../quiz/types';
 import type { ActiveRoom, ActiveRoomRound, RoomParticipant } from './types';
 
@@ -17,11 +18,15 @@ type RoomParticipantResponse = {
 };
 
 type RoomResponse = {
+  content_pack_version?: string | null;
   current_round_id?: string | null;
+  difficulty?: ActiveRoom['difficulty'];
   host_id: string;
   id: string;
+  question_count?: number | null;
   room_code: string;
-  status: 'active' | 'completed' | 'waiting';
+  status: 'active' | 'completed' | 'finalizing' | 'finished' | 'lobby' | 'waiting';
+  topic_mode?: 'mixed' | null;
 };
 
 type CreateOrJoinRoomResponse = {
@@ -35,6 +40,8 @@ type StartRoomRoundResponse = {
   room: RoomResponse;
   roomCode: string;
   round: {
+    content_pack_version?: string | null;
+    difficulty?: ActiveRoom['difficulty'];
     ends_at?: string | null;
     id: string;
     question_ids: string[];
@@ -80,9 +87,24 @@ async function mapParticipants(participants: RoomParticipantResponse[]) {
 
 async function mapRoom(payload: CreateOrJoinRoomResponse) {
   const participants = await mapParticipants(payload.participants);
+  const difficulty = payload.room.difficulty ?? 'medium';
+  const settings = createDefaultRoomMatchSettings(difficulty);
+
+  if (payload.room.content_pack_version) {
+    settings.contentPackVersion = payload.room.content_pack_version;
+  }
+
+  if (payload.room.question_count === 8) {
+    settings.questionCount = payload.room.question_count;
+  }
+
+  if (payload.room.topic_mode === 'mixed') {
+    settings.topicMode = payload.room.topic_mode;
+  }
 
   return {
     createdAt: new Date().toISOString(),
+    difficulty,
     id: payload.room.id,
     participants: participants.map((participant) => ({
       ...participant,
@@ -93,6 +115,7 @@ async function mapRoom(payload: CreateOrJoinRoomResponse) {
       normalizeRoomStatus(payload.room.status) === 'active'
         ? payload.room.current_round_id ?? undefined
         : undefined,
+    settings,
     status: normalizeRoomStatus(payload.room.status),
   } satisfies ActiveRoom;
 }
@@ -184,6 +207,12 @@ export async function startLiveRoomRound(activeRoom: ActiveRoom, profile: GuestP
   });
 
   const round: ActiveRoomRound = {
+    contentPackVersion:
+      parsedPayload.round.content_pack_version ??
+      room.settings.contentPackVersion,
+    difficulty:
+      parsedPayload.round.difficulty ??
+      room.settings.difficulty,
     mode: 'room',
     questions: parsedPayload.questions,
     roomCode: parsedPayload.roomCode,
@@ -220,6 +249,12 @@ export async function resumeLiveRoomRound(roomCode: string) {
   return {
     room,
     round: {
+      contentPackVersion:
+        parsedPayload.round.content_pack_version ??
+        room.settings.contentPackVersion,
+      difficulty:
+        parsedPayload.round.difficulty ??
+        room.settings.difficulty,
       mode: 'room' as const,
       questions: parsedPayload.questions,
       roomCode: parsedPayload.roomCode,
@@ -322,6 +357,8 @@ export async function finalizeLiveRoomRound(
 
 export function createDemoRoomRound(room: ActiveRoom, questions: QuizQuestion[]): ActiveRoomRound {
   return {
+    contentPackVersion: room.settings.contentPackVersion,
+    difficulty: room.settings.difficulty,
     mode: 'room',
     questions,
     roomCode: room.roomCode,

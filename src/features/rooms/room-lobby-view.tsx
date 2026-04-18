@@ -82,14 +82,14 @@ export function RoomLobbyView({
           <Text style={styles.subtitle}>{strings.subtitle}</Text>
           <BadgeChip
             icon="block"
-            label={difficultyStrings[activeRoom?.difficulty ?? selectedDifficulty]}
+            label={difficultyStrings[activeRoom?.settings.difficulty ?? selectedDifficulty]}
             tone="warning"
           />
           <Text style={styles.helper}>{strings.difficultyHint}</Text>
           <DifficultySelector
             label={strings.difficultyLabel}
             onSelect={onSelectDifficulty}
-            selectedDifficulty={activeRoom?.difficulty ?? selectedDifficulty}
+            selectedDifficulty={activeRoom?.settings.difficulty ?? selectedDifficulty}
             strings={difficultyStrings}
           />
         </WorldBackground>

@@ -1,5 +1,6 @@
 import type { ContentDifficulty } from '../content/types';
 import type { QuizQuestion } from '../quiz/types';
+import type { RoomMatchSettings } from './room-match-settings';
 
 export type RoomParticipant = {
   avatarId: string;
@@ -16,11 +17,13 @@ export type ActiveRoom = {
   difficulty?: ContentDifficulty;
   roundId?: string;
   roomCode: string;
+  settings: RoomMatchSettings;
   status: 'active' | 'lobby';
   participants: RoomParticipant[];
 };
 
 export type ActiveRoomRound = {
+  contentPackVersion?: string;
   difficulty?: ContentDifficulty;
   mode: 'room';
   questions: QuizQuestion[];

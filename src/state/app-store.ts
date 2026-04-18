@@ -10,6 +10,7 @@ import {
   startOfflineRoom,
   toggleLocalReady,
 } from '../features/rooms/demo-room-service';
+import { createDefaultRoomMatchSettings } from '../features/rooms/room-match-settings';
 import type { ActiveRoom, ActiveRoomRound } from '../features/rooms/types';
 import type { ContentDifficulty } from '../features/content/types';
 import { getDeviceLocale, type AppLocale } from '../lib/locale';
@@ -20,6 +21,14 @@ export type GuestProfile = {
   locale: AppLocale;
   nickname: string;
 };
+
+function withRoomSettings(room: ActiveRoom, difficulty: ContentDifficulty): ActiveRoom {
+  return {
+    ...room,
+    difficulty,
+    settings: room.settings ?? createDefaultRoomMatchSettings(difficulty),
+  };
+}
 
 type AppState = {
   activeRoom?: ActiveRoom;
@@ -62,14 +71,23 @@ export const useAppStore = create<AppState>()(
         }),
       createRoom: () =>
         set((state) => ({
-          activeRoom: state.profile ? createOfflineRoom(state.profile) : state.activeRoom,
+          activeRoom:
+            state.profile
+              ? withRoomSettings(
+                  createOfflineRoom(state.profile),
+                  state.selectedDifficulty
+                )
+              : state.activeRoom,
         })),
       hasHydrated: false,
       joinRoom: (roomCode) =>
         set((state) => ({
           activeRoom:
             state.profile && roomCode.trim()
-              ? joinOfflineRoom(state.profile, roomCode)
+              ? withRoomSettings(
+                  joinOfflineRoom(state.profile, roomCode),
+                  state.selectedDifficulty
+                )
               : state.activeRoom,
         })),
       lastResult: undefined,
@@ -89,10 +107,30 @@ export const useAppStore = create<AppState>()(
       setActiveRoom: (activeRoom) => set({ activeRoom }),
       setActiveRoomRound: (activeRoomRound) => set({ activeRoomRound }),
       setHasHydrated: (value) => set({ hasHydrated: value }),
-      setSelectedDifficulty: (selectedDifficulty) => set({ selectedDifficulty }),
+      setSelectedDifficulty: (selectedDifficulty) =>
+        set((state) => ({
+          activeRoom:
+            state.activeRoom && state.activeRoom.status === 'lobby'
+              ? {
+                  ...state.activeRoom,
+                  difficulty: selectedDifficulty,
+                  settings: {
+                    ...state.activeRoom.settings,
+                    difficulty: selectedDifficulty,
+                  },
+                }
+              : state.activeRoom,
+          selectedDifficulty,
+        })),
       startRoomBattle: () =>
         set((state) => ({
-          activeRoom: state.activeRoom ? startOfflineRoom(state.activeRoom) : state.activeRoom,
+          activeRoom:
+            state.activeRoom
+              ? withRoomSettings(
+                  startOfflineRoom(state.activeRoom),
+                  state.activeRoom.settings?.difficulty ?? state.selectedDifficulty
+                )
+              : state.activeRoom,
         })),
       toggleRoomReady: () =>
         set((state) => ({

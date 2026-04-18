@@ -1,7 +1,39 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { parseStartSoloRoundResponse } from '../src/lib/api-contracts';
+import {
+  parseStartSoloRoundResponse,
+  roomStateSchema,
+  soloRoundSchema,
+} from '../src/lib/api-contracts';
+
+test('room state schema accepts difficulty and content pack metadata', () => {
+  const parsed = roomStateSchema.parse({
+    contentPackVersion: 'minecraft-v1',
+    difficulty: 'medium',
+    participants: [],
+    roomCode: 'AB12CD',
+    status: 'lobby',
+  });
+
+  assert.equal(parsed.difficulty, 'medium');
+  assert.equal(parsed.contentPackVersion, 'minecraft-v1');
+});
+
+test('solo round schema accepts future difficulty and content pack metadata', () => {
+  const parsed = soloRoundSchema.parse({
+    contentPackVersion: 'minecraft-v1',
+    difficulty: 'easy',
+    questions: Array.from({ length: 8 }, (_, index) => ({
+      id: `q-${index}`,
+      options: ['A', 'B', 'C', 'D'],
+      prompt: `Question ${index}`,
+    })),
+  });
+
+  assert.equal(parsed.questions.length, 8);
+  assert.equal(parsed.difficulty, 'easy');
+});
 
 test('start solo round parser rejects malformed payloads', () => {
   assert.throws(() => parseStartSoloRoundResponse({ questions: 'nope' }), /Invalid/);
