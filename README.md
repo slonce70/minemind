@@ -5,8 +5,11 @@ Mobile quiz app prototype for `iOS + Android` built with `Expo`, `React Native`,
 ## Current Status
 - guest onboarding
 - localized UI: `uk`, `en`, `ru`
-- solo Minecraft quiz flow
+- solo Minecraft quiz flow with `easy / medium / hard`
 - private room flow with live-Supabase integration path and demo fallback
+- validated local Minecraft question bank with `60` active records
+- Minecraft-inspired fantasy UI layer, difficulty badges, and reward framing
+- room match settings foundation with `contentPackVersion` + difficulty metadata
 - NEXUS-Full planning docs in `docs/`
 - Supabase schema and Edge Function scaffolding in `supabase/`
 - validation suite and CI workflow
@@ -17,6 +20,8 @@ Mobile quiz app prototype for `iOS + Android` built with `Expo`, `React Native`,
 - `npm test`
 - `npm run typecheck`
 - `npm run validate`
+- `npx tsx scripts/validate-question-bank.ts`
+- `npx tsx scripts/export-question-packs.ts`
 - `npx expo export --platform web`
 - `./script/build_and_run.sh --help`
 - `./script/build_and_run.sh --web`

@@ -13,9 +13,11 @@
 - `solo mode`
 - `private rooms by code`
 - `uk / en / ru`
-- curated Minecraft content
+- `easy / medium / hard` difficulty modes surfaced as `Builder / Explorer / Nether Pro`
+- curated Minecraft content with validated local question bank workflow
 - safe nickname filter
 - basic local leaderboard preview
+- Minecraft-inspired fantasy presentation with badges and reward framing
 
 ## Out of Scope For V1
 - public matchmaking
@@ -31,3 +33,4 @@
 - завершує перший раунд без підказок
 - хоче replay після result screen
 - батькам зрозуміло, що застосунок не збирає зайві дані
+- повторні матчі не відчуваються однаковими завдяки difficulty і ширшому topic mix
