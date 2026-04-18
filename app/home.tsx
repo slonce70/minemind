@@ -1,4 +1,4 @@
-import { Redirect, router } from 'expo-router';
+import { Redirect, Stack, router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
 import { Screen } from '../src/components/ui/screen';
@@ -21,6 +21,7 @@ export default function HomeRoute() {
 
   return (
     <Screen scrollable>
+      <Stack.Screen options={{ headerShown: false }} />
       <HomeView
         hasActiveRoom={Boolean(activeRoom)}
         lastResult={lastResult}
@@ -51,6 +52,9 @@ export default function HomeRoute() {
           modeSelectorCopy: t('home.ready'),
           primaryCardCopy: `${t('home.categoryCopy')} ${minecraftCategory.roundQuestionCount} ${t('home.questions').toLowerCase()}, ${minecraftCategory.roundDurationLabel}.`,
           primaryCardTitle: t('home.playSolo'),
+          resultCorrectLabel: t('results.correct'),
+          resultScoreLabel: t('results.score'),
+          resultStreakLabel: t('results.bestStreak'),
           resultTitle: t('home.lastResult'),
           resultsAction: t('home.viewResults'),
           roomCardCopy: t('home.roomCardCopy'),

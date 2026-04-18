@@ -1,4 +1,4 @@
-import { Redirect, router } from 'expo-router';
+import { Redirect, Stack, router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
 import { RoomLobbyView } from '../src/features/rooms/room-lobby-view';
@@ -18,6 +18,7 @@ export default function RoomsRoute() {
 
   return (
     <Screen scrollable>
+      <Stack.Screen options={{ headerShown: false }} />
       <RoomLobbyView
         activeRoom={lobby.activeRoom}
         errorMessage={lobby.errorMessage}

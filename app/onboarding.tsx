@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -56,33 +56,36 @@ export default function OnboardingRoute() {
   };
 
   return (
-    <OnboardingView
-      errorMessage={errorKey ? t(errorKey) : serverError}
-      helperText={t('onboarding.nicknameHint')}
-      isSaving={isSaving}
-      localeOptions={localeOptions}
-      nickname={nickname}
-      onChangeNickname={setNickname}
-      onSelectAvatar={setSelectedAvatarId}
-      onSelectLocale={setSelectedLocale}
-      onSubmit={() => void handleContinue()}
-      privacyNote={t('onboarding.privacyNote')}
-      selectedAvatarId={selectedAvatarId}
-      selectedLocale={selectedLocale}
-      strings={{
-        avatarLabel: t('onboarding.avatarLabel'),
-        ctaLabel: t(isSaving ? 'common.loading' : 'onboarding.cta'),
-        eyebrow: t('onboarding.eyebrow'),
-        languageLabel: t('onboarding.languageLabel'),
-        nicknameLabel: t('onboarding.nicknameLabel'),
-        nicknamePlaceholder: t('onboarding.nicknamePlaceholder'),
-        previewEyebrow: t('onboarding.previewEyebrow'),
-        previewFallbackName: t('onboarding.previewFallbackName'),
-        previewLanguageLabel: t('onboarding.previewLanguageLabel'),
-        previewTitle: t('onboarding.previewTitle'),
-        subtitle: t('onboarding.subtitle'),
-        title: t('onboarding.title'),
-      }}
-    />
+    <>
+      <Stack.Screen options={{ headerShown: false }} />
+      <OnboardingView
+        errorMessage={errorKey ? t(errorKey) : serverError}
+        helperText={t('onboarding.nicknameHint')}
+        isSaving={isSaving}
+        localeOptions={localeOptions}
+        nickname={nickname}
+        onChangeNickname={setNickname}
+        onSelectAvatar={setSelectedAvatarId}
+        onSelectLocale={setSelectedLocale}
+        onSubmit={() => void handleContinue()}
+        privacyNote={t('onboarding.privacyNote')}
+        selectedAvatarId={selectedAvatarId}
+        selectedLocale={selectedLocale}
+        strings={{
+          avatarLabel: t('onboarding.avatarLabel'),
+          ctaLabel: t(isSaving ? 'common.loading' : 'onboarding.cta'),
+          eyebrow: t('onboarding.eyebrow'),
+          languageLabel: t('onboarding.languageLabel'),
+          nicknameLabel: t('onboarding.nicknameLabel'),
+          nicknamePlaceholder: t('onboarding.nicknamePlaceholder'),
+          previewEyebrow: t('onboarding.previewEyebrow'),
+          previewFallbackName: t('onboarding.previewFallbackName'),
+          previewLanguageLabel: t('onboarding.previewLanguageLabel'),
+          previewTitle: t('onboarding.previewTitle'),
+          subtitle: t('onboarding.subtitle'),
+          title: t('onboarding.title'),
+        }}
+      />
+    </>
   );
 }
