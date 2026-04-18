@@ -175,10 +175,15 @@ export function useRoomLobby(messages: { genericError: string }) {
         setActiveRoomRound(round);
       } else {
         startRoomBattle();
+        const matchSettings = activeRoom.settings;
         setActiveRoomRound(
           createDemoRoomRound(
             activeRoom,
-            getSoloQuestionSet(profile.locale, 8, activeRoom.difficulty ?? selectedDifficulty)
+            getSoloQuestionSet(
+              profile.locale,
+              matchSettings.questionCount,
+              matchSettings.difficulty ?? selectedDifficulty
+            )
           )
         );
       }

@@ -1,5 +1,6 @@
 import { avatarPresets } from '../profile/avatar-presets';
 import type { GuestProfile } from '../../state/app-store';
+import { createDefaultRoomMatchSettings } from './room-match-settings';
 import type { ActiveRoom, RoomParticipant } from './types';
 
 const demoNames = ['PixelBee', 'GlowFox', 'CraftNova', 'RedstoneRay', 'BlockMint', 'SkySlime'];
@@ -33,6 +34,7 @@ export function createOfflineRoom(profile: GuestProfile): ActiveRoom {
     id: `offline-${Date.now()}`,
     participants: [createHostParticipant(profile)],
     roomCode: generateRoomCode(),
+    settings: createDefaultRoomMatchSettings(),
     status: 'lobby',
   };
 
@@ -73,6 +75,7 @@ export function joinOfflineRoom(profile: GuestProfile, roomCode: string): Active
       },
     ],
     roomCode: normalizedCode,
+    settings: createDefaultRoomMatchSettings(),
     status: 'lobby',
   };
 
