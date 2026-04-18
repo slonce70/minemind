@@ -83,3 +83,13 @@ test('buildQuizResult can use server-authenticated answer payloads without local
   assert.equal(result.score, 154);
   assert.equal(result.breakdown[0].explanation, 'The crafting table unlocks the 3x3 grid.');
 });
+
+test('buildQuizResult keeps player standings and speed bonus in the result model', () => {
+  const result = buildQuizResult(sampleQuestions, {
+    q1: { selectedIndex: 1, timeLeft: 10 },
+    q2: { selectedIndex: 0, timeLeft: 5 },
+  });
+
+  assert.equal(result.standings[0].isPlayer, true);
+  assert.equal(result.speedBonus, 90);
+});
