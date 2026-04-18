@@ -1,13 +1,16 @@
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { appTheme, colors, typography } from '../../theme/tokens';
 
 export function LoadingScreen() {
+  const { t } = useTranslation();
+
   return (
     <View style={styles.container}>
       <ActivityIndicator color={colors.highlight} size="large" />
       <Text style={styles.label}>MineMind</Text>
-      <Text style={styles.subtle}>Loading your next match...</Text>
+      <Text style={styles.subtle}>{t('common.loadingMatch')}</Text>
     </View>
   );
 }

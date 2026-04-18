@@ -1,4 +1,4 @@
-import { Redirect, useLocalSearchParams } from 'expo-router';
+import { Redirect, Stack, useLocalSearchParams } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
@@ -56,6 +56,7 @@ export default function SoloRoute() {
 
   return (
     <Screen scrollable={false}>
+      <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.header}>
         <Text style={styles.kicker}>
           {round.isRoomMode ? t('solo.roomModeLabel') : t('solo.modeLabel')}

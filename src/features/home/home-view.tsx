@@ -27,6 +27,9 @@ type HomeViewProps = {
     modeSelectorCopy: string;
     primaryCardCopy: string;
     primaryCardTitle: string;
+    resultCorrectLabel: string;
+    resultScoreLabel: string;
+    resultStreakLabel: string;
     resultTitle: string;
     resultsAction: string;
     roomCardCopy: string;
@@ -81,9 +84,12 @@ export function HomeView({
         <Card>
           <Text style={styles.sectionTitle}>{strings.resultTitle}</Text>
           <View style={styles.resultGrid}>
-            <StatPill label="Score" value={String(lastResult.score)} />
-            <StatPill label="Correct" value={`${lastResult.correctAnswers}/${lastResult.questionCount}`} />
-            <StatPill label="Streak" value={String(lastResult.bestStreak)} />
+            <StatPill label={strings.resultScoreLabel} value={String(lastResult.score)} />
+            <StatPill
+              label={strings.resultCorrectLabel}
+              value={`${lastResult.correctAnswers}/${lastResult.questionCount}`}
+            />
+            <StatPill label={strings.resultStreakLabel} value={String(lastResult.bestStreak)} />
           </View>
           <PrimaryButton label={strings.resultsAction} onPress={onOpenResults} />
         </Card>

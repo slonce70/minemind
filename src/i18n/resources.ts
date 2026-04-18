@@ -4,6 +4,7 @@ export const resources = {
       common: {
         continue: 'Продовжити',
         loading: 'Завантаження...',
+        loadingMatch: 'Готуємо твій наступний матч...',
         retry: 'Спробувати ще раз',
       },
       errors: {
@@ -137,6 +138,7 @@ export const resources = {
       common: {
         continue: 'Continue',
         loading: 'Loading...',
+        loadingMatch: 'Loading your next match...',
         retry: 'Retry',
       },
       errors: {
@@ -270,6 +272,7 @@ export const resources = {
       common: {
         continue: 'Продолжить',
         loading: 'Загрузка...',
+        loadingMatch: 'Готовим твой следующий матч...',
         retry: 'Повторить',
       },
       errors: {
