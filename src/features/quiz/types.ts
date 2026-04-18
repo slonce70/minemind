@@ -1,4 +1,5 @@
 import type { AppLocale } from '../../lib/locale';
+import type { ContentDifficulty } from '../content/types';
 
 export type LocalizedString = Record<AppLocale, string>;
 
@@ -40,6 +41,7 @@ export type QuizResultSummary = {
   }[];
   completedAt: string;
   correctAnswers: number;
+  difficulty?: ContentDifficulty;
   mode: 'room' | 'solo';
   questionCount: number;
   roomCode?: string;

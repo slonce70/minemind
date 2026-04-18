@@ -1,3 +1,4 @@
+import type { ContentDifficulty } from '../content/types';
 import type { QuizQuestion } from '../quiz/types';
 
 export type RoomParticipant = {
@@ -12,6 +13,7 @@ export type RoomParticipant = {
 export type ActiveRoom = {
   createdAt: string;
   id?: string;
+  difficulty?: ContentDifficulty;
   roundId?: string;
   roomCode: string;
   status: 'active' | 'lobby';
@@ -19,6 +21,7 @@ export type ActiveRoom = {
 };
 
 export type ActiveRoomRound = {
+  difficulty?: ContentDifficulty;
   mode: 'room';
   questions: QuizQuestion[];
   roomCode: string;

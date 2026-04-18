@@ -11,6 +11,7 @@ import {
   toggleLocalReady,
 } from '../features/rooms/demo-room-service';
 import type { ActiveRoom, ActiveRoomRound } from '../features/rooms/types';
+import type { ContentDifficulty } from '../features/content/types';
 import { getDeviceLocale, type AppLocale } from '../lib/locale';
 import type { QuizResultSummary } from '../features/quiz/types';
 
@@ -38,8 +39,10 @@ type AppState = {
   setActiveRoom: (room?: ActiveRoom) => void;
   setActiveRoomRound: (round?: ActiveRoomRound) => void;
   setHasHydrated: (value: boolean) => void;
+  setSelectedDifficulty: (difficulty: ContentDifficulty) => void;
   startRoomBattle: () => void;
   toggleRoomReady: () => void;
+  selectedDifficulty: ContentDifficulty;
 };
 
 export const useAppStore = create<AppState>()(
@@ -73,17 +76,20 @@ export const useAppStore = create<AppState>()(
       leaveRoom: () => set({ activeRoom: undefined, activeRoomRound: undefined }),
       locale: getDeviceLocale(),
       profile: undefined,
+      selectedDifficulty: 'medium',
       resetProfile: () =>
         set({
           activeRoom: undefined,
           activeRoomRound: undefined,
           lastResult: undefined,
           profile: undefined,
+          selectedDifficulty: 'medium',
         }),
       saveLastResult: (lastResult) => set({ lastResult }),
       setActiveRoom: (activeRoom) => set({ activeRoom }),
       setActiveRoomRound: (activeRoomRound) => set({ activeRoomRound }),
       setHasHydrated: (value) => set({ hasHydrated: value }),
+      setSelectedDifficulty: (selectedDifficulty) => set({ selectedDifficulty }),
       startRoomBattle: () =>
         set((state) => ({
           activeRoom: state.activeRoom ? startOfflineRoom(state.activeRoom) : state.activeRoom,
@@ -94,6 +100,20 @@ export const useAppStore = create<AppState>()(
         })),
     }),
     {
+      migrate: (persistedState) => {
+        if (!persistedState || typeof persistedState !== 'object') {
+          return {
+            selectedDifficulty: 'medium' as ContentDifficulty,
+          };
+        }
+
+        const state = persistedState as Partial<AppState>;
+
+        return {
+          ...state,
+          selectedDifficulty: state.selectedDifficulty ?? 'medium',
+        };
+      },
       name: 'minemind-store',
       onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true);
@@ -104,8 +124,10 @@ export const useAppStore = create<AppState>()(
         lastResult: state.lastResult,
         locale: state.locale,
         profile: state.profile,
+        selectedDifficulty: state.selectedDifficulty,
       }),
       storage: createJSONStorage(() => AsyncStorage),
+      version: 2,
     }
   )
 );
