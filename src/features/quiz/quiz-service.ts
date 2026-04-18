@@ -1,25 +1,18 @@
 import type { AppLocale } from '../../lib/locale';
-import { minecraftQuestionBank } from './mock-data';
+import { loadMinecraftQuestionBank } from '../content/content-loader';
+import { selectQuestionRound } from '../content/content-selection';
+import type { ContentDifficulty, ContentQuestionRecord } from '../content/types';
 import type {
   QuizAnswerMap,
   QuizQuestion,
   QuizResultSummary,
 } from './types';
 
-function shuffle<T>(items: T[]) {
-  const copy = [...items];
-
-  for (let index = copy.length - 1; index > 0; index -= 1) {
-    const swapIndex = Math.floor(Math.random() * (index + 1));
-    const temporary = copy[index];
-    copy[index] = copy[swapIndex];
-    copy[swapIndex] = temporary;
-  }
-
-  return copy;
+function buildRoundSeed(locale: AppLocale, difficulty: ContentDifficulty) {
+  return `${locale}-${difficulty}-${Date.now().toString().slice(-6)}`;
 }
 
-function localizeQuestion(definition: (typeof minecraftQuestionBank)[number], locale: AppLocale): QuizQuestion {
+function localizeQuestion(definition: ContentQuestionRecord, locale: AppLocale): QuizQuestion {
   return {
     id: definition.id,
     correctIndex: definition.correctIndex,
@@ -29,8 +22,21 @@ function localizeQuestion(definition: (typeof minecraftQuestionBank)[number], lo
   };
 }
 
-export function getSoloQuestionSet(locale: AppLocale, count = 8) {
-  return shuffle(minecraftQuestionBank).slice(0, count).map((item) => localizeQuestion(item, locale));
+export function getSoloQuestionSet(
+  locale: AppLocale,
+  count = 8,
+  difficulty: ContentDifficulty = 'medium',
+  seed = buildRoundSeed(locale, difficulty)
+) {
+  const questionBank = loadMinecraftQuestionBank();
+  const round = selectQuestionRound({
+    bank: questionBank,
+    count,
+    difficulty,
+    seed,
+  });
+
+  return round.map((item) => localizeQuestion(item, locale));
 }
 
 export function buildQuizResult(

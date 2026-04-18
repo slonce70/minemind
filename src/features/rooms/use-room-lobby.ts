@@ -23,6 +23,7 @@ export function useRoomLobby(messages: { genericError: string }) {
   const activeRoomRound = useAppStore((state) => state.activeRoomRound);
   const createRoom = useAppStore((state) => state.createRoom);
   const joinRoom = useAppStore((state) => state.joinRoom);
+  const selectedDifficulty = useAppStore((state) => state.selectedDifficulty);
   const addDemoPlayersToRoom = useAppStore((state) => state.addDemoPlayersToRoom);
   const startRoomBattle = useAppStore((state) => state.startRoomBattle);
   const toggleRoomReady = useAppStore((state) => state.toggleRoomReady);
@@ -174,7 +175,12 @@ export function useRoomLobby(messages: { genericError: string }) {
         setActiveRoomRound(round);
       } else {
         startRoomBattle();
-        setActiveRoomRound(createDemoRoomRound(activeRoom, getSoloQuestionSet(profile.locale, 8)));
+        setActiveRoomRound(
+          createDemoRoomRound(
+            activeRoom,
+            getSoloQuestionSet(profile.locale, 8, activeRoom.difficulty ?? selectedDifficulty)
+          )
+        );
       }
       return true;
     } catch (error) {
