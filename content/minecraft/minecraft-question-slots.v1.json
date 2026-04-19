@@ -1,0 +1,434 @@
+[
+  {
+    "topicId": "survival-basics",
+    "difficulty": "easy",
+    "clusterId": "health-hunger-safety",
+    "targetCount": 15
+  },
+  {
+    "topicId": "survival-basics",
+    "difficulty": "easy",
+    "clusterId": "spawn-night-shelter",
+    "targetCount": 15
+  },
+  {
+    "topicId": "survival-basics",
+    "difficulty": "easy",
+    "clusterId": "movement-hazards-utility",
+    "targetCount": 15
+  },
+  {
+    "topicId": "survival-basics",
+    "difficulty": "medium",
+    "clusterId": "health-hunger-safety",
+    "targetCount": 15
+  },
+  {
+    "topicId": "survival-basics",
+    "difficulty": "medium",
+    "clusterId": "spawn-night-shelter",
+    "targetCount": 15
+  },
+  {
+    "topicId": "survival-basics",
+    "difficulty": "medium",
+    "clusterId": "movement-hazards-utility",
+    "targetCount": 15
+  },
+  {
+    "topicId": "survival-basics",
+    "difficulty": "hard",
+    "clusterId": "health-hunger-safety",
+    "targetCount": 15
+  },
+  {
+    "topicId": "survival-basics",
+    "difficulty": "hard",
+    "clusterId": "spawn-night-shelter",
+    "targetCount": 15
+  },
+  {
+    "topicId": "survival-basics",
+    "difficulty": "hard",
+    "clusterId": "movement-hazards-utility",
+    "targetCount": 15
+  },
+  {
+    "topicId": "crafting-and-smelting",
+    "difficulty": "easy",
+    "clusterId": "stations-recipes",
+    "targetCount": 15
+  },
+  {
+    "topicId": "crafting-and-smelting",
+    "difficulty": "easy",
+    "clusterId": "tools-fuel-smelting",
+    "targetCount": 15
+  },
+  {
+    "topicId": "crafting-and-smelting",
+    "difficulty": "easy",
+    "clusterId": "materials-progression",
+    "targetCount": 15
+  },
+  {
+    "topicId": "crafting-and-smelting",
+    "difficulty": "medium",
+    "clusterId": "stations-recipes",
+    "targetCount": 15
+  },
+  {
+    "topicId": "crafting-and-smelting",
+    "difficulty": "medium",
+    "clusterId": "tools-fuel-smelting",
+    "targetCount": 15
+  },
+  {
+    "topicId": "crafting-and-smelting",
+    "difficulty": "medium",
+    "clusterId": "materials-progression",
+    "targetCount": 15
+  },
+  {
+    "topicId": "crafting-and-smelting",
+    "difficulty": "hard",
+    "clusterId": "stations-recipes",
+    "targetCount": 15
+  },
+  {
+    "topicId": "crafting-and-smelting",
+    "difficulty": "hard",
+    "clusterId": "tools-fuel-smelting",
+    "targetCount": 15
+  },
+  {
+    "topicId": "crafting-and-smelting",
+    "difficulty": "hard",
+    "clusterId": "materials-progression",
+    "targetCount": 15
+  },
+  {
+    "topicId": "blocks-and-building",
+    "difficulty": "easy",
+    "clusterId": "natural-materials",
+    "targetCount": 15
+  },
+  {
+    "topicId": "blocks-and-building",
+    "difficulty": "easy",
+    "clusterId": "block-behavior",
+    "targetCount": 15
+  },
+  {
+    "topicId": "blocks-and-building",
+    "difficulty": "easy",
+    "clusterId": "utility-building-blocks",
+    "targetCount": 15
+  },
+  {
+    "topicId": "blocks-and-building",
+    "difficulty": "medium",
+    "clusterId": "natural-materials",
+    "targetCount": 15
+  },
+  {
+    "topicId": "blocks-and-building",
+    "difficulty": "medium",
+    "clusterId": "block-behavior",
+    "targetCount": 15
+  },
+  {
+    "topicId": "blocks-and-building",
+    "difficulty": "medium",
+    "clusterId": "utility-building-blocks",
+    "targetCount": 15
+  },
+  {
+    "topicId": "blocks-and-building",
+    "difficulty": "hard",
+    "clusterId": "natural-materials",
+    "targetCount": 15
+  },
+  {
+    "topicId": "blocks-and-building",
+    "difficulty": "hard",
+    "clusterId": "block-behavior",
+    "targetCount": 15
+  },
+  {
+    "topicId": "blocks-and-building",
+    "difficulty": "hard",
+    "clusterId": "utility-building-blocks",
+    "targetCount": 15
+  },
+  {
+    "topicId": "mobs-and-combat",
+    "difficulty": "easy",
+    "clusterId": "passive-neutral-mobs",
+    "targetCount": 15
+  },
+  {
+    "topicId": "mobs-and-combat",
+    "difficulty": "easy",
+    "clusterId": "hostile-mobs",
+    "targetCount": 15
+  },
+  {
+    "topicId": "mobs-and-combat",
+    "difficulty": "easy",
+    "clusterId": "combat-safety",
+    "targetCount": 15
+  },
+  {
+    "topicId": "mobs-and-combat",
+    "difficulty": "medium",
+    "clusterId": "passive-neutral-mobs",
+    "targetCount": 15
+  },
+  {
+    "topicId": "mobs-and-combat",
+    "difficulty": "medium",
+    "clusterId": "hostile-mobs",
+    "targetCount": 15
+  },
+  {
+    "topicId": "mobs-and-combat",
+    "difficulty": "medium",
+    "clusterId": "combat-safety",
+    "targetCount": 15
+  },
+  {
+    "topicId": "mobs-and-combat",
+    "difficulty": "hard",
+    "clusterId": "passive-neutral-mobs",
+    "targetCount": 15
+  },
+  {
+    "topicId": "mobs-and-combat",
+    "difficulty": "hard",
+    "clusterId": "hostile-mobs",
+    "targetCount": 15
+  },
+  {
+    "topicId": "mobs-and-combat",
+    "difficulty": "hard",
+    "clusterId": "combat-safety",
+    "targetCount": 15
+  },
+  {
+    "topicId": "farming-and-animals",
+    "difficulty": "easy",
+    "clusterId": "crops-growth",
+    "targetCount": 15
+  },
+  {
+    "topicId": "farming-and-animals",
+    "difficulty": "easy",
+    "clusterId": "animals-breeding",
+    "targetCount": 15
+  },
+  {
+    "topicId": "farming-and-animals",
+    "difficulty": "easy",
+    "clusterId": "food-farm-loops",
+    "targetCount": 15
+  },
+  {
+    "topicId": "farming-and-animals",
+    "difficulty": "medium",
+    "clusterId": "crops-growth",
+    "targetCount": 15
+  },
+  {
+    "topicId": "farming-and-animals",
+    "difficulty": "medium",
+    "clusterId": "animals-breeding",
+    "targetCount": 15
+  },
+  {
+    "topicId": "farming-and-animals",
+    "difficulty": "medium",
+    "clusterId": "food-farm-loops",
+    "targetCount": 15
+  },
+  {
+    "topicId": "farming-and-animals",
+    "difficulty": "hard",
+    "clusterId": "crops-growth",
+    "targetCount": 15
+  },
+  {
+    "topicId": "farming-and-animals",
+    "difficulty": "hard",
+    "clusterId": "animals-breeding",
+    "targetCount": 15
+  },
+  {
+    "topicId": "farming-and-animals",
+    "difficulty": "hard",
+    "clusterId": "food-farm-loops",
+    "targetCount": 15
+  },
+  {
+    "topicId": "villagers-and-enchanting",
+    "difficulty": "easy",
+    "clusterId": "professions-workstations",
+    "targetCount": 15
+  },
+  {
+    "topicId": "villagers-and-enchanting",
+    "difficulty": "easy",
+    "clusterId": "trading-economy",
+    "targetCount": 15
+  },
+  {
+    "topicId": "villagers-and-enchanting",
+    "difficulty": "easy",
+    "clusterId": "enchanting-upgrades",
+    "targetCount": 15
+  },
+  {
+    "topicId": "villagers-and-enchanting",
+    "difficulty": "medium",
+    "clusterId": "professions-workstations",
+    "targetCount": 15
+  },
+  {
+    "topicId": "villagers-and-enchanting",
+    "difficulty": "medium",
+    "clusterId": "trading-economy",
+    "targetCount": 15
+  },
+  {
+    "topicId": "villagers-and-enchanting",
+    "difficulty": "medium",
+    "clusterId": "enchanting-upgrades",
+    "targetCount": 15
+  },
+  {
+    "topicId": "villagers-and-enchanting",
+    "difficulty": "hard",
+    "clusterId": "professions-workstations",
+    "targetCount": 15
+  },
+  {
+    "topicId": "villagers-and-enchanting",
+    "difficulty": "hard",
+    "clusterId": "trading-economy",
+    "targetCount": 15
+  },
+  {
+    "topicId": "villagers-and-enchanting",
+    "difficulty": "hard",
+    "clusterId": "enchanting-upgrades",
+    "targetCount": 15
+  },
+  {
+    "topicId": "biomes-and-structures",
+    "difficulty": "easy",
+    "clusterId": "biome-recognition",
+    "targetCount": 15
+  },
+  {
+    "topicId": "biomes-and-structures",
+    "difficulty": "easy",
+    "clusterId": "natural-generated-structures",
+    "targetCount": 15
+  },
+  {
+    "topicId": "biomes-and-structures",
+    "difficulty": "easy",
+    "clusterId": "loot-and-purpose",
+    "targetCount": 15
+  },
+  {
+    "topicId": "biomes-and-structures",
+    "difficulty": "medium",
+    "clusterId": "biome-recognition",
+    "targetCount": 15
+  },
+  {
+    "topicId": "biomes-and-structures",
+    "difficulty": "medium",
+    "clusterId": "natural-generated-structures",
+    "targetCount": 15
+  },
+  {
+    "topicId": "biomes-and-structures",
+    "difficulty": "medium",
+    "clusterId": "loot-and-purpose",
+    "targetCount": 15
+  },
+  {
+    "topicId": "biomes-and-structures",
+    "difficulty": "hard",
+    "clusterId": "biome-recognition",
+    "targetCount": 15
+  },
+  {
+    "topicId": "biomes-and-structures",
+    "difficulty": "hard",
+    "clusterId": "natural-generated-structures",
+    "targetCount": 15
+  },
+  {
+    "topicId": "biomes-and-structures",
+    "difficulty": "hard",
+    "clusterId": "loot-and-purpose",
+    "targetCount": 15
+  },
+  {
+    "topicId": "nether-end-and-redstone",
+    "difficulty": "easy",
+    "clusterId": "nether-travel-materials",
+    "targetCount": 15
+  },
+  {
+    "topicId": "nether-end-and-redstone",
+    "difficulty": "easy",
+    "clusterId": "end-progression",
+    "targetCount": 15
+  },
+  {
+    "topicId": "nether-end-and-redstone",
+    "difficulty": "easy",
+    "clusterId": "simple-redstone",
+    "targetCount": 15
+  },
+  {
+    "topicId": "nether-end-and-redstone",
+    "difficulty": "medium",
+    "clusterId": "nether-travel-materials",
+    "targetCount": 15
+  },
+  {
+    "topicId": "nether-end-and-redstone",
+    "difficulty": "medium",
+    "clusterId": "end-progression",
+    "targetCount": 15
+  },
+  {
+    "topicId": "nether-end-and-redstone",
+    "difficulty": "medium",
+    "clusterId": "simple-redstone",
+    "targetCount": 15
+  },
+  {
+    "topicId": "nether-end-and-redstone",
+    "difficulty": "hard",
+    "clusterId": "nether-travel-materials",
+    "targetCount": 15
+  },
+  {
+    "topicId": "nether-end-and-redstone",
+    "difficulty": "hard",
+    "clusterId": "end-progression",
+    "targetCount": 15
+  },
+  {
+    "topicId": "nether-end-and-redstone",
+    "difficulty": "hard",
+    "clusterId": "simple-redstone",
+    "targetCount": 15
+  }
+]

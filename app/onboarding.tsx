@@ -2,6 +2,7 @@ import { Stack, router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { LoadingScreen } from '../src/components/ui/loading-screen';
 import { avatarPresets } from '../src/features/profile/avatar-presets';
 import { OnboardingView } from '../src/features/onboarding/onboarding-view';
 import { validateNickname } from '../src/features/profile/nickname';
@@ -9,10 +10,13 @@ import { ensureGuestSession } from '../src/features/profile/profile-service';
 import type { AppLocale } from '../src/lib/locale';
 import { appLocales } from '../src/lib/locale';
 import { useAppStore } from '../src/state/app-store';
+import { Redirect } from 'expo-router';
 
 export default function OnboardingRoute() {
   const { t } = useTranslation();
+  const hasHydrated = useAppStore((state) => state.hasHydrated);
   const currentLocale = useAppStore((state) => state.locale);
+  const profile = useAppStore((state) => state.profile);
   const completeOnboarding = useAppStore((state) => state.completeOnboarding);
   const [nickname, setNickname] = useState('');
   const [selectedAvatarId, setSelectedAvatarId] = useState<string>(avatarPresets[0].id);
@@ -20,11 +24,31 @@ export default function OnboardingRoute() {
   const [errorKey, setErrorKey] = useState<string | null>(null);
   const [serverError, setServerError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const translationOptions = useMemo(() => ({ lng: selectedLocale }), [selectedLocale]);
 
   const localeOptions = useMemo(
-    () => appLocales.map((locale) => ({ value: locale, label: t(`languageNames.${locale}`) })),
-    [t]
+    () =>
+      appLocales.map((locale) => ({
+        value: locale,
+        label: t(`languageNames.${locale}`, translationOptions),
+      })),
+    [t, translationOptions]
   );
+  const avatarLabels = useMemo(
+    () =>
+      Object.fromEntries(
+        avatarPresets.map((avatar) => [avatar.id, t(`avatars.${avatar.id}`, translationOptions)])
+      ) as Record<string, string>,
+    [t, translationOptions]
+  );
+
+  if (!hasHydrated) {
+    return <LoadingScreen />;
+  }
+
+  if (profile) {
+    return <Redirect href="/home" />;
+  }
 
   const handleContinue = async () => {
     const validation = validateNickname(nickname);
@@ -45,11 +69,11 @@ export default function OnboardingRoute() {
     };
 
     try {
-      completeOnboarding(profile);
       await ensureGuestSession(profile);
+      completeOnboarding(profile);
       router.replace('/home');
     } catch {
-      setServerError(t('onboarding.serverError'));
+      setServerError(t('onboarding.serverError', translationOptions));
     } finally {
       setIsSaving(false);
     }
@@ -59,8 +83,8 @@ export default function OnboardingRoute() {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <OnboardingView
-        errorMessage={errorKey ? t(errorKey) : serverError}
-        helperText={t('onboarding.nicknameHint')}
+        errorMessage={errorKey ? t(errorKey, translationOptions) : serverError}
+        helperText={t('onboarding.nicknameHint', translationOptions)}
         isSaving={isSaving}
         localeOptions={localeOptions}
         nickname={nickname}
@@ -68,22 +92,23 @@ export default function OnboardingRoute() {
         onSelectAvatar={setSelectedAvatarId}
         onSelectLocale={setSelectedLocale}
         onSubmit={() => void handleContinue()}
-        privacyNote={t('onboarding.privacyNote')}
+        privacyNote={t('onboarding.privacyNote', translationOptions)}
+        avatarLabels={avatarLabels}
         selectedAvatarId={selectedAvatarId}
         selectedLocale={selectedLocale}
         strings={{
-          avatarLabel: t('onboarding.avatarLabel'),
-          ctaLabel: t(isSaving ? 'common.loading' : 'onboarding.cta'),
-          eyebrow: t('onboarding.eyebrow'),
-          languageLabel: t('onboarding.languageLabel'),
-          nicknameLabel: t('onboarding.nicknameLabel'),
-          nicknamePlaceholder: t('onboarding.nicknamePlaceholder'),
-          previewEyebrow: t('onboarding.previewEyebrow'),
-          previewFallbackName: t('onboarding.previewFallbackName'),
-          previewLanguageLabel: t('onboarding.previewLanguageLabel'),
-          previewTitle: t('onboarding.previewTitle'),
-          subtitle: t('onboarding.subtitle'),
-          title: t('onboarding.title'),
+          avatarLabel: t('onboarding.avatarLabel', translationOptions),
+          ctaLabel: t(isSaving ? 'common.loading' : 'onboarding.cta', translationOptions),
+          eyebrow: t('onboarding.eyebrow', translationOptions),
+          languageLabel: t('onboarding.languageLabel', translationOptions),
+          nicknameLabel: t('onboarding.nicknameLabel', translationOptions),
+          nicknamePlaceholder: t('onboarding.nicknamePlaceholder', translationOptions),
+          previewEyebrow: t('onboarding.previewEyebrow', translationOptions),
+          previewFallbackName: t('onboarding.previewFallbackName', translationOptions),
+          previewLanguageLabel: t('onboarding.previewLanguageLabel', translationOptions),
+          previewTitle: t('onboarding.previewTitle', translationOptions),
+          subtitle: t('onboarding.subtitle', translationOptions),
+          title: t('onboarding.title', translationOptions),
         }}
       />
     </>

@@ -1,9 +1,17 @@
 {
   "cli": {
+    "appVersionSource": "remote",
     "version": ">= 12.0.0"
   },
   "build": {
     "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "classroom-dev": {
+      "android": {
+        "buildType": "apk"
+      },
       "developmentClient": true,
       "distribution": "internal"
     },

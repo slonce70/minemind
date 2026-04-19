@@ -13,43 +13,63 @@ export function WorldBackground({ children, style, variant, ...props }: WorldBac
 
   return (
     <View style={[styles.shell, { backgroundColor: art.backdrop }, style]} {...props}>
-      <View style={[styles.glow, { backgroundColor: art.glow }]} />
-      <View style={[styles.horizon, { backgroundColor: art.horizon }]} />
-      <View style={[styles.stripe, { backgroundColor: art.stripe }]} />
-      <View style={styles.content}>{children}</View>
+      <View style={[styles.layers, styles.passThrough]}>
+        <View style={[styles.mist, { backgroundColor: art.mist }]} />
+        <View style={[styles.terrainTop, { backgroundColor: art.terrainTop }]} />
+        <View style={[styles.terrainMid, { backgroundColor: art.terrainMid }]} />
+        <View style={[styles.terrainBottom, { backgroundColor: art.terrainBottom }]} />
+        <View style={[styles.detail, { backgroundColor: art.detail }]} />
+      </View>
+      <View style={styles.contentShell}>{children}</View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  content: {
-    gap: 0,
-  },
-  glow: {
-    borderRadius: 140,
-    height: 140,
-    position: 'absolute',
-    right: -20,
-    top: -30,
-    width: 140,
-  },
-  horizon: {
-    bottom: 0,
-    height: '48%',
-    left: 0,
-    position: 'absolute',
-    right: 0,
-  },
   shell: {
     borderRadius: radii.xl,
     overflow: 'hidden',
     position: 'relative',
   },
-  stripe: {
-    bottom: 20,
-    height: 18,
+  layers: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  passThrough: {
+    pointerEvents: 'none',
+  },
+  mist: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  terrainTop: {
+    bottom: '52%',
+    height: '30%',
     left: 0,
     position: 'absolute',
     right: 0,
+  },
+  terrainMid: {
+    bottom: '20%',
+    height: '34%',
+    left: 0,
+    position: 'absolute',
+    right: 0,
+  },
+  terrainBottom: {
+    bottom: 0,
+    height: '24%',
+    left: 0,
+    position: 'absolute',
+    right: 0,
+  },
+  detail: {
+    bottom: 22,
+    height: 10,
+    left: '8%',
+    position: 'absolute',
+    right: '8%',
+  },
+  contentShell: {
+    position: 'relative',
+    zIndex: 1,
   },
 });

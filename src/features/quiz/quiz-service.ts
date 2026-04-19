@@ -48,6 +48,7 @@ export function buildQuizResult(
     mode?: 'room' | 'solo';
     roomCode?: string;
     standings?: QuizResultSummary['standings'];
+    standingsBuilder?: (finalScore: number) => QuizResultSummary['standings'];
   }
 ): QuizResultSummary {
   let correctAnswers = 0;
@@ -84,6 +85,8 @@ export function buildQuizResult(
     };
   });
 
+  const finalScore = Math.round((baseScore + speedBonus) * multiplier);
+
   return {
     bestStreak,
     breakdown,
@@ -93,15 +96,16 @@ export function buildQuizResult(
     mode: options?.mode ?? 'solo',
     questionCount: questions.length,
     roomCode: options?.roomCode,
-    score: Math.round((baseScore + speedBonus) * multiplier),
+    score: finalScore,
     speedBonus,
     standings:
       options?.standings ??
+      options?.standingsBuilder?.(finalScore) ??
       [
         {
           isPlayer: true,
           name: 'You',
-          score: Math.round((baseScore + speedBonus) * multiplier),
+          score: finalScore,
         },
       ],
   };

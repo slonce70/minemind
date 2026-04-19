@@ -1,6 +1,7 @@
 import { getLocales } from 'expo-localization';
 
 export const appLocales = ['uk', 'en', 'ru'] as const;
+export const defaultAppLocale = 'uk' as const;
 
 export type AppLocale = (typeof appLocales)[number];
 
@@ -15,7 +16,7 @@ export function normalizeLocale(input?: string | null): AppLocale {
     return 'ru';
   }
 
-  return 'en';
+  return defaultAppLocale;
 }
 
 export function getDeviceLocale() {

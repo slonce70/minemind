@@ -13,6 +13,7 @@ type LocaleOption = {
 };
 
 type OnboardingViewProps = {
+  avatarLabels: Record<string, string>;
   errorMessage?: string | null;
   helperText: string;
   isSaving: boolean;
@@ -42,6 +43,7 @@ type OnboardingViewProps = {
 };
 
 export function OnboardingView({
+  avatarLabels,
   errorMessage,
   helperText,
   isSaving,
@@ -57,6 +59,7 @@ export function OnboardingView({
   strings,
 }: OnboardingViewProps) {
   const selectedAvatar = avatarLookup[selectedAvatarId];
+  const selectedAvatarLabel = avatarLabels[selectedAvatarId] ?? selectedAvatar.label;
   const selectedLocaleLabel =
     localeOptions.find((option) => option.value === selectedLocale)?.label ?? selectedLocale;
   const previewName = nickname.trim() || strings.previewFallbackName;
@@ -69,80 +72,83 @@ export function OnboardingView({
         <Text style={styles.subtitle}>{strings.subtitle}</Text>
       </View>
 
-      <Card highlight>
+      <Card style={styles.profilePlate}>
         <Text style={styles.previewEyebrow}>{strings.previewEyebrow}</Text>
         <View style={styles.previewRow}>
           <View style={[styles.previewBadge, { backgroundColor: selectedAvatar.color }]}>
-            <Text style={styles.previewInitial}>{selectedAvatar.label[0]}</Text>
+            <Text style={styles.previewInitial}>{selectedAvatarLabel[0]}</Text>
           </View>
           <View style={styles.previewText}>
             <Text style={styles.previewTitle}>{strings.previewTitle}</Text>
             <Text style={styles.previewName}>{previewName}</Text>
             <Text style={styles.previewMeta}>
-              {selectedAvatar.label} • {strings.previewLanguageLabel}: {selectedLocaleLabel}
+              {selectedAvatarLabel} • {strings.previewLanguageLabel}: {selectedLocaleLabel}
             </Text>
           </View>
         </View>
       </Card>
 
-      <Card>
-        <Text style={styles.sectionTitle}>{strings.nicknameLabel}</Text>
-        <TextInput
-          autoCapitalize="none"
-          autoCorrect={false}
-          maxLength={16}
-          onChangeText={onChangeNickname}
-          placeholder={strings.nicknamePlaceholder}
-          placeholderTextColor={colors.textMuted}
-          style={styles.input}
-          value={nickname}
-        />
-        <Text style={styles.helperText}>{helperText}</Text>
-        {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
-      </Card>
+      <View style={styles.setupSteps}>
+        <Card style={styles.stepCard} tone="panel">
+          <Text style={styles.sectionTitle}>{strings.nicknameLabel}</Text>
+          <TextInput
+            autoCapitalize="none"
+            autoCorrect={false}
+            maxLength={16}
+            onChangeText={onChangeNickname}
+            placeholder={strings.nicknamePlaceholder}
+            placeholderTextColor={colors.textMuted}
+            style={styles.input}
+            value={nickname}
+          />
+          <Text style={styles.helperText}>{helperText}</Text>
+          {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
+        </Card>
 
-      <Card>
-        <Text style={styles.sectionTitle}>{strings.languageLabel}</Text>
-        <View style={styles.choiceGrid}>
-          {localeOptions.map((option) => {
-            const isActive = selectedLocale === option.value;
+        <Card style={styles.stepCard} tone="panel">
+          <Text style={styles.sectionTitle}>{strings.languageLabel}</Text>
+          <View style={styles.optionGrid}>
+            {localeOptions.map((option) => {
+              const isActive = selectedLocale === option.value;
 
-            return (
-              <Pressable
-                key={option.value}
-                onPress={() => onSelectLocale(option.value)}
-                style={[styles.choiceChip, isActive && styles.choiceChipActive]}
-              >
-                <Text style={[styles.choiceChipText, isActive && styles.choiceChipTextActive]}>
-                  {option.label}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
-      </Card>
+              return (
+                <Pressable
+                  key={option.value}
+                  onPress={() => onSelectLocale(option.value)}
+                  style={[styles.optionBlock, isActive && styles.optionBlockActive]}
+                >
+                  <Text style={[styles.optionBlockText, isActive && styles.optionBlockTextActive]}>
+                    {option.label}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        </Card>
 
-      <Card>
-        <Text style={styles.sectionTitle}>{strings.avatarLabel}</Text>
-        <View style={styles.avatarGrid}>
-          {avatarPresets.map((avatar) => {
-            const isActive = selectedAvatarId === avatar.id;
+        <Card style={styles.stepCard} tone="panel">
+          <Text style={styles.sectionTitle}>{strings.avatarLabel}</Text>
+          <View style={styles.avatarGrid}>
+            {avatarPresets.map((avatar) => {
+              const isActive = selectedAvatarId === avatar.id;
+              const avatarLabel = avatarLabels[avatar.id] ?? avatar.label;
 
-            return (
-              <Pressable
-                key={avatar.id}
-                onPress={() => onSelectAvatar(avatar.id)}
-                style={[styles.avatarCard, isActive && styles.avatarCardActive]}
-              >
-                <View style={[styles.avatarBadge, { backgroundColor: avatar.color }]}>
-                  <Text style={styles.avatarInitial}>{avatar.label[0]}</Text>
-                </View>
-                <Text style={styles.avatarLabel}>{avatar.label}</Text>
-              </Pressable>
-            );
-          })}
-        </View>
-      </Card>
+              return (
+                <Pressable
+                  key={avatar.id}
+                  onPress={() => onSelectAvatar(avatar.id)}
+                  style={[styles.avatarCard, isActive && styles.avatarCardActive]}
+                >
+                  <View style={[styles.avatarBadge, { backgroundColor: avatar.color }]}>
+                    <Text style={styles.avatarInitial}>{avatarLabel[0]}</Text>
+                  </View>
+                  <Text style={styles.avatarLabel}>{avatarLabel}</Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        </Card>
+      </View>
 
       <PrimaryButton
         label={isSaving ? '...' : strings.ctaLabel}
@@ -175,6 +181,20 @@ const styles = StyleSheet.create({
     fontSize: typography.body,
     lineHeight: 24,
   },
+  profilePlate: {
+    backgroundColor: colors.surfaceAccent,
+    borderColor: colors.borderFocus,
+    borderWidth: 2,
+    minWidth: 0,
+    padding: spacing.lg,
+  },
+  setupSteps: {
+    gap: spacing.sm,
+  },
+  stepCard: {
+    borderLeftWidth: 4,
+    paddingTop: spacing.lg,
+  },
   previewEyebrow: {
     color: colors.highlight,
     fontSize: typography.overline,
@@ -183,8 +203,9 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   previewRow: {
-    alignItems: 'center',
+    alignItems: 'flex-start',
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: spacing.md,
   },
   previewBadge: {
@@ -202,20 +223,24 @@ const styles = StyleSheet.create({
   previewText: {
     flex: 1,
     gap: spacing.xs,
+    minWidth: 0,
   },
   previewTitle: {
     color: colors.textMuted,
+    flexShrink: 1,
     fontSize: typography.caption,
     fontWeight: '700',
     textTransform: 'uppercase',
   },
   previewName: {
     color: colors.textPrimary,
+    flexShrink: 1,
     fontSize: typography.h2,
     fontWeight: '800',
   },
   previewMeta: {
     color: colors.textSecondary,
+    flexShrink: 1,
     fontSize: typography.caption,
     lineHeight: 20,
   },
@@ -245,29 +270,36 @@ const styles = StyleSheet.create({
     fontSize: typography.caption,
     marginTop: spacing.sm,
   },
-  choiceGrid: {
+  optionGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.sm,
   },
-  choiceChip: {
+  optionBlock: {
     backgroundColor: colors.surfaceRaised,
-    borderColor: colors.border,
-    borderRadius: radii.full,
-    borderWidth: 1,
+    borderColor: colors.borderStrong,
+    borderRadius: radii.xl,
+    borderWidth: 2,
+    flexGrow: 1,
+    flexShrink: 1,
+    minWidth: 0,
     paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
+    paddingVertical: spacing.md,
   },
-  choiceChipActive: {
-    backgroundColor: colors.accentSoft,
-    borderColor: colors.accent,
+  optionBlockActive: {
+    backgroundColor: colors.surfaceAccent,
+    borderColor: colors.borderFocus,
   },
-  choiceChipText: {
+  optionBlockText: {
     color: colors.textSecondary,
     fontSize: typography.caption,
-    fontWeight: '700',
+    fontWeight: '800',
+    flexShrink: 1,
+    maxWidth: '100%',
+    minWidth: 0,
+    textAlign: 'center',
   },
-  choiceChipTextActive: {
+  optionBlockTextActive: {
     color: colors.textPrimary,
   },
   avatarGrid: {
@@ -285,7 +317,9 @@ const styles = StyleSheet.create({
     padding: spacing.md,
   },
   avatarCardActive: {
-    borderColor: colors.accent,
+    backgroundColor: colors.surfaceAccent,
+    borderColor: colors.borderFocus,
+    borderWidth: 2,
     transform: [{ translateY: -2 }],
   },
   avatarBadge: {

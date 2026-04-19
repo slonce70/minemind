@@ -56,3 +56,14 @@ export function buildRecoveredRoomResult(
     transport: 'supabase',
   });
 }
+
+export function normalizeClassroomResult(summary: QuizResultSummary) {
+  return normalizeMatchRecord({
+    authority: 'host-device',
+    input: summary,
+    isDemo: false,
+    modeOverride: 'classroom',
+    syncStatus: 'local-only',
+    transport: 'lan-host',
+  });
+}

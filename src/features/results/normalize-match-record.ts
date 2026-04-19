@@ -33,6 +33,7 @@ function deriveSyncStatus(input: NormalizeMatchRecordInput): MatchSyncStatus {
 
 export function normalizeMatchRecord(input: NormalizeMatchRecordInput): MatchRecord {
   const normalized = normalizeQuizResultSummary(input.input) ?? input.input;
+  const mode = input.modeOverride ?? normalized.mode;
 
   return {
     authority: input.authority,
@@ -43,12 +44,12 @@ export function normalizeMatchRecord(input: NormalizeMatchRecordInput): MatchRec
     difficulty: normalized.difficulty,
     id: buildMatchRecordId({
       completedAt: normalized.completedAt,
-      mode: normalized.mode,
+      mode,
       roomCode: normalized.roomCode,
       score: normalized.score,
     }),
     isDemo: input.isDemo,
-    mode: normalized.mode,
+    mode,
     participants: normalized.standings.map((entry) => ({
       isPlayer: entry.isPlayer,
       name: entry.name,

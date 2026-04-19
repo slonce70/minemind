@@ -7,6 +7,7 @@ import { difficultyConfig } from '../src/features/content/difficulty-config';
 import { HomeView } from '../src/features/home/home-view';
 import { minecraftCategory } from '../src/features/quiz/mock-data';
 import { getMatchSourceTranslationKey } from '../src/features/results/match-record-source';
+import { formatPlayerCount } from '../src/lib/count-format';
 import { isSupabaseConfigured } from '../src/lib/supabase';
 import { useAppStore } from '../src/state/app-store';
 
@@ -48,6 +49,7 @@ export default function HomeRoute() {
         localeLabel={t(`languageNames.${profile.locale}`)}
         modeLabel={isSupabaseConfigured ? t('home.onlineReady') : t('home.offlineMode')}
         nickname={profile.nickname}
+        onOpenClassroom={() => router.push('/classroom')}
         onOpenResults={() => router.push('/results')}
         onPlaySolo={() => router.push('/solo')}
         onResetProfile={() => {
@@ -70,9 +72,15 @@ export default function HomeRoute() {
         selectedDifficulty={selectedDifficulty}
         strings={{
           activeRoomCopy: activeRoom
-            ? t('home.activeRoomCopy', { code: activeRoom.roomCode, count: activeRoom.participants.length })
+            ? t('home.activeRoomCopy', {
+                code: activeRoom.roomCode,
+                countLabel: formatPlayerCount(profile.locale, activeRoom.participants.length),
+              })
             : t('home.roomCardCopy'),
           activeRoomTitle: t('home.activeRoom'),
+          classroomAction: t('home.classroomAction'),
+          classroomCardCopy: t('home.classroomCardCopy'),
+          classroomCardTitle: t('home.classroomCardTitle'),
           difficultyHelper: t('home.difficultyHint'),
           difficultySelectorLabel: t('home.difficultyLabel'),
           localeLabel: t('home.locale'),

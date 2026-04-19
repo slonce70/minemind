@@ -15,6 +15,7 @@ import { colors, radii, spacing, typography } from '../src/theme/tokens';
 export default function SoloRoute() {
   const { t } = useTranslation();
   const { mode } = useLocalSearchParams<{ mode?: string }>();
+  const hasHydrated = useAppStore((state) => state.hasHydrated);
   const locale = useAppStore((state) => state.locale);
   const round = useSoloRound({
     locale,
@@ -26,8 +27,16 @@ export default function SoloRoute() {
   });
   const difficultyLabel = t(difficultyConfig[round.difficulty].translationKey);
 
+  if (!hasHydrated) {
+    return <LoadingScreen />;
+  }
+
   if (round.isRoomMode && !round.isLoading && (!round.currentRoom || !round.currentRoomRound)) {
     return <Redirect href="/rooms" />;
+  }
+
+  if (round.isClassroomMode && !round.isLoading && !round.currentClassroomSession) {
+    return <Redirect href="/classroom" />;
   }
 
   if (round.isLoading) {
@@ -53,15 +62,19 @@ export default function SoloRoute() {
   }
 
   if (!round.question) {
-    return <Redirect href={round.isRoomMode ? '/rooms' : '/home'} />;
+    return <Redirect href={round.isRoomMode ? '/rooms' : round.isClassroomMode ? '/classroom' : '/home'} />;
   }
 
   return (
-    <Screen scrollable={false}>
+    <Screen>
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.header}>
         <Text style={styles.kicker}>
-          {round.isRoomMode ? t('solo.roomModeLabel') : t('solo.modeLabel')}
+          {round.isRoomMode
+            ? t('solo.roomModeLabel')
+            : round.isClassroomMode
+              ? t('solo.classroomModeLabel')
+              : t('solo.modeLabel')}
         </Text>
         <Text style={styles.difficultyLabel}>{difficultyLabel}</Text>
         <Text style={styles.progressTitle}>
@@ -125,7 +138,12 @@ export default function SoloRoute() {
         </Text>
       </Card>
 
-      {round.isRevealed ? null : (
+      {round.isRevealed ? (
+        <PrimaryButton
+          label={round.isSubmittingAnswer ? t('common.loading') : t('solo.next')}
+          onPress={() => void round.goNext()}
+        />
+      ) : (
         <PrimaryButton
           label={round.isSubmittingAnswer ? t('common.loading') : t('solo.skip')}
           onPress={() => round.handleAnswer(-1, 0)}

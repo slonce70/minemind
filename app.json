@@ -14,10 +14,18 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.alina.minemind"
+      "bundleIdentifier": "com.alina.minemind",
+      "infoPlist": {
+        "NSLocalNetworkUsageDescription": "MineMind uses your local network to host classroom matches on nearby devices."
+      }
     },
     "android": {
       "package": "com.alina.minemind",
+      "permissions": [
+        "INTERNET",
+        "ACCESS_WIFI_STATE",
+        "CHANGE_WIFI_MULTICAST_STATE"
+      ],
       "adaptiveIcon": {
         "backgroundColor": "#132017",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -36,6 +44,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "4e8dbd53-0ca8-4db9-af68-aef8abe6e3b0"
+      }
+    },
+    "owner": "slonce70"
   }
 }
