@@ -207,6 +207,7 @@ test('approved master bank ships ukrainian localization for every record', () =>
   const bank = JSON.parse(
     readFileSync(new URL('../content/minecraft/minecraft-master-bank.v2.json', import.meta.url), 'utf8')
   ) as Array<{
+    id: string;
     localized?: {
       en?: { explanation: string; options: string[]; prompt: string };
       uk?: { explanation: string; options: string[]; prompt: string };
@@ -228,6 +229,50 @@ test('approved master bank ships ukrainian localization for every record', () =>
         record.localized?.uk?.options.length === 4
     )
   );
+});
+
+test('ukrainian localization avoids placeholder phrasing and known broken terms', () => {
+  const bank = JSON.parse(
+    readFileSync(new URL('../content/minecraft/minecraft-master-bank.v2.json', import.meta.url), 'utf8')
+  ) as Array<{
+    id: string;
+    localized: {
+      uk: { explanation: string; options: string[]; prompt: string };
+    };
+  }>;
+
+  const bannedPatterns = [
+    /саме той варіант/,
+    / АРМ/,
+    /підліани/,
+    /Пожежні витрати/,
+    /океанського пам'ятника/,
+    /Кінцеве місто/,
+    /\bЗовнішні острови Енд\b/,
+    /Руїни океану/,
+    /Тропічна колода/,
+    /щитівки/,
+  ];
+
+  for (const record of bank) {
+    const prompt = record.localized.uk.prompt;
+    const explanation = record.localized.uk.explanation;
+    const options = record.localized.uk.options;
+    const combined = [prompt, explanation, ...options].join(' || ');
+
+    for (const pattern of bannedPatterns) {
+      assert.doesNotMatch(
+        combined,
+        pattern,
+        `${record.id} still matches banned pattern: ${pattern}`
+      );
+    }
+
+    assert.match(prompt, /^[A-ZА-ЯІЇЄҐ0-9]/, `${record.id} prompt should start with an uppercase character`);
+    for (const option of options) {
+      assert.match(option, /^[A-ZА-ЯІЇЄҐ0-9]/, `${record.id} option should start with an uppercase character`);
+    }
+  }
 });
 
 test('runtime question bank stays in sync with the fully localized master bank', () => {
