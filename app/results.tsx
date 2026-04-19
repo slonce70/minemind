@@ -30,9 +30,19 @@ export default function ResultsRoute() {
         difficultyLabel={t(difficultyConfig[latestMatch.difficulty ?? selectedDifficulty].translationKey)}
         matchRecord={latestMatch}
         onBackHome={() => router.replace('/home')}
-        onPlayAgain={() =>
-          router.replace(latestMatch.mode === 'room' ? '/rooms' : '/solo')
-        }
+        onPlayAgain={() => {
+          if (latestMatch.mode === 'room') {
+            router.replace('/rooms');
+            return;
+          }
+
+          if (latestMatch.mode === 'classroom') {
+            router.replace('/classroom');
+            return;
+          }
+
+          router.replace('/solo');
+        }}
         sourceLabel={t(getMatchSourceTranslationKey(latestMatch))}
         strings={{
           accuracyLabel: t('results.correct'),

@@ -19,6 +19,7 @@ type HomeViewProps = {
   localeLabel: string;
   modeLabel: string;
   nickname: string;
+  onOpenClassroom: () => void;
   onOpenResults: () => void;
   onPlaySolo: () => void;
   onResetProfile: () => void;
@@ -29,6 +30,9 @@ type HomeViewProps = {
   strings: {
     activeRoomTitle: string;
     activeRoomCopy: string;
+    classroomAction: string;
+    classroomCardCopy: string;
+    classroomCardTitle: string;
     difficultyHelper: string;
     difficultySelectorLabel: string;
     localeLabel: string;
@@ -58,6 +62,7 @@ export function HomeView({
   localeLabel,
   modeLabel,
   nickname,
+  onOpenClassroom,
   onOpenResults,
   onPlaySolo,
   onResetProfile,
@@ -69,7 +74,7 @@ export function HomeView({
 }: HomeViewProps) {
   return (
     <View style={styles.container}>
-      <Card highlight style={styles.heroCard}>
+      <Card highlight style={styles.heroCard} tone="scene">
         <WorldBackground style={styles.worldCard} variant="overworld">
           <View style={styles.heroHeader}>
             <Text style={styles.heroEyebrow}>{strings.modeSelectorCopy}</Text>
@@ -91,19 +96,34 @@ export function HomeView({
               selectedDifficulty={selectedDifficulty}
               strings={difficultyStrings}
             />
-            <PrimaryButton label={strings.primaryCardTitle} onPress={onPlaySolo} />
           </View>
         </WorldBackground>
       </Card>
 
-      <Card>
-        <Text style={styles.sectionTitle}>{strings.roomCardTitle}</Text>
-        <Text style={styles.copy}>{strings.roomCardCopy}</Text>
-        <SecondaryButton label={roomActionLabel} onPress={onRoomAction} />
-      </Card>
+      <View style={styles.routeBoard}>
+        <Card style={styles.primaryRoute} tone="scene">
+          <Text style={styles.routeEyebrow}>{strings.primaryCardTitle}</Text>
+          <Text style={styles.routeTitle}>{strings.primaryCardCopy}</Text>
+          <PrimaryButton label={strings.primaryCardTitle} onPress={onPlaySolo} />
+        </Card>
+
+        <View style={styles.supportRoutes}>
+          <Card style={styles.supportRoute} tone="panel">
+            <Text style={styles.sectionTitle}>{strings.roomCardTitle}</Text>
+            <Text style={styles.copy}>{strings.roomCardCopy}</Text>
+            <SecondaryButton label={roomActionLabel} onPress={onRoomAction} />
+          </Card>
+
+          <Card style={styles.supportRoute} tone="panel">
+            <Text style={styles.sectionTitle}>{strings.classroomCardTitle}</Text>
+            <Text style={styles.copy}>{strings.classroomCardCopy}</Text>
+            <SecondaryButton label={strings.classroomAction} onPress={onOpenClassroom} />
+          </Card>
+        </View>
+      </View>
 
       {hasActiveRoom ? (
-        <Card>
+        <Card tone="panel">
           <Text style={styles.sectionTitle}>{strings.activeRoomTitle}</Text>
           <Text style={styles.copy}>{strings.activeRoomCopy}</Text>
           <PrimaryButton label={roomActionLabel} onPress={onRoomAction} />
@@ -111,7 +131,7 @@ export function HomeView({
       ) : null}
 
       {latestMatch ? (
-        <Card>
+        <Card style={styles.expeditionLog} tone="utility">
           <Text style={styles.sectionTitle}>{strings.resultTitle}</Text>
           <View style={styles.resultGrid}>
             <StatPill label={strings.resultScoreLabel} value={String(latestMatch.score)} />
@@ -137,6 +157,21 @@ const styles = StyleSheet.create({
   container: {
     gap: spacing.sm,
   },
+  routeBoard: {
+    gap: spacing.sm,
+  },
+  primaryRoute: {
+    padding: spacing.lg,
+  },
+  supportRoutes: {
+    gap: spacing.sm,
+  },
+  supportRoute: {
+    flexBasis: 0,
+  },
+  expeditionLog: {
+    borderWidth: 2,
+  },
   heroControlZone: {
     backgroundColor: colors.surfaceRaised,
     borderColor: colors.border,
@@ -150,6 +185,18 @@ const styles = StyleSheet.create({
   },
   heroCard: {
     padding: 0,
+  },
+  routeEyebrow: {
+    color: colors.torch,
+    fontSize: typography.overline,
+    fontWeight: '800',
+    letterSpacing: 1.4,
+    textTransform: 'uppercase',
+  },
+  routeTitle: {
+    color: colors.textSecondary,
+    fontSize: typography.body,
+    lineHeight: 24,
   },
   heroEyebrow: {
     color: colors.highlight,

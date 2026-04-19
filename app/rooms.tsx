@@ -1,20 +1,28 @@
 import { Redirect, Stack, router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
+import { LoadingScreen } from '../src/components/ui/loading-screen';
 import { RoomLobbyView } from '../src/features/rooms/room-lobby-view';
 import { useRoomLobby } from '../src/features/rooms/use-room-lobby';
 import { Screen } from '../src/components/ui/screen';
 import { difficultyConfig } from '../src/features/content/difficulty-config';
+import { formatPlayerCount } from '../src/lib/count-format';
 import { isSupabaseConfigured } from '../src/lib/supabase';
 import { useAppStore } from '../src/state/app-store';
 
 export default function RoomsRoute() {
   const { t } = useTranslation();
+  const hasHydrated = useAppStore((state) => state.hasHydrated);
   const selectedDifficulty = useAppStore((state) => state.selectedDifficulty);
   const setSelectedDifficulty = useAppStore((state) => state.setSelectedDifficulty);
   const lobby = useRoomLobby({
     genericError: t('rooms.genericError'),
   });
+  const canResumeRound = Boolean(lobby.activeRoomRound && (!isSupabaseConfigured || lobby.activeRoom?.roundId));
+
+  if (!hasHydrated) {
+    return <LoadingScreen />;
+  }
 
   if (!lobby.profile) {
     return <Redirect href="/onboarding" />;
@@ -25,6 +33,7 @@ export default function RoomsRoute() {
       <Stack.Screen options={{ headerShown: false }} />
       <RoomLobbyView
         activeRoom={lobby.activeRoom}
+        canResumeRound={canResumeRound}
         difficultyStrings={{
           easy: t(difficultyConfig.easy.translationKey),
           medium: t(difficultyConfig.medium.translationKey),
@@ -53,14 +62,14 @@ export default function RoomsRoute() {
         }}
         onToggleReady={() => void lobby.handleToggleReady()}
         roomActionLabel={
-          lobby.activeRoom?.status === 'active' && lobby.activeRoomRound
+          canResumeRound
             ? t('rooms.resumeBattle')
             : t('rooms.startBattle')
         }
         strings={{
           activeRoom: t('rooms.activeRoom'),
           activeRoomCopy: t('rooms.activeRoomCopy', {
-            count: lobby.activeRoom?.participants.length ?? 0,
+            countLabel: formatPlayerCount(lobby.profile.locale, lobby.activeRoom?.participants.length ?? 0),
           }),
           addDemoPlayers: t('rooms.addDemoPlayers'),
           createRoom: t('rooms.createRoom'),

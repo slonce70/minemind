@@ -129,7 +129,15 @@ export function toggleLocalReady(room: ActiveRoom): ActiveRoom {
   return updatedRoom;
 }
 
+export function canStartOfflineRoom(room: ActiveRoom): boolean {
+  return room.status === 'active' || (room.participants.length > 1 && room.participants.every((participant) => participant.ready));
+}
+
 export function startOfflineRoom(room: ActiveRoom): ActiveRoom {
+  if (!canStartOfflineRoom(room)) {
+    return room;
+  }
+
   const updatedRoom = {
     ...room,
     status: 'active' as const,

@@ -18,16 +18,16 @@ export type ActiveRoom = {
   roundId?: string;
   roomCode: string;
   settings: RoomMatchSettings;
-  status: 'active' | 'lobby';
+  status: 'active' | 'lobby' | 'waiting' | 'finalizing' | 'finished';
   participants: RoomParticipant[];
 };
 
 export type ActiveRoomRound = {
   contentPackVersion?: string;
   difficulty?: ContentDifficulty;
-  mode: 'room';
+  mode: 'room' | 'classroom';
   questions: QuizQuestion[];
   roomCode: string;
   roundId?: string;
-  source: 'demo' | 'supabase';
+  source: 'classroom' | 'demo' | 'supabase';
 };

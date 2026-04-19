@@ -1,7 +1,7 @@
 export function deriveRoomLobbyState(room: {
   participants: Array<{ ready: boolean }>;
   roomCode: string;
-  status: 'active' | 'lobby';
+  status: 'active' | 'lobby' | 'waiting' | 'finalizing' | 'finished';
 }) {
   const readyCount = room.participants.filter((participant) => participant.ready).length;
 

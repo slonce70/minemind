@@ -62,11 +62,13 @@ export function ResultsView({
       <Card highlight style={styles.hero}>
         <WorldBackground
           style={styles.worldCard}
-          variant={badge.id === 'nether-pro-perfect' ? 'nether' : 'overworld'}
+          variant={badge.id === 'nether-pro-perfect' ? 'nether' : 'reward'}
         >
-          <View style={styles.heroHeader}>
-            <Text style={styles.kicker}>{strings.subtitle}</Text>
-            <Text style={styles.title}>{strings.title}</Text>
+          <View style={styles.trophyHeader}>
+            <View style={styles.heroHeader}>
+              <Text style={styles.kicker}>{strings.subtitle}</Text>
+              <Text style={styles.title}>{strings.title}</Text>
+            </View>
             <BadgeChip icon={badge.icon} label={badgeLabel} tone={badge.tone} />
           </View>
           <View style={styles.heroSummary}>
@@ -85,7 +87,7 @@ export function ResultsView({
         </WorldBackground>
       </Card>
 
-      <View style={styles.podiumRow}>
+      <View style={styles.podiumStage}>
         {matchRecord.participants.slice(0, 3).map((entry, index) => {
           const isWinner = index === 0;
 
@@ -103,7 +105,7 @@ export function ResultsView({
         })}
       </View>
 
-      <Card>
+      <Card style={styles.fieldNotes} tone="panel">
         <Text style={styles.sectionTitle}>{strings.insights}</Text>
         {matchRecord.breakdown.slice(0, 3).map((entry) => (
           <View key={entry.questionId} style={styles.insightRow}>
@@ -140,6 +142,9 @@ const styles = StyleSheet.create({
     fontSize: typography.display,
     fontWeight: '800',
   },
+  trophyHeader: {
+    gap: spacing.sm,
+  },
   heroStats: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -167,11 +172,14 @@ const styles = StyleSheet.create({
     fontSize: typography.caption,
     fontWeight: '700',
   },
-  podiumRow: {
+  podiumStage: {
     alignItems: 'flex-end',
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.sm,
+  },
+  fieldNotes: {
+    borderWidth: 2,
   },
   podiumCenter: {
     flexBasis: 220,

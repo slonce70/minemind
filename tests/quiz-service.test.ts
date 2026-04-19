@@ -94,6 +94,27 @@ test('buildQuizResult keeps player standings and speed bonus in the result model
   assert.equal(result.speedBonus, 90);
 });
 
+test('buildQuizResult can derive fallback standings from the final multiplied score', () => {
+  const result = buildQuizResult(sampleQuestions, {
+    q1: { selectedIndex: 1, timeLeft: 10 },
+    q2: { selectedIndex: 0, timeLeft: 5 },
+  }, {
+    difficulty: 'hard',
+    mode: 'room',
+    roomCode: 'ZX90QP',
+    standingsBuilder: (finalScore) => [
+      { isPlayer: true, name: 'Player', score: finalScore },
+      { isPlayer: false, name: 'BeeBot', score: finalScore + 42 },
+    ],
+  });
+
+  assert.equal(result.score, 435);
+  assert.deepEqual(result.standings, [
+    { isPlayer: true, name: 'Player', score: 435 },
+    { isPlayer: false, name: 'BeeBot', score: 477 },
+  ]);
+});
+
 test('getSoloQuestionSet returns localized questions for the requested difficulty', () => {
   const round = getSoloQuestionSet('uk', 8, 'medium', 'stable-seed');
 

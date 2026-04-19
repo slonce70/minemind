@@ -2,17 +2,19 @@ import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { PrimaryButton, SecondaryButton } from '../../components/ui/button';
 import { Card } from '../../components/ui/card';
+import { StatPill } from '../../components/ui/stat-pill';
 import { avatarLookup } from '../profile/avatar-presets';
 import type { ContentDifficulty } from '../content/types';
 import { DifficultySelector } from '../home/difficulty-selector';
 import { BadgeChip } from '../ui/badge-chip';
 import { WorldBackground } from '../ui/world-background';
 import type { ActiveRoom } from './types';
-import { colors, spacing, typography } from '../../theme/tokens';
+import { colors, radii, spacing, typography } from '../../theme/tokens';
 import { deriveRoomLobbyState } from './room-lobby-state';
 
 type RoomLobbyViewProps = {
   activeRoom?: ActiveRoom;
+  canResumeRound: boolean;
   difficultyStrings: Record<ContentDifficulty, string>;
   selectedDifficulty: ContentDifficulty;
   errorMessage?: string | null;
@@ -54,6 +56,7 @@ type RoomLobbyViewProps = {
 
 export function RoomLobbyView({
   activeRoom,
+  canResumeRound,
   difficultyStrings,
   selectedDifficulty,
   errorMessage,
@@ -72,26 +75,28 @@ export function RoomLobbyView({
   strings,
 }: RoomLobbyViewProps) {
   const lobbyState = activeRoom ? deriveRoomLobbyState(activeRoom) : null;
+  const isStartDisabled = isBusy || (!canResumeRound && !lobbyState?.canStart);
+  const displayedDifficulty = activeRoom?.status === 'active' ? activeRoom.settings.difficulty : selectedDifficulty;
 
   return (
     <View style={styles.container}>
-      <Card highlight>
+      <Card highlight tone="scene">
         <WorldBackground style={styles.worldCard} variant="cave">
-          <Text style={styles.eyebrow}>{strings.heroEyebrow}</Text>
-          <Text style={styles.title}>{strings.title}</Text>
-          <Text style={styles.subtitle}>{strings.subtitle}</Text>
-          <BadgeChip
-            icon="block"
-            label={difficultyStrings[activeRoom?.settings.difficulty ?? selectedDifficulty]}
-            tone="warning"
-          />
-          <Text style={styles.helper}>{strings.difficultyHint}</Text>
-          <DifficultySelector
-            label={strings.difficultyLabel}
-            onSelect={onSelectDifficulty}
-            selectedDifficulty={activeRoom?.settings.difficulty ?? selectedDifficulty}
-            strings={difficultyStrings}
-          />
+          <View style={styles.heroHeader}>
+            <Text style={styles.eyebrow}>{strings.heroEyebrow}</Text>
+            <Text style={styles.title}>{strings.title}</Text>
+            <Text style={styles.subtitle}>{strings.subtitle}</Text>
+            <BadgeChip label={difficultyStrings[displayedDifficulty]} tone="warning" />
+          </View>
+          <View style={styles.heroControlZone}>
+            <Text style={styles.helper}>{strings.difficultyHint}</Text>
+            <DifficultySelector
+              label={strings.difficultyLabel}
+              onSelect={onSelectDifficulty}
+              selectedDifficulty={displayedDifficulty}
+              strings={difficultyStrings}
+            />
+          </View>
         </WorldBackground>
       </Card>
 
@@ -99,10 +104,26 @@ export function RoomLobbyView({
 
       {activeRoom ? (
         <>
-          <Card>
+          <Card style={styles.commandSurface} tone="scene">
             <Text style={styles.sectionTitle}>{strings.activeRoom}</Text>
             <Text style={styles.roomCode}>{activeRoom.roomCode}</Text>
             <Text style={styles.copy}>{strings.activeRoomCopy}</Text>
+            <View style={styles.commandMetaGrid}>
+              <StatPill
+                label={strings.difficultyLabel}
+                value={difficultyStrings[displayedDifficulty]}
+              />
+              <StatPill
+                label={strings.lobbyTitle}
+                value={String(activeRoom.participants.length)}
+              />
+              {lobbyState ? (
+                <StatPill
+                  label={strings.ready}
+                  value={`${lobbyState.readyCount}/${lobbyState.participantCount}`}
+                />
+              ) : null}
+            </View>
             {lobbyState ? (
               <Text style={styles.readySummary}>
                 {strings.readySummary
@@ -110,9 +131,22 @@ export function RoomLobbyView({
                   .replace('{{participantCount}}', String(lobbyState.participantCount))}
               </Text>
             ) : null}
+            <View style={styles.commandActionRail}>
+              {isOfflineMode ? <PrimaryButton label={strings.addDemoPlayers} onPress={onAddDemoPlayers} /> : null}
+              <SecondaryButton
+                label={isBusy ? strings.loading : strings.toggleReady}
+                onPress={onToggleReady}
+              />
+              <PrimaryButton
+                disabled={isStartDisabled}
+                label={isBusy ? strings.loading : roomActionLabel}
+                onPress={onStartBattle}
+              />
+              <SecondaryButton label={strings.leaveRoom} onPress={onLeaveRoom} />
+            </View>
           </Card>
 
-          <Card>
+          <Card style={styles.rosterSurface} tone="panel">
             <Text style={styles.sectionTitle}>{strings.lobbyTitle}</Text>
             <View style={styles.participantList}>
               {activeRoom.participants.map((participant) => {
@@ -134,25 +168,21 @@ export function RoomLobbyView({
               })}
             </View>
           </Card>
-
-          {isOfflineMode ? <PrimaryButton label={strings.addDemoPlayers} onPress={onAddDemoPlayers} /> : null}
-          <SecondaryButton
-            label={isBusy ? strings.loading : strings.toggleReady}
-            onPress={onToggleReady}
-          />
-          <PrimaryButton
-            label={isBusy ? strings.loading : roomActionLabel}
-            onPress={onStartBattle}
-          />
-          <SecondaryButton label={strings.leaveRoom} onPress={onLeaveRoom} />
         </>
       ) : (
         <>
-          <PrimaryButton
-            label={isBusy ? strings.loading : strings.createRoom}
-            onPress={onCreateRoom}
-          />
-          <Card>
+          <Card style={styles.commandSurface} tone="scene">
+            <Text style={styles.sectionTitle}>{strings.createRoom}</Text>
+            <Text style={styles.copy}>{strings.subtitle}</Text>
+            <View style={styles.commandActionRail}>
+              <PrimaryButton
+                label={isBusy ? strings.loading : strings.createRoom}
+                onPress={onCreateRoom}
+              />
+            </View>
+          </Card>
+
+          <Card style={styles.rosterSurface} tone="panel">
             <Text style={styles.sectionTitle}>{strings.joinRoomTitle}</Text>
             <TextInput
               autoCapitalize="characters"
@@ -164,10 +194,12 @@ export function RoomLobbyView({
               style={styles.input}
               value={joinCode}
             />
-            <PrimaryButton
-              label={isBusy ? strings.loading : strings.joinRoomAction}
-              onPress={onJoinRoom}
-            />
+            <View style={styles.commandActionRail}>
+              <PrimaryButton
+                label={isBusy ? strings.loading : strings.joinRoomAction}
+                onPress={onJoinRoom}
+              />
+            </View>
           </Card>
         </>
       )}
@@ -177,6 +209,20 @@ export function RoomLobbyView({
 
 const styles = StyleSheet.create({
   container: {
+    gap: spacing.sm,
+  },
+  commandSurface: {
+    borderWidth: 2,
+  },
+  rosterSurface: {
+    borderWidth: 2,
+  },
+  commandMetaGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+  },
+  commandActionRail: {
     gap: spacing.sm,
   },
   eyebrow: {
@@ -204,6 +250,19 @@ const styles = StyleSheet.create({
   worldCard: {
     gap: spacing.sm,
     padding: spacing.lg,
+  },
+  heroHeader: {
+    gap: spacing.sm,
+    maxWidth: 720,
+  },
+  heroControlZone: {
+    backgroundColor: colors.surfaceInset,
+    borderColor: colors.borderStrong,
+    borderRadius: radii.xl,
+    borderWidth: 2,
+    gap: spacing.sm,
+    padding: spacing.lg,
+    width: '100%',
   },
   sectionTitle: {
     color: colors.textPrimary,
@@ -235,7 +294,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   participantRow: {
-    alignItems: 'center',
+    alignItems: 'flex-start',
     flexDirection: 'row',
     gap: spacing.sm,
   },
@@ -253,14 +312,17 @@ const styles = StyleSheet.create({
   },
   participantMeta: {
     flex: 1,
+    minWidth: 0,
   },
   participantName: {
     color: colors.textPrimary,
+    flexShrink: 1,
     fontSize: typography.body,
     fontWeight: '700',
   },
   participantState: {
     color: colors.textSecondary,
+    flexShrink: 1,
     fontSize: typography.caption,
   },
   input: {

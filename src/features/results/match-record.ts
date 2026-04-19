@@ -35,6 +35,7 @@ export type NormalizeMatchRecordInput = {
   authority: MatchAuthority;
   input: QuizResultSummary;
   isDemo: boolean;
+  modeOverride?: MatchMode;
   syncStatus?: MatchSyncStatus;
   transport: MatchTransport;
 };

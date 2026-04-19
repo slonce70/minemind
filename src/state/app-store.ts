@@ -10,11 +10,12 @@ import {
   startOfflineRoom,
   toggleLocalReady,
 } from '../features/rooms/demo-room-service';
+import type { ClassroomSession } from '../features/classroom/types';
 import { createDefaultRoomMatchSettings } from '../features/rooms/room-match-settings';
 import type { ActiveRoom, ActiveRoomRound } from '../features/rooms/types';
 import type { ContentDifficulty } from '../features/content/types';
 import type { MatchRecord } from '../features/results/match-record';
-import { getDeviceLocale, type AppLocale } from '../lib/locale';
+import { defaultAppLocale, type AppLocale } from '../lib/locale';
 import { migratePersistedAppState } from './app-store-migration';
 
 export type GuestProfile = {
@@ -35,7 +36,9 @@ type AppState = {
   activeRoom?: ActiveRoom;
   activeRoomRound?: ActiveRoomRound;
   addDemoPlayersToRoom: () => void;
+  classroomSession?: ClassroomSession;
   clearActiveRound: () => void;
+  clearClassroomSession: () => void;
   completeOnboarding: (profile: GuestProfile) => void;
   createRoom: () => void;
   hasHydrated: boolean;
@@ -47,6 +50,7 @@ type AppState = {
   recentMatches: MatchRecord[];
   resetProfile: () => void;
   saveMatchRecord: (record: MatchRecord) => void;
+  setClassroomSession: (session?: ClassroomSession) => void;
   setActiveRoom: (room?: ActiveRoom) => void;
   setActiveRoomRound: (round?: ActiveRoomRound) => void;
   setHasHydrated: (value: boolean) => void;
@@ -65,7 +69,9 @@ export const useAppStore = create<AppState>()(
         set((state) => ({
           activeRoom: state.activeRoom ? addDemoParticipants(state.activeRoom) : state.activeRoom,
         })),
+      classroomSession: undefined,
       clearActiveRound: () => set({ activeRoomRound: undefined }),
+      clearClassroomSession: () => set({ activeRoomRound: undefined, classroomSession: undefined }),
       completeOnboarding: (profile) =>
         set({
           locale: profile.locale,
@@ -94,7 +100,7 @@ export const useAppStore = create<AppState>()(
         })),
       lastMatchId: undefined,
       leaveRoom: () => set({ activeRoom: undefined, activeRoomRound: undefined }),
-      locale: getDeviceLocale(),
+      locale: defaultAppLocale,
       profile: undefined,
       recentMatches: [],
       selectedDifficulty: 'medium',
@@ -102,8 +108,9 @@ export const useAppStore = create<AppState>()(
         set({
           activeRoom: undefined,
           activeRoomRound: undefined,
+          classroomSession: undefined,
           lastMatchId: undefined,
-          locale: getDeviceLocale(),
+          locale: defaultAppLocale,
           profile: undefined,
           recentMatches: [],
           selectedDifficulty: 'medium',
@@ -145,6 +152,7 @@ export const useAppStore = create<AppState>()(
         set((state) => ({
           activeRoom: state.activeRoom ? toggleLocalReady(state.activeRoom) : state.activeRoom,
         })),
+      setClassroomSession: (classroomSession) => set({ classroomSession }),
     }),
     {
       migrate: migratePersistedAppState,
@@ -155,6 +163,7 @@ export const useAppStore = create<AppState>()(
       partialize: (state) => ({
         activeRoom: state.activeRoom,
         activeRoomRound: state.activeRoomRound,
+        classroomSession: state.classroomSession,
         lastMatchId: state.lastMatchId,
         locale: state.locale,
         profile: state.profile,
@@ -162,7 +171,7 @@ export const useAppStore = create<AppState>()(
         selectedDifficulty: state.selectedDifficulty,
       }),
       storage: createJSONStorage(() => AsyncStorage),
-      version: 4,
+      version: 5,
     }
   )
 );

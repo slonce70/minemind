@@ -6,6 +6,7 @@ import {
   createOfflineRoom,
   createRoomStandings,
   joinOfflineRoom,
+  startOfflineRoom,
   toggleLocalReady,
 } from '../src/features/rooms/demo-room-service';
 import type { GuestProfile } from '../src/state/app-store';
@@ -44,4 +45,14 @@ test('room flow adds demo players, toggles ready, and returns sorted standings',
   assert.equal(toggledRoom.participants[0].ready, false);
   assert.equal(standings[0].score >= standings[1].score, true);
   assert.equal(standings.some((entry) => entry.isPlayer), true);
+});
+
+test('startOfflineRoom keeps the room in lobby until every participant is ready', () => {
+  const seededRoom = createOfflineRoom(profile);
+  const fullRoom = addDemoParticipants(seededRoom, 4);
+  const notReadyRoom = toggleLocalReady(fullRoom);
+  const attemptedStart = startOfflineRoom(notReadyRoom);
+
+  assert.equal(notReadyRoom.participants[0].ready, false);
+  assert.equal(attemptedStart.status, 'lobby');
 });
