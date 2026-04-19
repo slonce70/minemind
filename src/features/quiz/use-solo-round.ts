@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { createRoomStandings } from '../rooms/demo-room-service';
 import {
@@ -10,9 +10,10 @@ import {
 import { useAppStore } from '../../state/app-store';
 import { isSupabaseConfigured } from '../../lib/supabase';
 import { difficultyConfig } from '../content/difficulty-config';
+import { normalizeMatchRecord } from '../results/normalize-match-record';
 import { startLiveSoloRound } from './live-quiz-service';
 import { buildQuizResult, getSoloQuestionSet } from './quiz-service';
-import type { QuizAnswerMap } from './types';
+import type { QuizAnswerMap, QuizResultSummary } from './types';
 
 export function useSoloRound(params: {
   locale: string;
@@ -22,7 +23,8 @@ export function useSoloRound(params: {
   };
   mode?: string;
 }) {
-  const saveLastResult = useAppStore((state) => state.saveLastResult);
+  const hasHydrated = useAppStore((state) => state.hasHydrated);
+  const saveMatchRecord = useAppStore((state) => state.saveMatchRecord);
   const activeRoom = useAppStore((state) => state.activeRoom);
   const activeRoomRound = useAppStore((state) => state.activeRoomRound);
   const leaveRoom = useAppStore((state) => state.leaveRoom);
@@ -57,11 +59,38 @@ export function useSoloRound(params: {
   const isRoomMode = params.mode === 'room';
   const currentRoom = isRoomMode ? activeRoom : undefined;
   const currentRoomRound = isRoomMode ? activeRoomRound : undefined;
+  const isRecoveringWaitingRoom = Boolean(
+    currentRoom &&
+    currentRoomRound?.source === 'supabase' &&
+    currentRoom.status === 'waiting' &&
+    !currentRoom.roundId
+  );
+
+  const persistResult = useCallback(
+    (result: QuizResultSummary) => {
+      const isLiveRoomResult = isRoomMode && currentRoomRound?.source === 'supabase';
+
+      saveMatchRecord(
+        normalizeMatchRecord({
+          authority: isLiveRoomResult ? 'server' : 'client',
+          input: result,
+          isDemo: isRoomMode && currentRoomRound?.source !== 'supabase',
+          syncStatus: isLiveRoomResult ? 'synced' : 'local-only',
+          transport: isLiveRoomResult ? 'supabase' : 'local',
+        })
+      );
+    },
+    [currentRoomRound?.source, isRoomMode, saveMatchRecord]
+  );
 
   useEffect(() => {
     let isMounted = true;
 
     const loadQuestions = async () => {
+      if (!hasHydrated) {
+        return;
+      }
+
       if (isRoomMode) {
         setIsLoading(true);
         setLoadError(null);
@@ -73,7 +102,7 @@ export function useSoloRound(params: {
           return;
         }
 
-        if (activeRoomRound) {
+        if (activeRoomRound && !isRecoveringWaitingRoom) {
           if (isMounted) {
             setQuestions(activeRoomRound.questions);
             setIsLoading(false);
@@ -81,7 +110,12 @@ export function useSoloRound(params: {
           return;
         }
 
-        if (!isSupabaseConfigured || currentRoom.status !== 'active') {
+        if (
+          !isSupabaseConfigured ||
+          !currentRoom.roundId ||
+          currentRoom.status === 'lobby' ||
+          currentRoom.status === 'finished'
+        ) {
           if (isMounted) {
             setIsLoading(false);
           }
@@ -147,6 +181,8 @@ export function useSoloRound(params: {
   }, [
     activeRoomRound,
     currentRoom,
+    isRecoveringWaitingRoom,
+    hasHydrated,
     isRoomMode,
     params.locale,
     params.messages.loadError,
@@ -156,30 +192,83 @@ export function useSoloRound(params: {
   ]);
 
   useEffect(() => {
+    if (!hasHydrated) {
+      return;
+    }
+
     if (!currentRoom) {
       return;
     }
 
-    if (currentRoom.status !== 'active' && currentRoomRound) {
+    if (
+      currentRoomRound?.source === 'supabase' &&
+      (currentRoom.status === 'lobby' || currentRoom.status === 'finished')
+    ) {
       clearActiveRound();
     }
-  }, [clearActiveRound, currentRoom, currentRoomRound]);
+  }, [clearActiveRound, currentRoom, currentRoomRound, hasHydrated]);
+
+  useEffect(() => {
+    if (!hasHydrated || !isRecoveringWaitingRoom || !currentRoomRound) {
+      return;
+    }
+
+    let isMounted = true;
+
+    setIsAwaitingResults(true);
+    setResultsPending(false);
+    setLoadError(null);
+
+    void finalizeLiveRoomRound(currentRoomRound)
+      .then((finalized) => {
+        if (!isMounted) {
+          return;
+        }
+
+        if (finalized.status === 'pending') {
+          setResultsPending(true);
+          return;
+        }
+
+        persistResult(finalized.result);
+        leaveRoom();
+        router.replace('/results');
+      })
+      .catch((error) => {
+        if (!isMounted) {
+          return;
+        }
+
+        setResultsPending(true);
+        setLoadError(error instanceof Error ? error.message : params.messages.loadError);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [
+    currentRoomRound,
+    hasHydrated,
+    isRecoveringWaitingRoom,
+    leaveRoom,
+    params.messages.loadError,
+    persistResult,
+  ]);
 
   const finishRound = async () => {
-    const provisionalResult = buildQuizResult(questions, answerMap);
     const result = buildQuizResult(questions, answerMap, {
       difficulty: roundDifficulty,
       mode: isRoomMode ? 'room' : 'solo',
       roomCode: currentRoom?.roomCode,
-      standings: isRoomMode
-        ? createRoomStandings(currentRoom!, provisionalResult.score)
+      standingsBuilder: (finalScore) => (isRoomMode
+        ? createRoomStandings(currentRoom!, finalScore)
         : [
             {
               isPlayer: true,
               name: 'You',
-              score: provisionalResult.score,
+              score: finalScore,
             },
-          ],
+          ]),
     });
 
     if (isRoomMode && currentRoomRound?.source === 'supabase') {
@@ -195,14 +284,14 @@ export function useSoloRound(params: {
           return;
         }
 
-        saveLastResult(finalized.result);
+        persistResult(finalized.result);
       } catch (error) {
         setResultsPending(true);
         setLoadError(error instanceof Error ? error.message : params.messages.loadError);
         return;
       }
     } else {
-      saveLastResult(result);
+      persistResult(result);
     }
 
     if (currentRoom) {

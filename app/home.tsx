@@ -1,22 +1,32 @@
 import { Redirect, Stack, router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
+import { LoadingScreen } from '../src/components/ui/loading-screen';
 import { Screen } from '../src/components/ui/screen';
 import { difficultyConfig } from '../src/features/content/difficulty-config';
 import { HomeView } from '../src/features/home/home-view';
-import { leaderboardPreview, minecraftCategory } from '../src/features/quiz/mock-data';
+import { minecraftCategory } from '../src/features/quiz/mock-data';
+import { getMatchSourceTranslationKey } from '../src/features/results/match-record-source';
 import { isSupabaseConfigured } from '../src/lib/supabase';
 import { useAppStore } from '../src/state/app-store';
 
 export default function HomeRoute() {
   const { t } = useTranslation();
+  const hasHydrated = useAppStore((state) => state.hasHydrated);
   const profile = useAppStore((state) => state.profile);
-  const lastResult = useAppStore((state) => state.lastResult);
+  const recentMatches = useAppStore((state) => state.recentMatches);
+  const lastMatchId = useAppStore((state) => state.lastMatchId);
   const activeRoom = useAppStore((state) => state.activeRoom);
   const activeRoomRound = useAppStore((state) => state.activeRoomRound);
   const resetProfile = useAppStore((state) => state.resetProfile);
   const selectedDifficulty = useAppStore((state) => state.selectedDifficulty);
   const setSelectedDifficulty = useAppStore((state) => state.setSelectedDifficulty);
+  const canResumeRoom = Boolean(activeRoomRound && (!isSupabaseConfigured || activeRoom?.roundId));
+  const latestMatch = recentMatches.find((entry) => entry.id === lastMatchId) ?? recentMatches[0];
+
+  if (!hasHydrated) {
+    return <LoadingScreen />;
+  }
 
   if (!profile) {
     return <Redirect href="/onboarding" />;
@@ -33,8 +43,8 @@ export default function HomeRoute() {
           hard: t(difficultyConfig.hard.translationKey),
         }}
         hasActiveRoom={Boolean(activeRoom)}
-        lastResult={lastResult}
-        leaderboardEntries={leaderboardPreview}
+        latestMatch={latestMatch}
+        latestMatchSourceLabel={latestMatch ? t(getMatchSourceTranslationKey(latestMatch)) : undefined}
         localeLabel={t(`languageNames.${profile.locale}`)}
         modeLabel={isSupabaseConfigured ? t('home.onlineReady') : t('home.offlineMode')}
         nickname={profile.nickname}
@@ -45,12 +55,18 @@ export default function HomeRoute() {
           router.replace('/onboarding');
         }}
         onRoomAction={() =>
-          activeRoom && activeRoom.status === 'active' && activeRoomRound
+          canResumeRoom
             ? router.push('/solo?mode=room')
             : router.push('/rooms')
         }
         onSelectDifficulty={setSelectedDifficulty}
-        roomActionLabel={activeRoom ? t('home.resumeRoom') : t('home.privateRooms')}
+        roomActionLabel={
+          activeRoom
+            ? canResumeRoom
+              ? t('home.resumeRoom')
+              : t('home.openLobby')
+            : t('home.privateRooms')
+        }
         selectedDifficulty={selectedDifficulty}
         strings={{
           activeRoomCopy: activeRoom
@@ -59,14 +75,17 @@ export default function HomeRoute() {
           activeRoomTitle: t('home.activeRoom'),
           difficultyHelper: t('home.difficultyHint'),
           difficultySelectorLabel: t('home.difficultyLabel'),
-          leaderboardTitle: t('home.leaderboardPreview'),
           localeLabel: t('home.locale'),
           modeLabel: t('home.mode'),
           modeSelectorCopy: t('home.ready'),
-          primaryCardCopy: `${t('home.categoryCopy')} ${minecraftCategory.roundQuestionCount} ${t('home.questions').toLowerCase()}, ${minecraftCategory.roundDurationLabel}.`,
+          primaryCardCopy: t('home.categoryCopy', {
+            questionCount: minecraftCategory.roundQuestionCount,
+            roundLength: t('home.roundLengthValue'),
+          }),
           primaryCardTitle: t('home.playSolo'),
           resultCorrectLabel: t('results.correct'),
           resultScoreLabel: t('results.score'),
+          resultSourceLabel: t('results.source'),
           resultStreakLabel: t('results.bestStreak'),
           resultTitle: t('home.lastResult'),
           resultsAction: t('home.viewResults'),
