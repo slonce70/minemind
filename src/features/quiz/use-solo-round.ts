@@ -230,7 +230,9 @@ export function useSoloRound(params: {
           return;
         }
 
-        persistResult(finalized.result);
+        if (finalized.record) {
+          saveMatchRecord(finalized.record);
+        }
         leaveRoom();
         router.replace('/results');
       })
@@ -253,6 +255,7 @@ export function useSoloRound(params: {
     leaveRoom,
     params.messages.loadError,
     persistResult,
+    saveMatchRecord,
   ]);
 
   const finishRound = async () => {
@@ -284,7 +287,9 @@ export function useSoloRound(params: {
           return;
         }
 
-        persistResult(finalized.result);
+        if (finalized.record) {
+          saveMatchRecord(finalized.record);
+        }
       } catch (error) {
         setResultsPending(true);
         setLoadError(error instanceof Error ? error.message : params.messages.loadError);

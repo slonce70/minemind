@@ -1,4 +1,5 @@
 import { serviceClient } from './client.ts';
+import { assertRoomStatus } from './validation.ts';
 
 export async function getRoomByCode(roomCode: string) {
   const { data: room, error } = await serviceClient
@@ -9,6 +10,10 @@ export async function getRoomByCode(roomCode: string) {
 
   if (error) {
     throw error;
+  }
+
+  if (room?.status) {
+    assertRoomStatus(room.status);
   }
 
   return room;

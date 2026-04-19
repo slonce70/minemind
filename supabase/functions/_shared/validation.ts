@@ -1,4 +1,6 @@
 const blockedFragments = ['admin', 'owner', 'mod', 'fuck', 'shit', 'sex', 'сука', 'хуй'];
+export const roomStatusValues = ['lobby', 'active', 'waiting', 'finalizing', 'finished'] as const;
+export type RoomStatus = (typeof roomStatusValues)[number];
 
 export function normalizeNickname(rawValue: string) {
   return rawValue.trim().replace(/\s+/g, ' ');
@@ -23,4 +25,12 @@ export function assertSafeNickname(rawValue: string) {
   }
 
   return candidate;
+}
+
+export function assertRoomStatus(value: string): RoomStatus {
+  if (!roomStatusValues.includes(value as RoomStatus)) {
+    throw new Error('Invalid room status.');
+  }
+
+  return value as RoomStatus;
 }
