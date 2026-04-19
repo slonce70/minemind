@@ -9,6 +9,8 @@ export const quizQuestionSchema = z.object({
 });
 
 const difficultySchema = z.enum(['easy', 'medium', 'hard']);
+export const roomStatusSchema = z.enum(['lobby', 'active', 'waiting', 'finalizing', 'finished']);
+const legacyRoomStatusSchema = z.enum(['active', 'completed', 'finalizing', 'finished', 'lobby', 'waiting']);
 
 export const roomParticipantSchema = z.object({
   avatar_id: z.string(),
@@ -25,7 +27,7 @@ const legacyRoomResponseSchema = z.object({
   id: z.string(),
   question_count: z.literal(8).nullable().optional(),
   room_code: z.string(),
-  status: z.enum(['active', 'completed', 'finalizing', 'finished', 'lobby', 'waiting']),
+  status: legacyRoomStatusSchema,
   topic_mode: z.enum(['mixed']).nullable().optional(),
 });
 
@@ -34,7 +36,7 @@ export const roomStateSchema = z.object({
   difficulty: difficultySchema,
   participants: z.array(roomParticipantSchema),
   roomCode: z.string().min(1),
-  status: z.enum(['lobby', 'active', 'finalizing', 'finished']),
+  status: roomStatusSchema,
 });
 
 export const soloRoundSchema = z.object({
@@ -49,6 +51,24 @@ const legacyStartSoloRoundResponseSchema = z.object({
     title: z.string(),
   }),
   questions: z.array(quizQuestionSchema),
+});
+
+export const startRoomRoundResponseSchema = z.object({
+  participants: z.array(roomParticipantSchema),
+  questions: z.array(quizQuestionSchema).min(1),
+  room: legacyRoomResponseSchema.extend({
+    status: roomStatusSchema,
+  }),
+  roomCode: z.string().min(1),
+  round: z.object({
+    content_pack_version: z.string().nullable().optional(),
+    difficulty: difficultySchema.optional(),
+    ends_at: z.string().nullable().optional(),
+    id: z.string(),
+    question_ids: z.array(z.string()).min(1),
+    room_id: z.string(),
+    started_at: z.string(),
+  }),
 });
 
 export function parseStartSoloRoundResponse(input: unknown) {
@@ -91,21 +111,7 @@ export function parseCreateOrJoinRoomResponse(input: unknown) {
 
 export function parseStartRoomRoundResponse(input: unknown) {
   try {
-    return z.object({
-      participants: z.array(roomParticipantSchema),
-      questions: z.array(quizQuestionSchema),
-      room: legacyRoomResponseSchema,
-      roomCode: z.string(),
-      round: z.object({
-        content_pack_version: z.string().nullable().optional(),
-        difficulty: difficultySchema.optional(),
-        ends_at: z.string().nullable().optional(),
-        id: z.string(),
-        question_ids: z.array(z.string()),
-        room_id: z.string(),
-        started_at: z.string(),
-      }),
-    }).parse(input);
+    return startRoomRoundResponseSchema.parse(input);
   } catch {
     throw new Error('Invalid room round response');
   }

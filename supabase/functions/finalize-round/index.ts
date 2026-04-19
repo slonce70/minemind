@@ -9,6 +9,28 @@ type FinalizeRoundPayload = {
   roundId: string;
 };
 
+function buildRankingSnapshot(
+  ranking: Array<{
+    best_streak: number;
+    correct_count: number;
+    nickname: string;
+    player_id: string;
+    rank: number;
+    round_id: string;
+    score: number;
+  }>
+) {
+  return ranking.map((entry) => ({
+    best_streak: entry.best_streak,
+    correct_count: entry.correct_count,
+    nickname: entry.nickname,
+    player_id: entry.player_id,
+    rank: entry.rank,
+    round_id: entry.round_id,
+    score: entry.score,
+  }));
+}
+
 async function buildNicknameMap(playerIds: string[]) {
   if (playerIds.length === 0) {
     return new Map<string, string>();
@@ -155,6 +177,11 @@ serve(async (request) => {
     const nicknameMap = await buildNicknameMap(ranking.map((entry) => entry.player_id));
 
     if ((submissions ?? []).length < expectedSubmissions) {
+      await serviceClient
+        .from('rooms')
+        .update({ status: 'finalizing' })
+        .eq('id', round.room_id);
+
       return jsonResponse({
         rankings: ranking.map((entry) => ({
           ...entry,
@@ -184,7 +211,16 @@ serve(async (request) => {
 
     await serviceClient
       .from('round_sessions')
-      .update({ ends_at: new Date().toISOString() })
+      .update({
+        ends_at: new Date().toISOString(),
+        finalized_at: new Date().toISOString(),
+        result_snapshot: buildRankingSnapshot(
+          ranking.map((entry) => ({
+            ...entry,
+            nickname: nicknameMap.get(entry.player_id) ?? 'Player',
+          }))
+        ),
+      })
       .eq('id', round.id);
     await serviceClient
       .from('rooms')
