@@ -1,16 +1,25 @@
 import { Redirect, Stack, router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
+import { LoadingScreen } from '../src/components/ui/loading-screen';
 import { difficultyConfig } from '../src/features/content/difficulty-config';
+import { getMatchSourceTranslationKey } from '../src/features/results/match-record-source';
 import { ResultsView } from '../src/features/results/results-view';
 import { useAppStore } from '../src/state/app-store';
 
 export default function ResultsRoute() {
   const { t } = useTranslation();
-  const result = useAppStore((state) => state.lastResult);
+  const hasHydrated = useAppStore((state) => state.hasHydrated);
+  const recentMatches = useAppStore((state) => state.recentMatches);
+  const lastMatchId = useAppStore((state) => state.lastMatchId);
   const selectedDifficulty = useAppStore((state) => state.selectedDifficulty);
+  const latestMatch = recentMatches.find((entry) => entry.id === lastMatchId) ?? recentMatches[0];
 
-  if (!result) {
+  if (!hasHydrated) {
+    return <LoadingScreen />;
+  }
+
+  if (!latestMatch) {
     return <Redirect href="/home" />;
   }
 
@@ -18,10 +27,13 @@ export default function ResultsRoute() {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <ResultsView
-        difficultyLabel={t(difficultyConfig[result.difficulty ?? selectedDifficulty].translationKey)}
+        difficultyLabel={t(difficultyConfig[latestMatch.difficulty ?? selectedDifficulty].translationKey)}
+        matchRecord={latestMatch}
         onBackHome={() => router.replace('/home')}
-        onPlayAgain={() => router.replace(result.mode === 'room' ? '/rooms' : '/solo')}
-        result={result}
+        onPlayAgain={() =>
+          router.replace(latestMatch.mode === 'room' ? '/rooms' : '/solo')
+        }
+        sourceLabel={t(getMatchSourceTranslationKey(latestMatch))}
         strings={{
           accuracyLabel: t('results.correct'),
           backHome: t('results.backHome'),
@@ -38,6 +50,7 @@ export default function ResultsRoute() {
           playAgain: t('results.playAgain'),
           roomCodePrefix: t('results.roomCodeLabel'),
           score: t('results.score'),
+          source: t('results.source'),
           subtitle: t('results.subtitle'),
           title: t('results.title'),
           you: t('results.you'),
