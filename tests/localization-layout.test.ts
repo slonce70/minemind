@@ -77,6 +77,7 @@ test('ukrainian and russian resources keep visible UX copy fully localized', () 
   assert.equal(uk.content.difficulty.hard, 'Майстер Незеру');
   assert.equal(uk.results.badges.netherPerfect, 'Майстер Незеру без помилок');
   assert.equal(uk.rooms.hostBadge, '(ведучий)');
+  assert.equal(uk.rooms.addDemoPlayers, 'Додати ботів');
   assert.equal(
     uk.rooms.offlineCopy,
     'Навіть без живої синхронізації тут уже можна пройти весь сценарій кімнати й перевірити, як працює матч із друзями.'
@@ -94,6 +95,7 @@ test('ukrainian and russian resources keep visible UX copy fully localized', () 
   assert.equal(ru.content.difficulty.hard, 'Мастер Незера');
   assert.equal(ru.results.badges.netherPerfect, 'Мастер Незера без ошибок');
   assert.equal(ru.rooms.hostBadge, '(ведущий)');
+  assert.equal(ru.rooms.addDemoPlayers, 'Добавить ботов');
   assert.equal(ru.rooms.readDocs, 'Логика уже описана в документации.');
   assert.equal(ru.rooms.items.codes, 'Коды комнат и приглашения друзей без списка друзей.');
   assert.equal(
