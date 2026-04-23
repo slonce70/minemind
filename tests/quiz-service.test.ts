@@ -156,10 +156,25 @@ test('question illustration manifest exposes generated biome assets by question 
     id: 'creeper-explodes',
     imageUri: '/question-illustrations/creeper-explodes.png',
   });
+  assert.deepEqual(getQuestionIllustration('igloo-in-snowy-biomes'), {
+    alt: 'Voxel igloo in a snowy biome with ice and spruce trees',
+    id: 'igloo-in-snowy-biomes',
+    imageUri: '/question-illustrations/igloo-in-snowy-biomes.png',
+  });
+  assert.deepEqual(getQuestionIllustration('ocean-monument-guardians'), {
+    alt: 'Voxel ocean monument underwater with guardians nearby',
+    id: 'ocean-monument-guardians',
+    imageUri: '/question-illustrations/ocean-monument-guardians.png',
+  });
   assert.deepEqual(getQuestionIllustration('obsidian-from-water-and-lava'), {
     alt: 'Voxel water and lava meeting to form obsidian',
     id: 'obsidian-from-water-and-lava',
     imageUri: '/question-illustrations/obsidian-from-water-and-lava.png',
+  });
+  assert.deepEqual(getQuestionIllustration('skeleton-uses-bow'), {
+    alt: 'Voxel skeleton aiming a bow in a dark field',
+    id: 'skeleton-uses-bow',
+    imageUri: '/question-illustrations/skeleton-uses-bow.png',
   });
   assert.deepEqual(getQuestionIllustration('village-has-villagers'), {
     alt: 'Voxel village with houses, crop fields, and safe settlement clues',
@@ -173,20 +188,29 @@ test('localized question rounds carry illustration metadata when available', () 
   const round = getSoloQuestionSet('uk', 120, 'easy', 'illustration-coverage');
   const creeper = round.find((question) => question.id === 'creeper-explodes');
   const obsidian = round.find((question) => question.id === 'obsidian-from-water-and-lava');
+  const skeleton = round.find((question) => question.id === 'skeleton-uses-bow');
   const village = round.find((question) => question.id === 'village-has-villagers');
 
   assert.equal(creeper?.illustration?.imageUri, '/question-illustrations/creeper-explodes.png');
   assert.equal(creeper?.illustration?.alt, 'Блоковий кріпер у високій траві перед вибухом');
   assert.equal(obsidian?.illustration?.imageUri, '/question-illustrations/obsidian-from-water-and-lava.png');
   assert.equal(obsidian?.illustration?.alt, 'Блокова вода торкається лави й утворює обсидіан');
+  assert.equal(skeleton?.illustration?.imageUri, '/question-illustrations/skeleton-uses-bow.png');
+  assert.equal(skeleton?.illustration?.alt, 'Блоковий скелет цілиться з лука в темному полі');
   assert.equal(village?.illustration?.imageUri, '/question-illustrations/village-has-villagers.png');
   assert.equal(village?.illustration?.alt, 'Блокове село з будинками, грядками й ознаками безпечного поселення');
 });
 
-test('medium rounds expose active illustration metadata for farming questions', () => {
+test('medium rounds expose active illustration metadata for farming and structure questions', () => {
   const round = getSoloQuestionSet('uk', 120, 'medium', 'illustration-coverage-medium');
   const bee = round.find((question) => question.id === 'bee-pollinates-crops');
+  const igloo = round.find((question) => question.id === 'igloo-in-snowy-biomes');
+  const monument = round.find((question) => question.id === 'ocean-monument-guardians');
 
   assert.equal(bee?.illustration?.imageUri, '/question-illustrations/bee-pollinates-crops.png');
   assert.equal(bee?.illustration?.alt, 'Блокова бджола запилює пшеницю й квіти біля ферми');
+  assert.equal(igloo?.illustration?.imageUri, '/question-illustrations/igloo-in-snowy-biomes.png');
+  assert.equal(igloo?.illustration?.alt, 'Блокове іглу в сніжному біомі з кригою та ялинами');
+  assert.equal(monument?.illustration?.imageUri, '/question-illustrations/ocean-monument-guardians.png');
+  assert.equal(monument?.illustration?.alt, 'Блоковий океанічний монумент під водою з вартовими поруч');
 });

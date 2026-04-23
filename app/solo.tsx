@@ -17,7 +17,10 @@ const questionIllustrationSourceById: Record<string, ImageSourcePropType> = {
   'bamboo-jungle-has-bamboo': require('../assets/question-illustrations/bamboo-jungle-has-bamboo.png'),
   'bee-pollinates-crops': require('../assets/question-illustrations/bee-pollinates-crops.png'),
   'creeper-explodes': require('../assets/question-illustrations/creeper-explodes.png'),
+  'igloo-in-snowy-biomes': require('../assets/question-illustrations/igloo-in-snowy-biomes.png'),
+  'ocean-monument-guardians': require('../assets/question-illustrations/ocean-monument-guardians.png'),
   'obsidian-from-water-and-lava': require('../assets/question-illustrations/obsidian-from-water-and-lava.png'),
+  'skeleton-uses-bow': require('../assets/question-illustrations/skeleton-uses-bow.png'),
   'village-has-villagers': require('../assets/question-illustrations/village-has-villagers.png'),
 };
 
