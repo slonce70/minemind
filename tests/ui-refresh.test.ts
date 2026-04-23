@@ -108,6 +108,20 @@ function styleHasProperty(sourceFile: ts.SourceFile, styleName: string, property
   );
 }
 
+function getStylePropertyText(sourceFile: ts.SourceFile, styleName: string, propertyName: string) {
+  const styleLiteral = getStyleLiteral(sourceFile, styleName);
+
+  for (const property of styleLiteral.properties) {
+    if (!ts.isPropertyAssignment(property) || getPropertyName(property.name) !== propertyName) {
+      continue;
+    }
+
+    return property.initializer.getText(sourceFile);
+  }
+
+  assert.fail(`Could not find styles.${styleName}.${propertyName}`);
+}
+
 function styleHasSpread(sourceFile: ts.SourceFile, styleName: string, expressionText: string) {
   const styleLiteral = getStyleLiteral(sourceFile, styleName);
 
@@ -341,6 +355,13 @@ test('world background uses layered terrain instead of horizon stripes', () => {
   assert.ok(styleHasProperty(worldBackgroundModule.sourceFile, 'terrainBottom', 'bottom'));
   assert.ok(styleHasProperty(worldBackgroundModule.sourceFile, 'detail', 'bottom'));
   assert.ok(styleHasProperty(worldBackgroundModule.sourceFile, 'contentShell', 'zIndex'));
+  assert.equal(getStylePropertyText(worldBackgroundModule.sourceFile, 'terrainTop', 'bottom'), "'12%'");
+  assert.equal(getStylePropertyText(worldBackgroundModule.sourceFile, 'terrainTop', 'height'), "'10%'");
+  assert.equal(getStylePropertyText(worldBackgroundModule.sourceFile, 'terrainMid', 'bottom'), "'5%'");
+  assert.equal(getStylePropertyText(worldBackgroundModule.sourceFile, 'terrainMid', 'height'), "'8%'");
+  assert.equal(getStylePropertyText(worldBackgroundModule.sourceFile, 'terrainBottom', 'height'), "'8%'");
+  assert.equal(getStylePropertyText(worldBackgroundModule.sourceFile, 'detail', 'bottom'), '2');
+  assert.equal(getStylePropertyText(worldBackgroundModule.sourceFile, 'detail', 'height'), '4');
 
   assert.ok(functionStylePropUses(worldBackgroundModule.sourceFile, 'WorldBackground', 'layers'));
   assert.ok(functionStylePropUses(worldBackgroundModule.sourceFile, 'WorldBackground', 'mist'));
@@ -382,7 +403,8 @@ test('home view promotes solo as the dominant expedition route and groups suppor
   assert.ok(styleHasProperty(homeViewModule.sourceFile, 'routeBoard', 'gap'));
   assert.ok(styleHasProperty(homeViewModule.sourceFile, 'primaryRoute', 'padding'));
   assert.ok(styleHasProperty(homeViewModule.sourceFile, 'supportRoutes', 'gap'));
-  assert.ok(styleHasProperty(homeViewModule.sourceFile, 'supportRoute', 'flexBasis'));
+  assert.equal(styleHasProperty(homeViewModule.sourceFile, 'supportRoute', 'flexBasis'), false);
+  assert.ok(styleHasProperty(homeViewModule.sourceFile, 'supportRoute', 'minWidth'));
   assert.ok(styleHasProperty(homeViewModule.sourceFile, 'expeditionLog', 'borderWidth'));
 
   assert.ok(functionStylePropUses(homeViewModule.sourceFile, 'HomeView', 'routeBoard'));
