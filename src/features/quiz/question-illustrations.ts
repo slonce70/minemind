@@ -63,6 +63,22 @@ const questionIllustrations: Record<string, IllustrationRecord> = {
     },
     imageUri: '/question-illustrations/obsidian-from-water-and-lava.png',
   },
+  'redstone-dust-carries-power': {
+    alt: {
+      en: 'Voxel redstone dust line powering a lamp on stone blocks',
+      ru: 'Блочная линия редстоун-пыли питает лампу на камне',
+      uk: 'Блокова лінія редстоун-пилу живить лампу на камені',
+    },
+    imageUri: '/question-illustrations/redstone-dust-carries-power.png',
+  },
+  'sand-falls-with-gravity': {
+    alt: {
+      en: 'Voxel sand block falling from a ledge because of gravity',
+      ru: 'Блочный песок падает с уступа из-за гравитации',
+      uk: 'Блоковий пісок падає з уступу через гравітацію',
+    },
+    imageUri: '/question-illustrations/sand-falls-with-gravity.png',
+  },
   'skeleton-uses-bow': {
     alt: {
       en: 'Voxel skeleton aiming a bow in a dark field',
@@ -70,6 +86,14 @@ const questionIllustrations: Record<string, IllustrationRecord> = {
       uk: 'Блоковий скелет цілиться з лука в темному полі',
     },
     imageUri: '/question-illustrations/skeleton-uses-bow.png',
+  },
+  'torch-lights-caves': {
+    alt: {
+      en: 'Voxel torch casting warm light inside a dark stone cave',
+      ru: 'Блочный факел бросает теплый свет в темной каменной пещере',
+      uk: 'Блоковий факел кидає тепле світло в темній камʼяній печері',
+    },
+    imageUri: '/question-illustrations/torch-lights-caves.png',
   },
   'village-has-villagers': {
     alt: {
