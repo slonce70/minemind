@@ -15,6 +15,9 @@ import { colors, radii, spacing, typography } from '../src/theme/tokens';
 const questionIllustrationSourceById: Record<string, ImageSourcePropType> = {
   'badlands-has-terracotta': require('../assets/question-illustrations/badlands-has-terracotta.png'),
   'bamboo-jungle-has-bamboo': require('../assets/question-illustrations/bamboo-jungle-has-bamboo.png'),
+  'bee-pollinates-crops': require('../assets/question-illustrations/bee-pollinates-crops.png'),
+  'creeper-explodes': require('../assets/question-illustrations/creeper-explodes.png'),
+  'obsidian-from-water-and-lava': require('../assets/question-illustrations/obsidian-from-water-and-lava.png'),
   'village-has-villagers': require('../assets/question-illustrations/village-has-villagers.png'),
 };
 
