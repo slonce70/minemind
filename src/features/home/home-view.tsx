@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   supportRoute: {
-    flexBasis: 0,
+    minWidth: 0,
   },
   expeditionLog: {
     borderWidth: 2,
