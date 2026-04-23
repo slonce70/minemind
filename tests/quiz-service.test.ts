@@ -1,7 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { buildQuizResult, getSoloQuestionSet } from '../src/features/quiz/quiz-service';
+import {
+  buildQuizResult,
+  getQuestionIllustration,
+  getSoloQuestionSet,
+} from '../src/features/quiz/quiz-service';
 import type { QuizAnswerMap, QuizQuestion } from '../src/features/quiz/types';
 
 const sampleQuestions: QuizQuestion[] = [
@@ -129,4 +133,31 @@ test('getSoloQuestionSet stays deterministic for the same seed', () => {
   const second = getSoloQuestionSet('en', 8, 'medium', 'stable-seed').map((question) => question.id);
 
   assert.deepEqual(first, second);
+});
+
+test('question illustration manifest exposes generated biome assets by question id', () => {
+  assert.deepEqual(getQuestionIllustration('badlands-has-terracotta'), {
+    alt: 'Voxel badlands biome with layered terracotta hills',
+    id: 'badlands-has-terracotta',
+    imageUri: '/question-illustrations/badlands-has-terracotta.png',
+  });
+  assert.deepEqual(getQuestionIllustration('bamboo-jungle-has-bamboo'), {
+    alt: 'Voxel bamboo jungle filled with tall bamboo stalks',
+    id: 'bamboo-jungle-has-bamboo',
+    imageUri: '/question-illustrations/bamboo-jungle-has-bamboo.png',
+  });
+  assert.deepEqual(getQuestionIllustration('village-has-villagers'), {
+    alt: 'Voxel village with houses, crop fields, and safe settlement clues',
+    id: 'village-has-villagers',
+    imageUri: '/question-illustrations/village-has-villagers.png',
+  });
+  assert.equal(getQuestionIllustration('unknown-question'), undefined);
+});
+
+test('localized question rounds carry illustration metadata when available', () => {
+  const round = getSoloQuestionSet('uk', 120, 'easy', 'illustration-coverage');
+  const village = round.find((question) => question.id === 'village-has-villagers');
+
+  assert.equal(village?.illustration?.imageUri, '/question-illustrations/village-has-villagers.png');
+  assert.equal(village?.illustration?.alt, 'Блокове село з будинками, грядками й ознаками безпечного поселення');
 });
