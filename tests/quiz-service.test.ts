@@ -146,6 +146,21 @@ test('question illustration manifest exposes generated biome assets by question 
     id: 'bamboo-jungle-has-bamboo',
     imageUri: '/question-illustrations/bamboo-jungle-has-bamboo.png',
   });
+  assert.deepEqual(getQuestionIllustration('bee-pollinates-crops'), {
+    alt: 'Voxel bee pollinating wheat and flowers beside a farm',
+    id: 'bee-pollinates-crops',
+    imageUri: '/question-illustrations/bee-pollinates-crops.png',
+  });
+  assert.deepEqual(getQuestionIllustration('creeper-explodes'), {
+    alt: 'Voxel creeper in tall grass just before exploding',
+    id: 'creeper-explodes',
+    imageUri: '/question-illustrations/creeper-explodes.png',
+  });
+  assert.deepEqual(getQuestionIllustration('obsidian-from-water-and-lava'), {
+    alt: 'Voxel water and lava meeting to form obsidian',
+    id: 'obsidian-from-water-and-lava',
+    imageUri: '/question-illustrations/obsidian-from-water-and-lava.png',
+  });
   assert.deepEqual(getQuestionIllustration('village-has-villagers'), {
     alt: 'Voxel village with houses, crop fields, and safe settlement clues',
     id: 'village-has-villagers',
@@ -156,8 +171,22 @@ test('question illustration manifest exposes generated biome assets by question 
 
 test('localized question rounds carry illustration metadata when available', () => {
   const round = getSoloQuestionSet('uk', 120, 'easy', 'illustration-coverage');
+  const creeper = round.find((question) => question.id === 'creeper-explodes');
+  const obsidian = round.find((question) => question.id === 'obsidian-from-water-and-lava');
   const village = round.find((question) => question.id === 'village-has-villagers');
 
+  assert.equal(creeper?.illustration?.imageUri, '/question-illustrations/creeper-explodes.png');
+  assert.equal(creeper?.illustration?.alt, 'Блоковий кріпер у високій траві перед вибухом');
+  assert.equal(obsidian?.illustration?.imageUri, '/question-illustrations/obsidian-from-water-and-lava.png');
+  assert.equal(obsidian?.illustration?.alt, 'Блокова вода торкається лави й утворює обсидіан');
   assert.equal(village?.illustration?.imageUri, '/question-illustrations/village-has-villagers.png');
   assert.equal(village?.illustration?.alt, 'Блокове село з будинками, грядками й ознаками безпечного поселення');
+});
+
+test('medium rounds expose active illustration metadata for farming questions', () => {
+  const round = getSoloQuestionSet('uk', 120, 'medium', 'illustration-coverage-medium');
+  const bee = round.find((question) => question.id === 'bee-pollinates-crops');
+
+  assert.equal(bee?.illustration?.imageUri, '/question-illustrations/bee-pollinates-crops.png');
+  assert.equal(bee?.illustration?.alt, 'Блокова бджола запилює пшеницю й квіти біля ферми');
 });

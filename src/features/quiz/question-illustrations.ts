@@ -23,6 +23,30 @@ const questionIllustrations: Record<string, IllustrationRecord> = {
     },
     imageUri: '/question-illustrations/bamboo-jungle-has-bamboo.png',
   },
+  'bee-pollinates-crops': {
+    alt: {
+      en: 'Voxel bee pollinating wheat and flowers beside a farm',
+      ru: 'Блочная пчела опыляет пшеницу и цветы возле фермы',
+      uk: 'Блокова бджола запилює пшеницю й квіти біля ферми',
+    },
+    imageUri: '/question-illustrations/bee-pollinates-crops.png',
+  },
+  'creeper-explodes': {
+    alt: {
+      en: 'Voxel creeper in tall grass just before exploding',
+      ru: 'Блочный крипер у высокой травы перед взрывом',
+      uk: 'Блоковий кріпер у високій траві перед вибухом',
+    },
+    imageUri: '/question-illustrations/creeper-explodes.png',
+  },
+  'obsidian-from-water-and-lava': {
+    alt: {
+      en: 'Voxel water and lava meeting to form obsidian',
+      ru: 'Блочная вода встречается с лавой и образует обсидиан',
+      uk: 'Блокова вода торкається лави й утворює обсидіан',
+    },
+    imageUri: '/question-illustrations/obsidian-from-water-and-lava.png',
+  },
   'village-has-villagers': {
     alt: {
       en: 'Voxel village with houses, crop fields, and safe settlement clues',
