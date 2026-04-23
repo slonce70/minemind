@@ -20,7 +20,10 @@ const questionIllustrationSourceById: Record<string, ImageSourcePropType> = {
   'igloo-in-snowy-biomes': require('../assets/question-illustrations/igloo-in-snowy-biomes.png'),
   'ocean-monument-guardians': require('../assets/question-illustrations/ocean-monument-guardians.png'),
   'obsidian-from-water-and-lava': require('../assets/question-illustrations/obsidian-from-water-and-lava.png'),
+  'redstone-dust-carries-power': require('../assets/question-illustrations/redstone-dust-carries-power.png'),
+  'sand-falls-with-gravity': require('../assets/question-illustrations/sand-falls-with-gravity.png'),
   'skeleton-uses-bow': require('../assets/question-illustrations/skeleton-uses-bow.png'),
+  'torch-lights-caves': require('../assets/question-illustrations/torch-lights-caves.png'),
   'village-has-villagers': require('../assets/question-illustrations/village-has-villagers.png'),
 };
 
