@@ -39,6 +39,22 @@ const questionIllustrations: Record<string, IllustrationRecord> = {
     },
     imageUri: '/question-illustrations/creeper-explodes.png',
   },
+  'igloo-in-snowy-biomes': {
+    alt: {
+      en: 'Voxel igloo in a snowy biome with ice and spruce trees',
+      ru: 'Блочное иглу в снежном биоме со льдом и елями',
+      uk: 'Блокове іглу в сніжному біомі з кригою та ялинами',
+    },
+    imageUri: '/question-illustrations/igloo-in-snowy-biomes.png',
+  },
+  'ocean-monument-guardians': {
+    alt: {
+      en: 'Voxel ocean monument underwater with guardians nearby',
+      ru: 'Блочный океанический монумент под водой со стражами рядом',
+      uk: 'Блоковий океанічний монумент під водою з вартовими поруч',
+    },
+    imageUri: '/question-illustrations/ocean-monument-guardians.png',
+  },
   'obsidian-from-water-and-lava': {
     alt: {
       en: 'Voxel water and lava meeting to form obsidian',
@@ -46,6 +62,14 @@ const questionIllustrations: Record<string, IllustrationRecord> = {
       uk: 'Блокова вода торкається лави й утворює обсидіан',
     },
     imageUri: '/question-illustrations/obsidian-from-water-and-lava.png',
+  },
+  'skeleton-uses-bow': {
+    alt: {
+      en: 'Voxel skeleton aiming a bow in a dark field',
+      ru: 'Блочный скелет целится из лука в темном поле',
+      uk: 'Блоковий скелет цілиться з лука в темному полі',
+    },
+    imageUri: '/question-illustrations/skeleton-uses-bow.png',
   },
   'village-has-villagers': {
     alt: {
