@@ -11,10 +11,17 @@ export type LocalizedQuestionDefinition = {
   prompt: LocalizedString;
 };
 
+export type QuizQuestionIllustration = {
+  alt: string;
+  id: string;
+  imageUri: string;
+};
+
 export type QuizQuestion = {
   correctIndex?: number;
   explanation?: string;
   id: string;
+  illustration?: QuizQuestionIllustration;
   options: string[];
   prompt: string;
 };

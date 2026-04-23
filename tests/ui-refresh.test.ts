@@ -471,6 +471,20 @@ test('room lobby and results screens use wrapped slabs for controls and rewards'
   assert.ok(jsxNodeContainsIdentifier(resultsActionStackNode, 'onBackHome'));
 });
 
+test('solo screen supports optional question illustrations without replacing the quiz flow', () => {
+  const soloSource = readFileSync(new URL('../app/solo.tsx', import.meta.url), 'utf8');
+
+  assert.match(soloSource, /Image/);
+  assert.match(soloSource, /questionIllustrationSourceById/);
+  assert.match(soloSource, /round\.question\.illustration/);
+  assert.match(soloSource, /styles\.questionIllustrationFrame/);
+  assert.match(soloSource, /styles\.questionIllustration/);
+  assert.match(soloSource, /aspectRatio:\s*16\s*\/\s*9/);
+  assert.match(soloSource, /resizeMode="cover"/);
+  assert.match(soloSource, /styles\.factCard/);
+  assert.match(soloSource, /t\('solo\.next'\)/);
+});
+
 test('results stage the trophy summary, podium, and field notes as distinct reward surfaces', () => {
   const resultsModule = parseTsxModule('../src/features/results/results-view.tsx');
 

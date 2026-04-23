@@ -1,5 +1,5 @@
 import { Redirect, Stack, useLocalSearchParams } from 'expo-router';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, type ImageSourcePropType, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { PrimaryButton } from '../src/components/ui/button';
@@ -11,6 +11,12 @@ import { createQuizFeedbackState } from '../src/features/quiz/quiz-feedback';
 import { useSoloRound } from '../src/features/quiz/use-solo-round';
 import { useAppStore } from '../src/state/app-store';
 import { colors, radii, spacing, typography } from '../src/theme/tokens';
+
+const questionIllustrationSourceById: Record<string, ImageSourcePropType> = {
+  'badlands-has-terracotta': require('../assets/question-illustrations/badlands-has-terracotta.png'),
+  'bamboo-jungle-has-bamboo': require('../assets/question-illustrations/bamboo-jungle-has-bamboo.png'),
+  'village-has-villagers': require('../assets/question-illustrations/village-has-villagers.png'),
+};
 
 export default function SoloRoute() {
   const { t } = useTranslation();
@@ -95,6 +101,21 @@ export default function SoloRoute() {
             {round.timeLeft}s / {round.timeLimit}s
           </Text>
         </View>
+        {round.question.illustration ? (
+          <View style={styles.questionIllustrationFrame}>
+            <Image
+              accessibilityIgnoresInvertColors
+              accessibilityLabel={round.question.illustration.alt}
+              resizeMode="cover"
+              source={
+                questionIllustrationSourceById[round.question.illustration.id] ?? {
+                  uri: round.question.illustration.imageUri,
+                }
+              }
+              style={styles.questionIllustration}
+            />
+          </View>
+        ) : null}
         <Text style={styles.questionPrompt}>{round.question.prompt}</Text>
       </Card>
 
@@ -189,6 +210,19 @@ const styles = StyleSheet.create({
   },
   questionCard: {
     marginBottom: spacing.md,
+  },
+  questionIllustrationFrame: {
+    aspectRatio: 16 / 9,
+    backgroundColor: colors.surfaceInset,
+    borderColor: colors.border,
+    borderRadius: radii.lg,
+    borderWidth: 1,
+    marginBottom: spacing.md,
+    overflow: 'hidden',
+  },
+  questionIllustration: {
+    height: '100%',
+    width: '100%',
   },
   timerRow: {
     flexDirection: 'row',
