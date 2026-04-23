@@ -151,7 +151,7 @@ export const resources = {
       rooms: {
         activeRoom: 'Поточна кімната',
         activeRoomCopy: 'У кімнаті зараз {{countLabel}}. Можна позначити готовність і почати матч.',
-        addDemoPlayers: 'Додати демо-гравців',
+        addDemoPlayers: 'Додати ботів',
         backToSolo: 'Повернутися до соло',
         createRoom: 'Створити кімнату',
         difficultyHint: 'Ведучий обирає складність для наступного матчу в кімнаті. Її бачать усі до старту.',
@@ -353,7 +353,7 @@ export const resources = {
       rooms: {
         activeRoom: 'Current room',
         activeRoomCopy: 'There are {{countLabel}} in the room. Set everyone ready and launch the match.',
-        addDemoPlayers: 'Add demo players',
+        addDemoPlayers: 'Add bots',
         backToSolo: 'Back to solo',
         createRoom: 'Create room',
         difficultyHint: 'The host chooses the next room difficulty here, and everyone sees it before the match starts.',
@@ -555,7 +555,7 @@ export const resources = {
       rooms: {
         activeRoom: 'Текущая комната',
         activeRoomCopy: 'Сейчас в комнате {{countLabel}}. Можно отметить готовность и начать матч.',
-        addDemoPlayers: 'Добавить демо-игроков',
+        addDemoPlayers: 'Добавить ботов',
         backToSolo: 'Вернуться в соло',
         createRoom: 'Создать комнату',
         difficultyHint: 'Хост выбирает сложность следующего матча здесь, и все видят ее до старта.',
