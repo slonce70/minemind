@@ -12,12 +12,16 @@ test('room state schema accepts difficulty and content pack metadata', () => {
     contentPackVersion: 'minecraft-v1',
     difficulty: 'medium',
     participants: [],
+    questionCount: 8,
     roomCode: 'AB12CD',
     status: 'lobby',
+    topicMode: 'mixed',
   });
 
   assert.equal(parsed.difficulty, 'medium');
   assert.equal(parsed.contentPackVersion, 'minecraft-v1');
+  assert.equal(parsed.questionCount, 8);
+  assert.equal(parsed.topicMode, 'mixed');
 });
 
 test('solo round schema accepts future difficulty and content pack metadata', () => {

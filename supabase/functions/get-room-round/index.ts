@@ -33,7 +33,7 @@ serve(async (request) => {
 
     const { data: round, error: roundError } = await serviceClient
       .from('round_sessions')
-      .select('id, room_id, question_ids, started_at, ends_at')
+      .select('id, room_id, question_ids, started_at, ends_at, content_pack_version, difficulty, question_count, topic_mode')
       .eq('id', room.current_round_id)
       .single();
 

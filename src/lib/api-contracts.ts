@@ -35,8 +35,10 @@ export const roomStateSchema = z.object({
   contentPackVersion: z.string().min(1),
   difficulty: difficultySchema,
   participants: z.array(roomParticipantSchema),
+  questionCount: z.literal(8),
   roomCode: z.string().min(1),
   status: roomStatusSchema,
+  topicMode: z.literal('mixed'),
 });
 
 export const soloRoundSchema = z.object({
@@ -60,15 +62,17 @@ export const startRoomRoundResponseSchema = z.object({
     status: roomStatusSchema,
   }),
   roomCode: z.string().min(1),
-  round: z.object({
-    content_pack_version: z.string().nullable().optional(),
-    difficulty: difficultySchema.optional(),
-    ends_at: z.string().nullable().optional(),
-    id: z.string(),
-    question_ids: z.array(z.string()).min(1),
-    room_id: z.string(),
-    started_at: z.string(),
-  }),
+    round: z.object({
+      content_pack_version: z.string().nullable().optional(),
+      difficulty: difficultySchema.optional(),
+      ends_at: z.string().nullable().optional(),
+      id: z.string(),
+      question_count: z.literal(8).nullable().optional(),
+      question_ids: z.array(z.string()).min(1),
+      room_id: z.string(),
+      started_at: z.string(),
+      topic_mode: z.enum(['mixed']).nullable().optional(),
+    }),
 });
 
 export function parseStartSoloRoundResponse(input: unknown) {

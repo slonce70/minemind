@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import test from 'node:test';
 
 import {
@@ -15,8 +16,10 @@ test('room status schema accepts canonical waiting and finished states', () => {
     contentPackVersion: 'minecraft-v1',
     difficulty: 'hard',
     participants: [],
+    questionCount: 8,
     roomCode: 'AB12CD',
     status: 'waiting',
+    topicMode: 'mixed',
   });
 
   assert.equal(parsedRoom.status, 'waiting');
@@ -57,4 +60,58 @@ test('start room round response carries canonical room status and round manifest
   assert.equal(parsed.round.id, 'round-1');
   assert.equal(parsed.round.content_pack_version, 'minecraft-v1');
   assert.equal(parsed.questions.length, 8);
+});
+
+test('create and join room contracts require canonical room settings metadata', () => {
+  const parsed = roomStateSchema.parse({
+    contentPackVersion: 'minecraft-v1',
+    difficulty: 'hard',
+    participants: [],
+    questionCount: 8,
+    roomCode: 'AB12CD',
+    status: 'lobby',
+    topicMode: 'mixed',
+  });
+
+  assert.equal(parsed.difficulty, 'hard');
+  assert.equal(parsed.questionCount, 8);
+  assert.equal(parsed.topicMode, 'mixed');
+});
+
+test('room shared selector includes settings columns for live rooms', () => {
+  const roomHelperSource = readFileSync(
+    new URL('../supabase/functions/_shared/rooms.ts', import.meta.url),
+    'utf8'
+  );
+  const createRoomSource = readFileSync(
+    new URL('../supabase/functions/create-room/index.ts', import.meta.url),
+    'utf8'
+  );
+
+  assert.match(roomHelperSource, /content_pack_version/);
+  assert.match(roomHelperSource, /difficulty/);
+  assert.match(roomHelperSource, /question_count/);
+  assert.match(roomHelperSource, /topic_mode/);
+  assert.match(createRoomSource, /parseRoomMatchSettingsPayload/);
+});
+
+test('live round functions select question packs by canonical difficulty', () => {
+  const questionsSource = readFileSync(
+    new URL('../supabase/functions/_shared/questions.ts', import.meta.url),
+    'utf8'
+  );
+  const startRoundSource = readFileSync(
+    new URL('../supabase/functions/start-room-round/index.ts', import.meta.url),
+    'utf8'
+  );
+  const getRoundSource = readFileSync(
+    new URL('../supabase/functions/get-room-round/index.ts', import.meta.url),
+    'utf8'
+  );
+
+  assert.match(questionsSource, /difficulty: ContentDifficulty/);
+  assert.match(questionsSource, /\.eq\('difficulty', difficulty\)/);
+  assert.match(startRoundSource, /difficulty: room\.difficulty/);
+  assert.match(startRoundSource, /content_pack_version: room\.content_pack_version/);
+  assert.match(getRoundSource, /content_pack_version, difficulty, question_count, topic_mode/);
 });
