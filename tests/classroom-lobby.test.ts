@@ -128,3 +128,11 @@ test('classroom lobby resolves the host LAN address before advertising', () => {
   assert.match(source, /getIpAddressAsync/);
   assert.match(source, /0\.0\.0\.0/);
 });
+
+test('classroom host lobby renders a QR invite surface for nearby joiners', () => {
+  const viewSource = readFileSync(new URL('../src/features/classroom/classroom-lobby-view.tsx', import.meta.url), 'utf8');
+
+  assert.match(viewSource, /ClassroomInviteQr/);
+  assert.match(viewSource, /inviteQrTitle/);
+  assert.match(viewSource, /inviteQrHint/);
+});
