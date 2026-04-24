@@ -1,12 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { existsSync, statSync } from 'node:fs';
 
 import {
   buildQuizResult,
   getQuestionIllustration,
   getSoloQuestionSet,
 } from '../src/features/quiz/quiz-service';
+import { illustratedQuestionIds } from '../src/features/quiz/question-illustrations';
 import type { QuizAnswerMap, QuizQuestion } from '../src/features/quiz/types';
+
+const maxQuestionIllustrationBytes = 820 * 1024;
 
 const sampleQuestions: QuizQuestion[] = [
   {
@@ -197,6 +201,27 @@ test('question illustration manifest exposes generated biome assets by question 
     imageUri: '/question-illustrations/village-has-villagers.png',
   });
   assert.equal(getQuestionIllustration('unknown-question'), undefined);
+});
+
+test('question illustration assets stay mirrored and within the web bundle budget', () => {
+  assert.ok(illustratedQuestionIds.length >= 12);
+
+  for (const questionId of illustratedQuestionIds) {
+    const assetFile = new URL(`../assets/question-illustrations/${questionId}.png`, import.meta.url);
+    const publicFile = new URL(`../public/question-illustrations/${questionId}.png`, import.meta.url);
+
+    assert.ok(existsSync(assetFile), `Expected asset illustration for ${questionId}`);
+    assert.ok(existsSync(publicFile), `Expected public illustration for ${questionId}`);
+
+    const assetSize = statSync(assetFile).size;
+    const publicSize = statSync(publicFile).size;
+
+    assert.equal(publicSize, assetSize, `Expected mirrored illustration sizes for ${questionId}`);
+    assert.ok(
+      assetSize <= maxQuestionIllustrationBytes,
+      `Expected ${questionId}.png to stay under ${maxQuestionIllustrationBytes} bytes, got ${assetSize}`,
+    );
+  }
 });
 
 test('localized question rounds carry illustration metadata when available', () => {
