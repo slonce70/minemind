@@ -6,7 +6,7 @@ import {
 } from '../../lib/api-contracts';
 import { toPlayerSafeErrorMessage } from '../shared/app-copy';
 import { getAuthenticatedUser, invokeSupabaseFunction } from '../../lib/supabase';
-import { createDefaultRoomMatchSettings } from './room-match-settings';
+import { createDefaultRoomMatchSettings, type RoomMatchSettings } from './room-match-settings';
 import type { QuizResultSummary, QuizQuestion } from '../quiz/types';
 import type { ActiveRoom, ActiveRoomRound, RoomParticipant } from './types';
 import { buildRecoveredRoomResult } from '../results/recover-room-result';
@@ -46,9 +46,11 @@ type StartRoomRoundResponse = {
     difficulty?: ActiveRoom['difficulty'];
     ends_at?: string | null;
     id: string;
+    question_count?: number | null;
     question_ids: string[];
     room_id: string;
     started_at: string;
+    topic_mode?: 'mixed' | null;
   };
 };
 
@@ -133,14 +135,52 @@ async function mapRoom(payload: CreateOrJoinRoomResponse) {
   } satisfies ActiveRoom;
 }
 
-export async function createLiveRoom(profile: GuestProfile) {
+export async function createLiveRoom(profile: GuestProfile, settings: RoomMatchSettings) {
   try {
-    const payload = await invokeSupabaseFunction<CreateOrJoinRoomResponse, { locale: GuestProfile['locale'] }>(
+    const payload = await invokeSupabaseFunction<
+      CreateOrJoinRoomResponse,
+      {
+        contentPackVersion: string;
+        difficulty: RoomMatchSettings['difficulty'];
+        locale: GuestProfile['locale'];
+        questionCount: 8;
+        topicMode: 'mixed';
+      }
+    >(
       'create-room',
       {
+        contentPackVersion: settings.contentPackVersion,
+        difficulty: settings.difficulty,
         locale: profile.locale,
+        questionCount: settings.questionCount,
+        topicMode: settings.topicMode,
       }
     );
+
+    return mapRoom(parseCreateOrJoinRoomResponse(payload));
+  } catch (error) {
+    throw new Error(toPlayerSafeErrorMessage(error));
+  }
+}
+
+export async function updateLiveRoomSettings(activeRoom: ActiveRoom, settings: RoomMatchSettings) {
+  try {
+    const payload = await invokeSupabaseFunction<
+      CreateOrJoinRoomResponse,
+      {
+        contentPackVersion: string;
+        difficulty: RoomMatchSettings['difficulty'];
+        questionCount: 8;
+        roomCode: string;
+        topicMode: 'mixed';
+      }
+    >('update-room-settings', {
+      contentPackVersion: settings.contentPackVersion,
+      difficulty: settings.difficulty,
+      questionCount: settings.questionCount,
+      roomCode: activeRoom.roomCode,
+      topicMode: settings.topicMode,
+    });
 
     return mapRoom(parseCreateOrJoinRoomResponse(payload));
   } catch (error) {
@@ -201,12 +241,20 @@ export async function startLiveRoomRound(activeRoom: ActiveRoom, profile: GuestP
     payload = await invokeSupabaseFunction<
       StartRoomRoundResponse,
       {
+        contentPackVersion: string;
+        difficulty: RoomMatchSettings['difficulty'];
         locale: GuestProfile['locale'];
+        questionCount: 8;
         roomCode: string;
+        topicMode: 'mixed';
       }
     >('start-room-round', {
+      contentPackVersion: activeRoom.settings.contentPackVersion,
+      difficulty: activeRoom.settings.difficulty,
       locale: profile.locale,
+      questionCount: activeRoom.settings.questionCount,
       roomCode: activeRoom.roomCode,
+      topicMode: activeRoom.settings.topicMode,
     });
   } catch (error) {
     throw new Error(toPlayerSafeErrorMessage(error));

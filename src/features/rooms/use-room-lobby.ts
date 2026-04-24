@@ -7,6 +7,7 @@ import { createDemoRoomRound } from './live-room-service';
 import { getSoloQuestionSet } from '../quiz/quiz-service';
 import { deriveRoomLobbyState } from './room-lobby-state';
 import { canStartOfflineRoom } from './demo-room-service';
+import { createDefaultRoomMatchSettings } from './room-match-settings';
 import { subscribeToRoomChannel } from './realtime-room-channel';
 import {
   createLiveRoom,
@@ -14,6 +15,7 @@ import {
   refreshLiveRoom,
   resumeLiveRoomRound,
   startLiveRoomRound,
+  updateLiveRoomSettings,
   updateLiveReadyState,
 } from './live-room-service';
 
@@ -26,6 +28,7 @@ export function useRoomLobby(messages: { genericError: string }) {
   const createRoom = useAppStore((state) => state.createRoom);
   const joinRoom = useAppStore((state) => state.joinRoom);
   const selectedDifficulty = useAppStore((state) => state.selectedDifficulty);
+  const setSelectedDifficulty = useAppStore((state) => state.setSelectedDifficulty);
   const addDemoPlayersToRoom = useAppStore((state) => state.addDemoPlayersToRoom);
   const startRoomBattle = useAppStore((state) => state.startRoomBattle);
   const toggleRoomReady = useAppStore((state) => state.toggleRoomReady);
@@ -104,7 +107,8 @@ export function useRoomLobby(messages: { genericError: string }) {
     try {
       if (isSupabaseConfigured) {
         await ensureGuestSession(profile);
-        const room = await createLiveRoom(profile);
+        const settings = createDefaultRoomMatchSettings(selectedDifficulty);
+        const room = await createLiveRoom(profile, settings);
         setActiveRoom(room);
         clearActiveRound();
       } else {
@@ -214,6 +218,35 @@ export function useRoomLobby(messages: { genericError: string }) {
     }
   };
 
+  const handleSelectDifficulty = async (difficulty: typeof selectedDifficulty) => {
+    setSelectedDifficulty(difficulty);
+
+    if (!activeRoom || !profile || !isSupabaseConfigured || activeRoom.status === 'active') {
+      return;
+    }
+
+    const localPlayer = activeRoom.participants.find((participant) => participant.isLocalPlayer);
+    if (!localPlayer?.isHost) {
+      return;
+    }
+
+    setErrorMessage(null);
+    setIsBusy(true);
+
+    try {
+      await ensureGuestSession(profile);
+      const room = await updateLiveRoomSettings(
+        activeRoom,
+        createDefaultRoomMatchSettings(difficulty)
+      );
+      setActiveRoom(room);
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : messages.genericError);
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   return {
     activeRoom,
     activeRoomRound,
@@ -222,6 +255,7 @@ export function useRoomLobby(messages: { genericError: string }) {
     handleCreateRoom,
     handleJoinRoom,
     handleLeaveRoom: () => leaveRoom(),
+    handleSelectDifficulty,
     handleStartBattle,
     handleToggleReady,
     canResumeRound,
