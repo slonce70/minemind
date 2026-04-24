@@ -3,6 +3,7 @@ import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
 import { requireAuthenticatedUser } from '../_shared/auth.ts';
 import { serviceClient } from '../_shared/client.ts';
 import { handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
+import { filterSubmissionsForRoundQuestions } from '../_shared/round-questions.ts';
 import { assertRoomMembership, listRoomParticipants } from '../_shared/rooms.ts';
 
 type FinalizeRoundPayload = {
@@ -117,6 +118,10 @@ serve(async (request) => {
       throw submissionsError;
     }
 
+    const validSubmissions = filterSubmissionsForRoundQuestions(
+      submissions ?? [],
+      round.question_ids
+    );
     const participants = await listRoomParticipants(round.room_id);
     const scoreboard = new Map<
       string,
@@ -128,7 +133,7 @@ serve(async (request) => {
       }
     >();
 
-    for (const submission of submissions ?? []) {
+    for (const submission of validSubmissions) {
       const existing = scoreboard.get(submission.player_id) ?? {
         bestStreak: 0,
         correctCount: 0,
@@ -176,7 +181,7 @@ serve(async (request) => {
     const expectedSubmissions = participants.length * round.question_ids.length;
     const nicknameMap = await buildNicknameMap(ranking.map((entry) => entry.player_id));
 
-    if ((submissions ?? []).length < expectedSubmissions) {
+    if (validSubmissions.length < expectedSubmissions) {
       await serviceClient
         .from('rooms')
         .update({ status: 'finalizing' })
