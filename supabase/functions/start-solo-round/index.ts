@@ -17,7 +17,7 @@ serve(async (request) => {
   try {
     await requireAuthenticatedUser(request);
     const body = await requireJsonBody<StartSoloRoundPayload>(request);
-    const { pack, questions } = await getLocalizedQuestionPack(body.locale ?? 'en');
+    const { pack, questions } = await getLocalizedQuestionPack(body.locale ?? 'en', 'medium');
 
     return jsonResponse({
       pack,
