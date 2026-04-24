@@ -35,8 +35,10 @@ export const roomStateSchema = z.object({
   contentPackVersion: z.string().min(1),
   difficulty: difficultySchema,
   participants: z.array(roomParticipantSchema),
+  questionCount: z.literal(8),
   roomCode: z.string().min(1),
   status: roomStatusSchema,
+  topicMode: z.literal('mixed'),
 });
 
 export const soloRoundSchema = z.object({
