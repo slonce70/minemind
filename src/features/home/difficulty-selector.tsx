@@ -39,8 +39,11 @@ export function DifficultySelector({
 
 const styles = StyleSheet.create({
   button: {
-    flex: 1,
-    minHeight: 48,
+    flexBasis: 160,
+    flexGrow: 1,
+    flexShrink: 1,
+    minHeight: 52,
+    minWidth: 0,
   },
   container: {
     gap: spacing.sm,
@@ -54,6 +57,7 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: spacing.xs,
   },
 });

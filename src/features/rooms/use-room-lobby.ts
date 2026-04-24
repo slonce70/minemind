@@ -6,6 +6,8 @@ import { isSupabaseConfigured } from '../../lib/supabase';
 import { createDemoRoomRound } from './live-room-service';
 import { getSoloQuestionSet } from '../quiz/quiz-service';
 import { deriveRoomLobbyState } from './room-lobby-state';
+import { canStartOfflineRoom } from './demo-room-service';
+import { subscribeToRoomChannel } from './realtime-room-channel';
 import {
   createLiveRoom,
   joinLiveRoom,
@@ -34,6 +36,7 @@ export function useRoomLobby(messages: { genericError: string }) {
   const [joinCode, setJoinCode] = useState('');
   const [isBusy, setIsBusy] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const canResumeRound = Boolean(activeRoomRound && (!isSupabaseConfigured || activeRoom?.roundId));
 
   useEffect(() => {
     if (!isSupabaseConfigured || !activeRoom) {
@@ -52,7 +55,7 @@ export function useRoomLobby(messages: { genericError: string }) {
 
         setActiveRoom(room);
 
-        if (room.status === 'active' && room.roundId && !activeRoomRound) {
+        if ((room.status === 'active' || room.status === 'finalizing') && room.roundId && !activeRoomRound) {
           const resumed = await resumeLiveRoomRound(room.roomCode);
 
           if (isCancelled) {
@@ -63,7 +66,7 @@ export function useRoomLobby(messages: { genericError: string }) {
           setActiveRoomRound(resumed.round);
         }
 
-        if (room.status === 'lobby' && activeRoomRound) {
+        if ((room.status === 'lobby' || room.status === 'finished') && activeRoomRound) {
           clearActiveRound();
         }
       } catch {
@@ -72,6 +75,12 @@ export function useRoomLobby(messages: { genericError: string }) {
     };
 
     void syncRoomState();
+    const unsubscribe = subscribeToRoomChannel(activeRoom.roomCode, {
+      onRoomFinished: () => void syncRoomState(),
+      onRoomUpdated: () => void syncRoomState(),
+      onRoundFinalizing: () => void syncRoomState(),
+      onRoundStarted: () => void syncRoomState(),
+    });
 
     const interval = setInterval(() => {
       void syncRoomState();
@@ -80,6 +89,7 @@ export function useRoomLobby(messages: { genericError: string }) {
     return () => {
       isCancelled = true;
       clearInterval(interval);
+      unsubscribe();
     };
   }, [activeRoom, activeRoomRound, clearActiveRound, setActiveRoom, setActiveRoomRound]);
 
@@ -157,7 +167,15 @@ export function useRoomLobby(messages: { genericError: string }) {
   };
 
   const handleStartBattle = async () => {
+    if (canResumeRound) {
+      return true;
+    }
+
     if (!activeRoom || !profile) {
+      return false;
+    }
+
+    if (!canStartOfflineRoom(activeRoom)) {
       return false;
     }
 
@@ -206,6 +224,7 @@ export function useRoomLobby(messages: { genericError: string }) {
     handleLeaveRoom: () => leaveRoom(),
     handleStartBattle,
     handleToggleReady,
+    canResumeRound,
     isBusy,
     joinCode,
     profile,

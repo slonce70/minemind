@@ -3,11 +3,14 @@ import { difficultyConfig } from '../content/difficulty-config';
 import { loadMinecraftQuestionBank } from '../content/content-loader';
 import { selectQuestionRound } from '../content/content-selection';
 import type { ContentDifficulty, ContentQuestionRecord } from '../content/types';
+import { getQuestionIllustration } from './question-illustrations';
 import type {
   QuizAnswerMap,
   QuizQuestion,
   QuizResultSummary,
 } from './types';
+
+export { getQuestionIllustration } from './question-illustrations';
 
 function buildRoundSeed(locale: AppLocale, difficulty: ContentDifficulty) {
   return `${locale}-${difficulty}-${Date.now().toString().slice(-6)}`;
@@ -18,6 +21,7 @@ function localizeQuestion(definition: ContentQuestionRecord, locale: AppLocale):
     id: definition.id,
     correctIndex: definition.correctIndex,
     explanation: definition.explanation[locale],
+    illustration: getQuestionIllustration(definition.id, locale),
     options: definition.options.map((option) => option[locale]),
     prompt: definition.prompt[locale],
   };
@@ -48,6 +52,7 @@ export function buildQuizResult(
     mode?: 'room' | 'solo';
     roomCode?: string;
     standings?: QuizResultSummary['standings'];
+    standingsBuilder?: (finalScore: number) => QuizResultSummary['standings'];
   }
 ): QuizResultSummary {
   let correctAnswers = 0;
@@ -84,6 +89,8 @@ export function buildQuizResult(
     };
   });
 
+  const finalScore = Math.round((baseScore + speedBonus) * multiplier);
+
   return {
     bestStreak,
     breakdown,
@@ -93,15 +100,16 @@ export function buildQuizResult(
     mode: options?.mode ?? 'solo',
     questionCount: questions.length,
     roomCode: options?.roomCode,
-    score: Math.round((baseScore + speedBonus) * multiplier),
+    score: finalScore,
     speedBonus,
     standings:
       options?.standings ??
+      options?.standingsBuilder?.(finalScore) ??
       [
         {
           isPlayer: true,
           name: 'You',
-          score: Math.round((baseScore + speedBonus) * multiplier),
+          score: finalScore,
         },
       ],
   };

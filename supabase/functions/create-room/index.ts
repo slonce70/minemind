@@ -30,6 +30,7 @@ serve(async (request) => {
       .insert({
         host_id: user.id,
         room_code: roomCode,
+        status: 'lobby',
       })
       .select('id, room_code, host_id, status, current_round_id')
       .single();

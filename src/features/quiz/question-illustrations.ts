@@ -1,0 +1,125 @@
+import type { AppLocale } from '../../lib/locale';
+import type { QuizQuestionIllustration } from './types';
+
+type IllustrationRecord = {
+  alt: Record<AppLocale, string>;
+  imageUri: string;
+};
+
+const questionIllustrations: Record<string, IllustrationRecord> = {
+  'badlands-has-terracotta': {
+    alt: {
+      en: 'Voxel badlands biome with layered terracotta hills',
+      ru: 'Блочный биом пустошей со слоистыми терракотовыми холмами',
+      uk: 'Блоковий біом безплідних земель із шаруватими теракотовими пагорбами',
+    },
+    imageUri: '/question-illustrations/badlands-has-terracotta.png',
+  },
+  'bamboo-jungle-has-bamboo': {
+    alt: {
+      en: 'Voxel bamboo jungle filled with tall bamboo stalks',
+      ru: 'Блочные бамбуковые джунгли с высокими стеблями бамбука',
+      uk: 'Блокові бамбукові джунглі з високими стеблами бамбука',
+    },
+    imageUri: '/question-illustrations/bamboo-jungle-has-bamboo.png',
+  },
+  'bee-pollinates-crops': {
+    alt: {
+      en: 'Voxel bee pollinating wheat and flowers beside a farm',
+      ru: 'Блочная пчела опыляет пшеницу и цветы возле фермы',
+      uk: 'Блокова бджола запилює пшеницю й квіти біля ферми',
+    },
+    imageUri: '/question-illustrations/bee-pollinates-crops.png',
+  },
+  'creeper-explodes': {
+    alt: {
+      en: 'Voxel creeper in tall grass just before exploding',
+      ru: 'Блочный крипер у высокой травы перед взрывом',
+      uk: 'Блоковий кріпер у високій траві перед вибухом',
+    },
+    imageUri: '/question-illustrations/creeper-explodes.png',
+  },
+  'igloo-in-snowy-biomes': {
+    alt: {
+      en: 'Voxel igloo in a snowy biome with ice and spruce trees',
+      ru: 'Блочное иглу в снежном биоме со льдом и елями',
+      uk: 'Блокове іглу в сніжному біомі з кригою та ялинами',
+    },
+    imageUri: '/question-illustrations/igloo-in-snowy-biomes.png',
+  },
+  'ocean-monument-guardians': {
+    alt: {
+      en: 'Voxel ocean monument underwater with guardians nearby',
+      ru: 'Блочный океанический монумент под водой со стражами рядом',
+      uk: 'Блоковий океанічний монумент під водою з вартовими поруч',
+    },
+    imageUri: '/question-illustrations/ocean-monument-guardians.png',
+  },
+  'obsidian-from-water-and-lava': {
+    alt: {
+      en: 'Voxel water and lava meeting to form obsidian',
+      ru: 'Блочная вода встречается с лавой и образует обсидиан',
+      uk: 'Блокова вода торкається лави й утворює обсидіан',
+    },
+    imageUri: '/question-illustrations/obsidian-from-water-and-lava.png',
+  },
+  'redstone-dust-carries-power': {
+    alt: {
+      en: 'Voxel redstone dust line powering a lamp on stone blocks',
+      ru: 'Блочная линия редстоун-пыли питает лампу на камне',
+      uk: 'Блокова лінія редстоун-пилу живить лампу на камені',
+    },
+    imageUri: '/question-illustrations/redstone-dust-carries-power.png',
+  },
+  'sand-falls-with-gravity': {
+    alt: {
+      en: 'Voxel sand block falling from a ledge because of gravity',
+      ru: 'Блочный песок падает с уступа из-за гравитации',
+      uk: 'Блоковий пісок падає з уступу через гравітацію',
+    },
+    imageUri: '/question-illustrations/sand-falls-with-gravity.png',
+  },
+  'skeleton-uses-bow': {
+    alt: {
+      en: 'Voxel skeleton aiming a bow in a dark field',
+      ru: 'Блочный скелет целится из лука в темном поле',
+      uk: 'Блоковий скелет цілиться з лука в темному полі',
+    },
+    imageUri: '/question-illustrations/skeleton-uses-bow.png',
+  },
+  'torch-lights-caves': {
+    alt: {
+      en: 'Voxel torch casting warm light inside a dark stone cave',
+      ru: 'Блочный факел бросает теплый свет в темной каменной пещере',
+      uk: 'Блоковий факел кидає тепле світло в темній камʼяній печері',
+    },
+    imageUri: '/question-illustrations/torch-lights-caves.png',
+  },
+  'village-has-villagers': {
+    alt: {
+      en: 'Voxel village with houses, crop fields, and safe settlement clues',
+      ru: 'Блочная деревня с домами, грядками и признаками безопасного поселения',
+      uk: 'Блокове село з будинками, грядками й ознаками безпечного поселення',
+    },
+    imageUri: '/question-illustrations/village-has-villagers.png',
+  },
+} satisfies Record<string, IllustrationRecord>;
+
+export const illustratedQuestionIds = Object.keys(questionIllustrations);
+
+export function getQuestionIllustration(
+  questionId: string,
+  locale: AppLocale = 'en',
+): QuizQuestionIllustration | undefined {
+  const illustration = questionIllustrations[questionId];
+
+  if (!illustration) {
+    return undefined;
+  }
+
+  return {
+    alt: illustration.alt[locale],
+    id: questionId,
+    imageUri: illustration.imageUri,
+  };
+}

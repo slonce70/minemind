@@ -1,6 +1,14 @@
 import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
+import {
+  buildClassroomRoundResults,
+  hasClassroomRoundSubmissionsForAllParticipants,
+  mergeClassroomRoundSubmission,
+  type ClassroomRoundSubmissions,
+} from '../classroom/classroom-round-authority';
+import { finalizeClassroomRound } from '../classroom/use-classroom-round';
+import { getSharedLocalHostTransport } from '../classroom/local-host-transport';
 import { createRoomStandings } from '../rooms/demo-room-service';
 import {
   finalizeLiveRoomRound,
@@ -10,9 +18,10 @@ import {
 import { useAppStore } from '../../state/app-store';
 import { isSupabaseConfigured } from '../../lib/supabase';
 import { difficultyConfig } from '../content/difficulty-config';
+import { normalizeMatchRecord } from '../results/normalize-match-record';
 import { startLiveSoloRound } from './live-quiz-service';
 import { buildQuizResult, getSoloQuestionSet } from './quiz-service';
-import type { QuizAnswerMap } from './types';
+import type { QuizAnswerMap, QuizResultSummary } from './types';
 
 export function useSoloRound(params: {
   locale: string;
@@ -22,22 +31,29 @@ export function useSoloRound(params: {
   };
   mode?: string;
 }) {
-  const saveLastResult = useAppStore((state) => state.saveLastResult);
+  const hasHydrated = useAppStore((state) => state.hasHydrated);
+  const saveMatchRecord = useAppStore((state) => state.saveMatchRecord);
   const activeRoom = useAppStore((state) => state.activeRoom);
   const activeRoomRound = useAppStore((state) => state.activeRoomRound);
+  const classroomSession = useAppStore((state) => state.classroomSession);
   const leaveRoom = useAppStore((state) => state.leaveRoom);
+  const profile = useAppStore((state) => state.profile);
   const selectedDifficulty = useAppStore((state) => state.selectedDifficulty);
   const setActiveRoom = useAppStore((state) => state.setActiveRoom);
   const setActiveRoomRound = useAppStore((state) => state.setActiveRoomRound);
+  const setClassroomSession = useAppStore((state) => state.setClassroomSession);
   const clearActiveRound = useAppStore((state) => state.clearActiveRound);
   const roundDifficulty =
+    classroomSession?.difficulty ??
     activeRoom?.settings.difficulty ??
     activeRoom?.difficulty ??
     activeRoomRound?.difficulty ??
     selectedDifficulty;
   const questionTimeLimit = difficultyConfig[roundDifficulty].timerSeconds;
   const [questions, setQuestions] = useState(() =>
-    params.mode === 'room' && activeRoomRound ? activeRoomRound.questions : []
+    params.mode === 'room' || params.mode === 'classroom'
+      ? activeRoomRound?.questions ?? []
+      : []
   );
   const [isLoading, setIsLoading] = useState(
     params.mode === 'room' ? Boolean(activeRoom && !activeRoomRound) : true
@@ -51,17 +67,68 @@ export function useSoloRound(params: {
   const [isSubmittingAnswer, setIsSubmittingAnswer] = useState(false);
   const [resultsPending, setResultsPending] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [classroomSubmissions, setClassroomSubmissions] = useState<ClassroomRoundSubmissions>({});
+  const [hasSubmittedClassroomRound, setHasSubmittedClassroomRound] = useState(false);
+  const [isPublishingClassroomResults, setIsPublishingClassroomResults] = useState(false);
+  const classroomTransport = getSharedLocalHostTransport();
+  const autoAdvanceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const question = questions[currentIndex];
   const progress = questions.length > 0 ? Math.round(((currentIndex + 1) / questions.length) * 100) : 0;
+  const isClassroomMode = params.mode === 'classroom';
   const isRoomMode = params.mode === 'room';
   const currentRoom = isRoomMode ? activeRoom : undefined;
   const currentRoomRound = isRoomMode ? activeRoomRound : undefined;
+  const currentClassroomSession = isClassroomMode ? classroomSession : undefined;
+  const localClassroomParticipantId =
+    currentClassroomSession?.participants.find((participant) => participant.isLocalPlayer)?.id ??
+    profile?.nickname.toLowerCase().replace(/\s+/g, '-');
+  const isRecoveringWaitingRoom = Boolean(
+    currentRoom &&
+    currentRoomRound?.source === 'supabase' &&
+    currentRoom.status === 'waiting' &&
+    !currentRoom.roundId
+  );
+
+  const persistResult = useCallback(
+    (result: QuizResultSummary) => {
+      if (isClassroomMode && currentClassroomSession) {
+        return;
+      }
+
+      const isLiveRoomResult = isRoomMode && currentRoomRound?.source === 'supabase';
+
+      saveMatchRecord(
+        normalizeMatchRecord({
+          authority: isLiveRoomResult ? 'server' : 'client',
+          input: result,
+          isDemo: isRoomMode && currentRoomRound?.source !== 'supabase',
+          syncStatus: isLiveRoomResult ? 'synced' : 'local-only',
+          transport: isLiveRoomResult ? 'supabase' : 'local',
+        })
+      );
+    },
+    [currentClassroomSession, currentRoomRound?.source, isClassroomMode, isRoomMode, saveMatchRecord]
+  );
+
+  useEffect(() => {
+    if (!isClassroomMode) {
+      return;
+    }
+
+    setClassroomSubmissions({});
+    setHasSubmittedClassroomRound(false);
+    setIsPublishingClassroomResults(false);
+  }, [currentClassroomSession?.id, activeRoomRound?.roomCode, isClassroomMode]);
 
   useEffect(() => {
     let isMounted = true;
 
     const loadQuestions = async () => {
+      if (!hasHydrated) {
+        return;
+      }
+
       if (isRoomMode) {
         setIsLoading(true);
         setLoadError(null);
@@ -73,7 +140,7 @@ export function useSoloRound(params: {
           return;
         }
 
-        if (activeRoomRound) {
+        if (activeRoomRound && !isRecoveringWaitingRoom) {
           if (isMounted) {
             setQuestions(activeRoomRound.questions);
             setIsLoading(false);
@@ -81,7 +148,12 @@ export function useSoloRound(params: {
           return;
         }
 
-        if (!isSupabaseConfigured || currentRoom.status !== 'active') {
+        if (
+          !isSupabaseConfigured ||
+          !currentRoom.roundId ||
+          currentRoom.status === 'lobby' ||
+          currentRoom.status === 'finished'
+        ) {
           if (isMounted) {
             setIsLoading(false);
           }
@@ -95,6 +167,43 @@ export function useSoloRound(params: {
             setActiveRoom(resumed.room);
             setActiveRoomRound(resumed.round);
             setQuestions(resumed.round.questions);
+          }
+        } catch (error) {
+          if (isMounted) {
+            setLoadError(error instanceof Error ? error.message : params.messages.loadError);
+          }
+        } finally {
+          if (isMounted) {
+            setIsLoading(false);
+          }
+        }
+
+        return;
+      }
+
+      if (isClassroomMode) {
+        setIsLoading(true);
+        setLoadError(null);
+
+        if (!currentClassroomSession) {
+          if (isMounted) {
+            setIsLoading(false);
+          }
+          return;
+        }
+
+        try {
+          const nextQuestions =
+            activeRoomRound?.source === 'classroom'
+              ? activeRoomRound.questions
+              : getSoloQuestionSet(
+                  params.locale as 'uk' | 'en' | 'ru',
+                  8,
+                  currentClassroomSession.difficulty ?? selectedDifficulty
+                );
+
+          if (isMounted) {
+            setQuestions(nextQuestions);
           }
         } catch (error) {
           if (isMounted) {
@@ -146,7 +255,11 @@ export function useSoloRound(params: {
     };
   }, [
     activeRoomRound,
+    currentClassroomSession,
     currentRoom,
+    isRecoveringWaitingRoom,
+    isClassroomMode,
+    hasHydrated,
     isRoomMode,
     params.locale,
     params.messages.loadError,
@@ -156,31 +269,238 @@ export function useSoloRound(params: {
   ]);
 
   useEffect(() => {
+    if (!hasHydrated) {
+      return;
+    }
+
     if (!currentRoom) {
       return;
     }
 
-    if (currentRoom.status !== 'active' && currentRoomRound) {
+    if (
+      currentRoomRound?.source === 'supabase' &&
+      (currentRoom.status === 'lobby' || currentRoom.status === 'finished')
+    ) {
       clearActiveRound();
     }
-  }, [clearActiveRound, currentRoom, currentRoomRound]);
+  }, [clearActiveRound, currentRoom, currentRoomRound, hasHydrated]);
+
+  useEffect(() => {
+    if (!isClassroomMode) {
+      return;
+    }
+
+    return classroomTransport.subscribe((event) => {
+      const liveSession = useAppStore.getState().classroomSession;
+
+      if (!liveSession) {
+        return;
+      }
+
+      if ('roomCode' in event && event.roomCode !== liveSession.roomCode) {
+        return;
+      }
+
+      if (event.type === 'round-submitted' && liveSession.role === 'host') {
+        setClassroomSubmissions((current) =>
+          mergeClassroomRoundSubmission(current, {
+            answers: event.answers,
+            participantId: event.participantId,
+          })
+        );
+        return;
+      }
+
+      if (event.type === 'round-finished') {
+        if (liveSession.role === 'host') {
+          return;
+        }
+
+        const localParticipant = liveSession.participants.find((participant) => participant.isLocalPlayer);
+        const localRecord = event.records.find((entry) => entry.participantId === localParticipant?.id)?.record;
+
+        if (!localRecord) {
+          return;
+        }
+
+        saveMatchRecord(localRecord);
+        setResultsPending(false);
+        setIsAwaitingResults(false);
+        clearActiveRound();
+        setClassroomSession({
+          ...liveSession,
+          status: 'finished',
+        });
+        router.replace('/results');
+      }
+    });
+  }, [clearActiveRound, classroomTransport, isClassroomMode, saveMatchRecord, setClassroomSession]);
+
+  useEffect(() => {
+    if (!hasHydrated || !isRecoveringWaitingRoom || !currentRoomRound) {
+      return;
+    }
+
+    let isMounted = true;
+
+    setIsAwaitingResults(true);
+    setResultsPending(false);
+    setLoadError(null);
+
+    void finalizeLiveRoomRound(currentRoomRound)
+      .then((finalized) => {
+        if (!isMounted) {
+          return;
+        }
+
+        if (finalized.status === 'pending') {
+          setResultsPending(true);
+          return;
+        }
+
+        if (finalized.record) {
+          saveMatchRecord(finalized.record);
+        }
+        leaveRoom();
+        router.replace('/results');
+      })
+      .catch((error) => {
+        if (!isMounted) {
+          return;
+        }
+
+        setResultsPending(true);
+        setLoadError(error instanceof Error ? error.message : params.messages.loadError);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [
+    currentRoomRound,
+    hasHydrated,
+    isRecoveringWaitingRoom,
+    leaveRoom,
+    params.messages.loadError,
+    persistResult,
+    saveMatchRecord,
+  ]);
+
+  useEffect(() => {
+    if (
+      !isClassroomMode ||
+      !currentClassroomSession ||
+      currentClassroomSession.role !== 'host' ||
+      !hasSubmittedClassroomRound ||
+      !activeRoomRound ||
+      !localClassroomParticipantId ||
+      isPublishingClassroomResults
+    ) {
+      return;
+    }
+
+    if (!hasClassroomRoundSubmissionsForAllParticipants(currentClassroomSession.participants, classroomSubmissions)) {
+      setResultsPending(true);
+      return;
+    }
+
+    setIsPublishingClassroomResults(true);
+
+    const records = buildClassroomRoundResults({
+      participants: currentClassroomSession.participants,
+      round: activeRoomRound,
+      submissionsByParticipantId: classroomSubmissions,
+    });
+    const localRecord = records.find((entry) => entry.participantId === localClassroomParticipantId)?.record;
+
+    if (localRecord) {
+      saveMatchRecord(localRecord);
+    }
+
+    clearActiveRound();
+    setResultsPending(false);
+    setIsAwaitingResults(false);
+    setClassroomSession({
+      ...currentClassroomSession,
+      status: 'finished',
+    });
+
+    void classroomTransport.publishEvent({
+      records,
+      roomCode: currentClassroomSession.roomCode,
+      type: 'round-finished',
+    })
+      .catch((error) => {
+        setLoadError(error instanceof Error ? error.message : params.messages.loadError);
+      })
+      .finally(() => {
+        router.replace('/results');
+      });
+  }, [
+    activeRoomRound,
+    classroomSubmissions,
+    classroomTransport,
+    clearActiveRound,
+    currentClassroomSession,
+    hasSubmittedClassroomRound,
+    isClassroomMode,
+    isPublishingClassroomResults,
+    localClassroomParticipantId,
+    params.messages.loadError,
+    saveMatchRecord,
+    setClassroomSession,
+  ]);
 
   const finishRound = async () => {
-    const provisionalResult = buildQuizResult(questions, answerMap);
     const result = buildQuizResult(questions, answerMap, {
       difficulty: roundDifficulty,
-      mode: isRoomMode ? 'room' : 'solo',
-      roomCode: currentRoom?.roomCode,
-      standings: isRoomMode
-        ? createRoomStandings(currentRoom!, provisionalResult.score)
+      mode: isRoomMode || isClassroomMode ? 'room' : 'solo',
+      roomCode: currentClassroomSession?.roomCode ?? currentRoom?.roomCode,
+      standingsBuilder: (finalScore) => (isRoomMode
+        ? createRoomStandings(currentRoom!, finalScore)
+        : isClassroomMode && currentClassroomSession
+          ? currentClassroomSession.participants.map((participant) => ({
+              isPlayer: participant.isLocalPlayer,
+              name: participant.name,
+              score: participant.isLocalPlayer ? finalScore : 0,
+            }))
         : [
             {
               isPlayer: true,
               name: 'You',
-              score: provisionalResult.score,
+              score: finalScore,
             },
-          ],
+          ]),
     });
+
+    if (isClassroomMode && currentClassroomSession && localClassroomParticipantId) {
+      const nextSubmissions = mergeClassroomRoundSubmission(classroomSubmissions, {
+        answers: answerMap,
+        participantId: localClassroomParticipantId,
+      });
+
+      setClassroomSubmissions(nextSubmissions);
+      setHasSubmittedClassroomRound(true);
+      setIsAwaitingResults(true);
+      setResultsPending(currentClassroomSession.participants.length > 1);
+      setLoadError(null);
+
+      if (currentClassroomSession.role !== 'host') {
+        try {
+          await classroomTransport.publishEvent({
+            answers: answerMap,
+            participantId: localClassroomParticipantId,
+            roomCode: currentClassroomSession.roomCode,
+            type: 'round-submitted',
+          });
+        } catch (error) {
+          setLoadError(error instanceof Error ? error.message : params.messages.loadError);
+          return;
+        }
+      }
+
+      return;
+    }
 
     if (isRoomMode && currentRoomRound?.source === 'supabase') {
       setIsAwaitingResults(true);
@@ -195,23 +515,37 @@ export function useSoloRound(params: {
           return;
         }
 
-        saveLastResult(finalized.result);
+        if (finalized.record) {
+          saveMatchRecord(finalized.record);
+        }
       } catch (error) {
         setResultsPending(true);
         setLoadError(error instanceof Error ? error.message : params.messages.loadError);
         return;
       }
     } else {
-      saveLastResult(result);
+      persistResult(result);
     }
 
     if (currentRoom) {
       leaveRoom();
     }
+    if (currentClassroomSession) {
+      clearActiveRound();
+      setClassroomSession({
+        ...currentClassroomSession,
+        status: 'finished',
+      });
+    }
     router.replace('/results');
   };
 
   const goNext = async () => {
+    if (autoAdvanceTimeoutRef.current) {
+      clearTimeout(autoAdvanceTimeoutRef.current);
+      autoAdvanceTimeoutRef.current = null;
+    }
+
     if (currentIndex < questions.length - 1) {
       setCurrentIndex((value) => value + 1);
       setSelectedIndex(null);
@@ -269,7 +603,8 @@ export function useSoloRound(params: {
         })
         .finally(() => {
           setIsSubmittingAnswer(false);
-          setTimeout(() => {
+          autoAdvanceTimeoutRef.current = setTimeout(() => {
+            autoAdvanceTimeoutRef.current = null;
             void goNext();
           }, 1100);
         });
@@ -277,7 +612,8 @@ export function useSoloRound(params: {
       return;
     }
 
-    setTimeout(() => {
+    autoAdvanceTimeoutRef.current = setTimeout(() => {
+      autoAdvanceTimeoutRef.current = null;
       void goNext();
     }, 1100);
   };
@@ -285,6 +621,14 @@ export function useSoloRound(params: {
   useEffect(() => {
     setTimeLeft(questionTimeLimit);
   }, [questionTimeLimit]);
+
+  useEffect(() => {
+    return () => {
+      if (autoAdvanceTimeoutRef.current) {
+        clearTimeout(autoAdvanceTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (!question || isRevealed) {
@@ -309,10 +653,13 @@ export function useSoloRound(params: {
   return {
     answerMap,
     currentIndex,
+    currentClassroomSession,
     difficulty: roundDifficulty,
     currentRoom,
     currentRoomRound,
+    goNext,
     handleAnswer,
+    isClassroomMode,
     isAwaitingResults,
     isLoading,
     isRevealed,
