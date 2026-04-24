@@ -25,10 +25,11 @@ test('content taxonomy stays stable for difficulty and topic ids', () => {
 test('difficulty config keeps stable timers and translation keys', () => {
   assert.equal(difficultyConfig.easy.timerSeconds, 20);
   assert.equal(difficultyConfig.medium.timerSeconds, 18);
-  assert.equal(difficultyConfig.hard.timerSeconds, 15);
+  assert.equal(difficultyConfig.hard.timerSeconds, 12);
   assert.equal(difficultyConfig.easy.translationKey, 'content.difficulty.easy');
   assert.equal(difficultyConfig.medium.translationKey, 'content.difficulty.medium');
   assert.equal(difficultyConfig.hard.translationKey, 'content.difficulty.hard');
+  assert.equal(difficultyConfig.hard.scoreMultiplier, 2);
 });
 
 const validQuestion = {

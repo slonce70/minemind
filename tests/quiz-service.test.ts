@@ -116,10 +116,10 @@ test('buildQuizResult can derive fallback standings from the final multiplied sc
     ],
   });
 
-  assert.equal(result.score, 435);
+  assert.equal(result.score, 580);
   assert.deepEqual(result.standings, [
-    { isPlayer: true, name: 'Player', score: 435 },
-    { isPlayer: false, name: 'BeeBot', score: 477 },
+    { isPlayer: true, name: 'Player', score: 580 },
+    { isPlayer: false, name: 'BeeBot', score: 622 },
   ]);
 });
 
@@ -129,7 +129,27 @@ test('getSoloQuestionSet returns localized questions for the requested difficult
   assert.equal(round.length, 8);
   assert.ok(round.every((question) => typeof question.prompt === 'string'));
   assert.ok(round.every((question) => question.options.length === 4));
-  assert.ok(round.some((question) => question.prompt.includes('Minecraft') || question.prompt.includes('майн')));
+  assert.ok(round.every((question) => question.prompt.length >= 40));
+});
+
+test('getSoloQuestionSet does not mix in the old legacy question bank', () => {
+  const legacyQuestionIds = new Set([
+    'biomes',
+    'beds',
+    'crafting-table',
+    'creeper',
+    'diamond-pickaxe',
+    'end-dragon',
+    'nether-portal',
+    'redstone',
+    'torches',
+    'villagers',
+    'water-bucket',
+    'wheat',
+  ]);
+  const round = getSoloQuestionSet('uk', 120, 'medium', 'legacy-filter');
+
+  assert.ok(round.every((question) => !legacyQuestionIds.has(question.id)));
 });
 
 test('getSoloQuestionSet stays deterministic for the same seed', () => {
