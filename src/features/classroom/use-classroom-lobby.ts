@@ -1,3 +1,4 @@
+import * as Network from 'expo-network';
 import { Share } from 'react-native';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -15,6 +16,7 @@ function buildRoomCode() {
 export function useClassroomLobby(messages?: {
   connectionError?: string;
   hostAddressRequired?: string;
+  initialInviteInput?: string | null;
   nativeBuildRequired?: string;
   shareInviteError?: string;
 }) {
@@ -56,6 +58,21 @@ export function useClassroomLobby(messages?: {
     : null;
   const lobbyState = classroomSession ? deriveClassroomLobbyState(classroomSession) : null;
 
+  useEffect(() => {
+    if (classroomSession || !messages?.initialInviteInput) {
+      return;
+    }
+
+    const parsedInvite = parseClassroomInviteInput(messages.initialInviteInput);
+
+    if (!parsedInvite) {
+      return;
+    }
+
+    setHostAddress(messages.initialInviteInput);
+    setJoinCode(parsedInvite.roomCode ?? '');
+  }, [classroomSession, messages?.initialInviteInput]);
+
   useEffect(
     () =>
       localHostTransport.subscribe((event) => {
@@ -88,6 +105,22 @@ export function useClassroomLobby(messages?: {
     setErrorMessage(null);
   };
 
+  const resolveHostAddress = async () => {
+    const manualAddress = hostAddress.trim();
+
+    if (manualAddress) {
+      return manualAddress;
+    }
+
+    try {
+      const detectedAddress = await Network.getIpAddressAsync();
+
+      return detectedAddress && detectedAddress !== '0.0.0.0' ? detectedAddress : undefined;
+    } catch {
+      return undefined;
+    }
+  };
+
   const handleHostSession = async () => {
     if (!localParticipant) {
       return;
@@ -98,9 +131,10 @@ export function useClassroomLobby(messages?: {
 
     try {
       const roomCode = buildRoomCode();
+      const resolvedHostAddress = await resolveHostAddress();
       const config: HostSessionConfig = {
         difficulty: selectedDifficulty,
-        hostAddress: hostAddress.trim() || undefined,
+        hostAddress: resolvedHostAddress,
         hostProfile: localParticipant,
         roomCode,
       };
