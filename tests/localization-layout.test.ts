@@ -75,6 +75,7 @@ test('ukrainian and russian resources keep visible UX copy fully localized', () 
   assert.equal(uk.content.difficulty.easy, 'Будівничий');
   assert.equal(uk.content.difficulty.medium, 'Дослідник');
   assert.equal(uk.content.difficulty.hard, 'Про-режим');
+  assert.equal(uk.classroom.inviteQrTitle, 'Скануй QR, щоб приєднатися');
   assert.equal(uk.results.badges.netherPerfect, 'Про-режим без помилок');
   assert.equal(uk.rooms.hostBadge, '(ведучий)');
   assert.equal(uk.rooms.addDemoPlayers, 'Додати ботів');
@@ -93,6 +94,7 @@ test('ukrainian and russian resources keep visible UX copy fully localized', () 
   assert.equal(ru.content.difficulty.easy, 'Строитель');
   assert.equal(ru.content.difficulty.medium, 'Исследователь');
   assert.equal(ru.content.difficulty.hard, 'Про-режим');
+  assert.equal(ru.classroom.inviteQrTitle, 'Сканируй QR, чтобы присоединиться');
   assert.equal(ru.results.badges.netherPerfect, 'Про-режим без ошибок');
   assert.equal(ru.rooms.hostBadge, '(ведущий)');
   assert.equal(ru.rooms.addDemoPlayers, 'Добавить ботов');
