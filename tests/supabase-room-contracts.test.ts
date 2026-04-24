@@ -94,3 +94,24 @@ test('room shared selector includes settings columns for live rooms', () => {
   assert.match(roomHelperSource, /topic_mode/);
   assert.match(createRoomSource, /parseRoomMatchSettingsPayload/);
 });
+
+test('live round functions select question packs by canonical difficulty', () => {
+  const questionsSource = readFileSync(
+    new URL('../supabase/functions/_shared/questions.ts', import.meta.url),
+    'utf8'
+  );
+  const startRoundSource = readFileSync(
+    new URL('../supabase/functions/start-room-round/index.ts', import.meta.url),
+    'utf8'
+  );
+  const getRoundSource = readFileSync(
+    new URL('../supabase/functions/get-room-round/index.ts', import.meta.url),
+    'utf8'
+  );
+
+  assert.match(questionsSource, /difficulty: ContentDifficulty/);
+  assert.match(questionsSource, /\.eq\('difficulty', difficulty\)/);
+  assert.match(startRoundSource, /difficulty: room\.difficulty/);
+  assert.match(startRoundSource, /content_pack_version: room\.content_pack_version/);
+  assert.match(getRoundSource, /content_pack_version, difficulty, question_count, topic_mode/);
+});

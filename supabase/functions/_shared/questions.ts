@@ -1,4 +1,5 @@
 import { serviceClient } from './client.ts';
+import type { ContentDifficulty } from './room-settings.ts';
 
 type QuestionRow = {
   correct_option: number;
@@ -12,11 +13,16 @@ type QuestionRow = {
   sort_order: number;
 };
 
-export async function getLocalizedQuestionPack(locale: string, count = 8) {
+export async function getLocalizedQuestionPack(
+  locale: string,
+  difficulty: ContentDifficulty = 'medium',
+  count = 8
+) {
   const { data: pack, error: packError } = await serviceClient
     .from('question_packs')
     .select('id,title')
     .eq('locale', locale)
+    .eq('difficulty', difficulty)
     .order('created_at', { ascending: true })
     .limit(1)
     .maybeSingle();
@@ -47,6 +53,7 @@ export async function getLocalizedQuestionPack(locale: string, count = 8) {
   }
 
   return {
+    difficulty,
     pack,
     questions: questions as QuestionRow[],
   };
