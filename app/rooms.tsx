@@ -14,7 +14,6 @@ export default function RoomsRoute() {
   const { t } = useTranslation();
   const hasHydrated = useAppStore((state) => state.hasHydrated);
   const selectedDifficulty = useAppStore((state) => state.selectedDifficulty);
-  const setSelectedDifficulty = useAppStore((state) => state.setSelectedDifficulty);
   const lobby = useRoomLobby({
     genericError: t('rooms.genericError'),
   });
@@ -52,7 +51,7 @@ export default function RoomsRoute() {
           lobby.handleLeaveRoom();
           router.replace('/home');
         }}
-        onSelectDifficulty={setSelectedDifficulty}
+        onSelectDifficulty={lobby.handleSelectDifficulty}
         onStartBattle={() => {
           void lobby.handleStartBattle().then((didStart) => {
             if (didStart) {

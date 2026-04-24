@@ -112,3 +112,29 @@ test('live room server lifecycle starts in lobby and persists finalization snaps
   assert.match(finalizeRoundSource, /finalized_at:/);
   assert.match(finalizeRoundSource, /result_snapshot:/);
 });
+
+test('online room creation and start send canonical match settings', () => {
+  const liveRoomServiceSource = readFileSync(
+    new URL('../src/features/rooms/live-room-service.ts', import.meta.url),
+    'utf8'
+  );
+
+  assert.match(liveRoomServiceSource, /createLiveRoom\(profile: GuestProfile, settings: RoomMatchSettings\)/);
+  assert.match(liveRoomServiceSource, /contentPackVersion: settings\.contentPackVersion/);
+  assert.match(liveRoomServiceSource, /difficulty: settings\.difficulty/);
+  assert.match(liveRoomServiceSource, /questionCount: settings\.questionCount/);
+  assert.match(liveRoomServiceSource, /topicMode: settings\.topicMode/);
+  assert.match(liveRoomServiceSource, /updateLiveRoomSettings/);
+});
+
+test('room lobby routes difficulty changes through live settings when online', () => {
+  const roomLobbyHookSource = readFileSync(
+    new URL('../src/features/rooms/use-room-lobby.ts', import.meta.url),
+    'utf8'
+  );
+  const roomsRouteSource = readFileSync(new URL('../app/rooms.tsx', import.meta.url), 'utf8');
+
+  assert.match(roomLobbyHookSource, /handleSelectDifficulty/);
+  assert.match(roomLobbyHookSource, /updateLiveRoomSettings/);
+  assert.match(roomsRouteSource, /onSelectDifficulty=\{lobby\.handleSelectDifficulty\}/);
+});
