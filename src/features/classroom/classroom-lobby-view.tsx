@@ -5,6 +5,7 @@ import { Card } from '../../components/ui/card';
 import { StatPill } from '../../components/ui/stat-pill';
 import { avatarLookup } from '../profile/avatar-presets';
 import { WorldBackground } from '../ui/world-background';
+import { ClassroomInviteQr } from './classroom-invite-qr';
 import type { ClassroomSession } from './types';
 import { colors, radii, spacing, typography } from '../../theme/tokens';
 
@@ -14,6 +15,7 @@ type ClassroomLobbyViewProps = {
   hostAddress: string;
   inviteToken?: string | null;
   isBusy: boolean;
+  joinInviteInput: string;
   joinCode: string;
   lobbyState?: {
     canStart: boolean;
@@ -21,6 +23,7 @@ type ClassroomLobbyViewProps = {
     readyCount: number;
   } | null;
   onChangeHostAddress: (value: string) => void;
+  onChangeJoinInviteInput: (value: string) => void;
   onChangeJoinCode: (value: string) => void;
   onClearSession: () => void;
   onHostSession: () => void;
@@ -34,6 +37,9 @@ type ClassroomLobbyViewProps = {
     hostAddressPlaceholder: string;
     hostSession: string;
     hostSessionHint: string;
+    inviteQrAccessibilityLabel: string;
+    inviteQrHint: string;
+    inviteQrTitle: string;
     inviteTokenLabel: string;
     inviteTokenPlaceholder: string;
     joinSession: string;
@@ -64,9 +70,11 @@ export function ClassroomLobbyView({
   hostAddress,
   inviteToken,
   isBusy,
+  joinInviteInput,
   joinCode,
   lobbyState,
   onChangeHostAddress,
+  onChangeJoinInviteInput,
   onChangeJoinCode,
   onClearSession,
   onHostSession,
@@ -140,6 +148,14 @@ export function ClassroomLobbyView({
             ) : null}
             {inviteToken ? (
               <>
+                <View style={styles.qrSurface}>
+                  <Text style={styles.sectionTitle}>{strings.inviteQrTitle}</Text>
+                  <Text style={styles.copy}>{strings.inviteQrHint}</Text>
+                  <ClassroomInviteQr
+                    accessibilityLabel={strings.inviteQrAccessibilityLabel}
+                    value={inviteToken}
+                  />
+                </View>
                 <Text style={styles.inputLabel}>{strings.inviteTokenLabel}</Text>
                 <Text selectable style={styles.inviteToken}>
                   {inviteToken}
@@ -205,11 +221,11 @@ export function ClassroomLobbyView({
             <Text style={styles.copy}>{strings.joinSessionHint}</Text>
             <Text style={styles.inputLabel}>{strings.inviteTokenLabel}</Text>
             <TextInput
-              onChangeText={onChangeHostAddress}
+              onChangeText={onChangeJoinInviteInput}
               placeholder={strings.inviteTokenPlaceholder}
               placeholderTextColor={colors.textMuted}
               style={styles.input}
-              value={hostAddress}
+              value={joinInviteInput}
             />
             <TextInput
               autoCapitalize="characters"
@@ -257,6 +273,14 @@ const styles = StyleSheet.create({
   },
   commandActionRail: {
     gap: spacing.sm,
+  },
+  qrSurface: {
+    backgroundColor: colors.surfaceInset,
+    borderColor: colors.borderStrong,
+    borderRadius: radii.xl,
+    borderWidth: 2,
+    gap: spacing.sm,
+    padding: spacing.md,
   },
   worldCard: {
     gap: spacing.sm,

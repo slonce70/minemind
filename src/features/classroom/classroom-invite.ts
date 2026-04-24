@@ -1,7 +1,14 @@
+import qrcode from 'qrcode-generator';
+
 export type ParsedClassroomInvite = {
   hostAddress: string;
   port?: number;
   roomCode?: string;
+};
+
+export type ClassroomInviteQrMatrix = {
+  cells: boolean[][];
+  size: number;
 };
 
 export function buildClassroomInviteToken(input: {
@@ -60,5 +67,20 @@ export function parseClassroomInviteInput(input: string): ParsedClassroomInvite 
     hostAddress,
     port,
     roomCode: undefined,
+  };
+}
+
+export function buildClassroomInviteQrMatrix(input: string): ClassroomInviteQrMatrix {
+  const qr = qrcode(0, 'M');
+  qr.addData(input);
+  qr.make();
+
+  const size = qr.getModuleCount();
+
+  return {
+    cells: Array.from({ length: size }, (_, rowIndex) =>
+      Array.from({ length: size }, (_, columnIndex) => qr.isDark(rowIndex, columnIndex))
+    ),
+    size,
   };
 }

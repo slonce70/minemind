@@ -1,20 +1,47 @@
-import { Redirect, Stack, router } from 'expo-router';
-import { useEffect } from 'react';
+import { Redirect, Stack, router, useLocalSearchParams } from 'expo-router';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { LoadingScreen } from '../src/components/ui/loading-screen';
 import { Screen } from '../src/components/ui/screen';
+import { buildClassroomInviteToken } from '../src/features/classroom/classroom-invite';
 import { ClassroomLobbyView } from '../src/features/classroom/classroom-lobby-view';
 import { useClassroomLobby } from '../src/features/classroom/use-classroom-lobby';
 import { formatPlayerCount } from '../src/lib/count-format';
 import { useAppStore } from '../src/state/app-store';
 
+function firstParam(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
 export default function ClassroomRoute() {
   const { t } = useTranslation();
+  const params = useLocalSearchParams<{
+    host?: string | string[];
+    port?: string | string[];
+    roomCode?: string | string[];
+  }>();
   const hasHydrated = useAppStore((state) => state.hasHydrated);
+  const initialInviteInput = useMemo(() => {
+    const host = firstParam(params.host);
+    const roomCode = firstParam(params.roomCode);
+    const portValue = firstParam(params.port);
+    const port = portValue ? Number(portValue) : undefined;
+
+    if (!host || !roomCode || Number.isNaN(port)) {
+      return null;
+    }
+
+    return buildClassroomInviteToken({
+      hostAddress: host,
+      port,
+      roomCode,
+    });
+  }, [params.host, params.port, params.roomCode]);
   const lobby = useClassroomLobby({
     connectionError: t('classroom.connectionError'),
     hostAddressRequired: t('classroom.hostAddressRequired'),
+    initialInviteInput,
     nativeBuildRequired: t('classroom.nativeBuildRequired'),
     shareInviteError: t('classroom.shareInviteError'),
   });
@@ -43,9 +70,11 @@ export default function ClassroomRoute() {
         hostAddress={lobby.hostAddress}
         inviteToken={lobby.inviteToken}
         isBusy={lobby.isBusy}
+        joinInviteInput={lobby.joinInviteInput}
         joinCode={lobby.joinCode}
         lobbyState={lobby.lobbyState}
         onChangeHostAddress={lobby.setHostAddress}
+        onChangeJoinInviteInput={lobby.setJoinInviteInput}
         onChangeJoinCode={lobby.setJoinCode}
         onClearSession={lobby.clearClassroomSession}
         onHostSession={() => void lobby.handleHostSession()}
@@ -59,6 +88,9 @@ export default function ClassroomRoute() {
           hostAddressPlaceholder: t('classroom.hostAddressPlaceholder'),
           hostSession: t('classroom.hostSession'),
           hostSessionHint: t('classroom.hostSessionHint'),
+          inviteQrAccessibilityLabel: t('classroom.inviteQrAccessibilityLabel'),
+          inviteQrHint: t('classroom.inviteQrHint'),
+          inviteQrTitle: t('classroom.inviteQrTitle'),
           inviteTokenLabel: t('classroom.inviteTokenLabel'),
           inviteTokenPlaceholder: t('classroom.inviteTokenPlaceholder'),
           joinSession: t('classroom.joinSession'),
