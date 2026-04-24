@@ -112,3 +112,19 @@ test('classroom lobby keeps ready controls and host start gating in the UI flow'
   assert.match(viewSource, /toggleReady/);
   assert.match(viewSource, /disabled=\{isStartDisabled\}/);
 });
+
+test('classroom route passes scanned invite params into the lobby hook', () => {
+  const source = readFileSync(new URL('../app/classroom.tsx', import.meta.url), 'utf8');
+
+  assert.match(source, /useLocalSearchParams/);
+  assert.match(source, /buildClassroomInviteToken/);
+  assert.match(source, /initialInviteInput/);
+});
+
+test('classroom lobby resolves the host LAN address before advertising', () => {
+  const source = readFileSync(new URL('../src/features/classroom/use-classroom-lobby.ts', import.meta.url), 'utf8');
+
+  assert.match(source, /expo-network/);
+  assert.match(source, /getIpAddressAsync/);
+  assert.match(source, /0\.0\.0\.0/);
+});
