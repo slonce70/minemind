@@ -3,6 +3,7 @@ import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
 import { requireAuthenticatedUser } from '../_shared/auth.ts';
 import { serviceClient } from '../_shared/client.ts';
 import { handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
+import { assertQuestionBelongsToRound } from '../_shared/round-questions.ts';
 import { assertRoomMembership } from '../_shared/rooms.ts';
 
 type SubmitAnswerPayload = {
@@ -23,7 +24,7 @@ serve(async (request) => {
     const body = await requireJsonBody<SubmitAnswerPayload>(request);
     const { data: round, error: roundError } = await serviceClient
       .from('round_sessions')
-      .select('id, room_id')
+      .select('id, room_id, question_ids')
       .eq('id', body.roundId)
       .single();
 
@@ -34,6 +35,11 @@ serve(async (request) => {
     if (round.room_id) {
       await assertRoomMembership(round.room_id, user.id);
     }
+
+    assertQuestionBelongsToRound({
+      questionId: body.questionId,
+      roundQuestionIds: round.question_ids,
+    });
 
     const sanitizedOption = Math.max(-1, Math.min(3, body.selectedOption));
     const sanitizedTimeLeft = Math.max(0, Math.min(18000, body.timeLeftMs ?? 0));
@@ -59,6 +65,7 @@ serve(async (request) => {
     const { data: question, error: questionError } = await serviceClient
       .from('questions')
       .select('correct_option, explanation')
+      .in('id', round.question_ids)
       .eq('id', body.questionId)
       .single();
 
