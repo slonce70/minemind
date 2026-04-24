@@ -24,8 +24,8 @@ export const difficultyConfig: Record<ContentDifficulty, DifficultyConfigEntry> 
   },
   hard: {
     badgeTone: 'danger',
-    scoreMultiplier: 1.5,
+    scoreMultiplier: 2,
     translationKey: 'content.difficulty.hard',
-    timerSeconds: 15,
+    timerSeconds: 12,
   },
 };
