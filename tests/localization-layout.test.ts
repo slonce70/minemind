@@ -74,8 +74,8 @@ test('ukrainian and russian resources keep visible UX copy fully localized', () 
   assert.equal(uk.languageNames.en, 'Англійська');
   assert.equal(uk.content.difficulty.easy, 'Будівничий');
   assert.equal(uk.content.difficulty.medium, 'Дослідник');
-  assert.equal(uk.content.difficulty.hard, 'Майстер Незеру');
-  assert.equal(uk.results.badges.netherPerfect, 'Майстер Незеру без помилок');
+  assert.equal(uk.content.difficulty.hard, 'Про-режим');
+  assert.equal(uk.results.badges.netherPerfect, 'Про-режим без помилок');
   assert.equal(uk.rooms.hostBadge, '(ведучий)');
   assert.equal(uk.rooms.addDemoPlayers, 'Додати ботів');
   assert.equal(
@@ -92,8 +92,8 @@ test('ukrainian and russian resources keep visible UX copy fully localized', () 
   assert.equal(ru.languageNames.en, 'Английский');
   assert.equal(ru.content.difficulty.easy, 'Строитель');
   assert.equal(ru.content.difficulty.medium, 'Исследователь');
-  assert.equal(ru.content.difficulty.hard, 'Мастер Незера');
-  assert.equal(ru.results.badges.netherPerfect, 'Мастер Незера без ошибок');
+  assert.equal(ru.content.difficulty.hard, 'Про-режим');
+  assert.equal(ru.results.badges.netherPerfect, 'Про-режим без ошибок');
   assert.equal(ru.rooms.hostBadge, '(ведущий)');
   assert.equal(ru.rooms.addDemoPlayers, 'Добавить ботов');
   assert.equal(ru.rooms.readDocs, 'Логика уже описана в документации.');
