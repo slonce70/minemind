@@ -15,6 +15,7 @@ type ClassroomLobbyViewProps = {
   hostAddress: string;
   inviteToken?: string | null;
   isBusy: boolean;
+  joinInviteInput: string;
   joinCode: string;
   lobbyState?: {
     canStart: boolean;
@@ -22,6 +23,7 @@ type ClassroomLobbyViewProps = {
     readyCount: number;
   } | null;
   onChangeHostAddress: (value: string) => void;
+  onChangeJoinInviteInput: (value: string) => void;
   onChangeJoinCode: (value: string) => void;
   onClearSession: () => void;
   onHostSession: () => void;
@@ -68,9 +70,11 @@ export function ClassroomLobbyView({
   hostAddress,
   inviteToken,
   isBusy,
+  joinInviteInput,
   joinCode,
   lobbyState,
   onChangeHostAddress,
+  onChangeJoinInviteInput,
   onChangeJoinCode,
   onClearSession,
   onHostSession,
@@ -217,11 +221,11 @@ export function ClassroomLobbyView({
             <Text style={styles.copy}>{strings.joinSessionHint}</Text>
             <Text style={styles.inputLabel}>{strings.inviteTokenLabel}</Text>
             <TextInput
-              onChangeText={onChangeHostAddress}
+              onChangeText={onChangeJoinInviteInput}
               placeholder={strings.inviteTokenPlaceholder}
               placeholderTextColor={colors.textMuted}
               style={styles.input}
-              value={hostAddress}
+              value={joinInviteInput}
             />
             <TextInput
               autoCapitalize="characters"

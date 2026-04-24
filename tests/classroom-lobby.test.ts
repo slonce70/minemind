@@ -121,6 +121,15 @@ test('classroom route passes scanned invite params into the lobby hook', () => {
   assert.match(source, /initialInviteInput/);
 });
 
+test('classroom lobby keeps host address separate from scanned join invites', () => {
+  const hookSource = readFileSync(new URL('../src/features/classroom/use-classroom-lobby.ts', import.meta.url), 'utf8');
+  const viewSource = readFileSync(new URL('../src/features/classroom/classroom-lobby-view.tsx', import.meta.url), 'utf8');
+
+  assert.match(hookSource, /joinInviteInput/);
+  assert.match(hookSource, /setJoinInviteInput/);
+  assert.match(viewSource, /onChangeJoinInviteInput/);
+});
+
 test('classroom lobby resolves the host LAN address before advertising', () => {
   const source = readFileSync(new URL('../src/features/classroom/use-classroom-lobby.ts', import.meta.url), 'utf8');
 
