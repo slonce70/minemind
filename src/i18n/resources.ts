@@ -42,7 +42,7 @@ export const resources = {
         difficulty: {
           easy: 'Будівничий',
           medium: 'Дослідник',
-          hard: 'Майстер Незеру',
+          hard: 'Про-режим',
         },
       },
       errors: {
@@ -113,7 +113,7 @@ export const resources = {
       results: {
         backHome: 'Назад на головну',
         badges: {
-          netherPerfect: 'Майстер Незеру без помилок',
+          netherPerfect: 'Про-режим без помилок',
           perfectClear: 'Ідеальний прохід',
           standardClear: 'Раунд завершено',
         },
@@ -244,7 +244,7 @@ export const resources = {
         difficulty: {
           easy: 'Builder',
           medium: 'Explorer',
-          hard: 'Nether Pro',
+          hard: 'Pro Mode',
         },
       },
       errors: {
@@ -315,7 +315,7 @@ export const resources = {
       results: {
         backHome: 'Back home',
         badges: {
-          netherPerfect: 'Nether Pro perfect',
+          netherPerfect: 'Pro Mode perfect',
           perfectClear: 'Perfect clear',
           standardClear: 'Round complete',
         },
@@ -446,7 +446,7 @@ export const resources = {
         difficulty: {
           easy: 'Строитель',
           medium: 'Исследователь',
-          hard: 'Мастер Незера',
+          hard: 'Про-режим',
         },
       },
       errors: {
@@ -517,7 +517,7 @@ export const resources = {
       results: {
         backHome: 'Назад домой',
         badges: {
-          netherPerfect: 'Мастер Незера без ошибок',
+          netherPerfect: 'Про-режим без ошибок',
           perfectClear: 'Идеальное прохождение',
           standardClear: 'Раунд завершен',
         },
