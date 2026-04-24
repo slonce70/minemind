@@ -70,9 +70,11 @@ export default function ClassroomRoute() {
         hostAddress={lobby.hostAddress}
         inviteToken={lobby.inviteToken}
         isBusy={lobby.isBusy}
+        joinInviteInput={lobby.joinInviteInput}
         joinCode={lobby.joinCode}
         lobbyState={lobby.lobbyState}
         onChangeHostAddress={lobby.setHostAddress}
+        onChangeJoinInviteInput={lobby.setJoinInviteInput}
         onChangeJoinCode={lobby.setJoinCode}
         onClearSession={lobby.clearClassroomSession}
         onHostSession={() => void lobby.handleHostSession()}
