@@ -3,9 +3,10 @@ import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
 import { requireAuthenticatedUser } from '../_shared/auth.ts';
 import { serviceClient } from '../_shared/client.ts';
 import { handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
+import { parseRoomMatchSettingsPayload, type RoomMatchSettingsPayload } from '../_shared/room-settings.ts';
 import { listRoomParticipants } from '../_shared/rooms.ts';
 
-type CreateRoomPayload = {
+type CreateRoomPayload = RoomMatchSettingsPayload & {
   locale?: 'en' | 'ru' | 'uk';
 };
 
@@ -17,7 +18,8 @@ serve(async (request) => {
 
   try {
     const user = await requireAuthenticatedUser(request);
-    await requireJsonBody<CreateRoomPayload>(request);
+    const body = await requireJsonBody<CreateRoomPayload>(request);
+    const settings = parseRoomMatchSettingsPayload(body);
 
     const { data: roomCode, error: roomCodeError } = await serviceClient.rpc('generate_room_code');
 
@@ -28,11 +30,15 @@ serve(async (request) => {
     const { data: room, error: roomError } = await serviceClient
       .from('rooms')
       .insert({
+        content_pack_version: settings.content_pack_version,
+        difficulty: settings.difficulty,
         host_id: user.id,
+        question_count: settings.question_count,
         room_code: roomCode,
         status: 'lobby',
+        topic_mode: settings.topic_mode,
       })
-      .select('id, room_code, host_id, status, current_round_id')
+      .select('id, room_code, host_id, status, current_round_id, content_pack_version, difficulty, question_count, topic_mode')
       .single();
 
     if (roomError || !room) {

@@ -4,7 +4,7 @@ import { assertRoomStatus } from './validation.ts';
 export async function getRoomByCode(roomCode: string) {
   const { data: room, error } = await serviceClient
     .from('rooms')
-    .select('id, room_code, host_id, status, current_round_id')
+    .select('id, room_code, host_id, status, current_round_id, content_pack_version, difficulty, question_count, topic_mode')
     .eq('room_code', roomCode.toUpperCase())
     .maybeSingle();
 

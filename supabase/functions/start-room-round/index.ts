@@ -44,16 +44,24 @@ serve(async (request) => {
       throw new Error('All players need to be ready before the battle starts.');
     }
 
-    const { questions } = await getLocalizedQuestionPack(body.locale ?? 'en');
+    const { questions } = await getLocalizedQuestionPack(
+      body.locale ?? 'en',
+      room.difficulty,
+      room.question_count
+    );
     const questionIds = questions.map((question) => question.id);
 
     const { data: round, error: roundError } = await serviceClient
       .from('round_sessions')
       .insert({
+        content_pack_version: room.content_pack_version,
+        difficulty: room.difficulty,
+        question_count: room.question_count,
         question_ids: questionIds,
         room_id: room.id,
+        topic_mode: room.topic_mode,
       })
-      .select('id, room_id, question_ids, started_at, ends_at')
+      .select('id, room_id, question_ids, started_at, ends_at, content_pack_version, difficulty, question_count, topic_mode')
       .single();
 
     if (roundError || !round) {
