@@ -1,0 +1,341 @@
+[
+  {
+    "id": "official-first-day",
+    "title": "How to survive your first day | Minecraft",
+    "type": "official-article",
+    "url": "https://www.minecraft.net/it-it/article/how-survive-your-first-day",
+    "accessedAt": "2026-04-19",
+    "topics": [
+      "survival-basics",
+      "crafting-and-smelting"
+    ],
+    "canonScope": "common-canon",
+    "notes": "Official survival guidance for shelter, food, tools, furnaces, and safe early play."
+  },
+  {
+    "id": "official-how-to-craft",
+    "title": "How to craft | Minecraft",
+    "type": "official-article",
+    "url": "https://www.minecraft.net/article/how-craft",
+    "accessedAt": "2026-04-19",
+    "topics": [
+      "crafting-and-smelting",
+      "survival-basics",
+      "blocks-and-building"
+    ],
+    "canonScope": "common-canon",
+    "notes": "Official crafting guidance for recipes, tools, furnaces, and early progression."
+  },
+  {
+    "id": "wiki-ancient-city",
+    "title": "Ancient City - Minecraft Wiki",
+    "type": "wiki",
+    "url": "https://minecraft.wiki/w/Ancient_City",
+    "accessedAt": "2026-04-19",
+    "topics": [
+      "biomes-and-structures"
+    ],
+    "canonScope": "common-canon",
+    "notes": "Reference for the deep dark structure and its biome association."
+  },
+  {
+    "id": "wiki-anvil",
+    "title": "Anvil - Minecraft Wiki",
+    "type": "wiki",
+    "url": "https://minecraft.wiki/w/Anvil",
+    "accessedAt": "2026-04-19",
+    "topics": [
+      "crafting-and-smelting",
+      "villagers-and-enchanting"
+    ],
+    "canonScope": "common-canon",
+    "notes": "Reference for renaming, repairing, combining enchantments, and anvil durability."
+  },
+  {
+    "id": "wiki-bed",
+    "title": "Bed - Minecraft Wiki",
+    "type": "wiki",
+    "url": "https://minecraft.wiki/w/Bed",
+    "accessedAt": "2026-04-19",
+    "topics": [
+      "survival-basics",
+      "biomes-and-structures"
+    ],
+    "canonScope": "common-canon",
+    "notes": "Reference for sleeping, skipping night, respawn points, and bed behavior."
+  },
+  {
+    "id": "wiki-biome",
+    "title": "Biome - Minecraft Wiki",
+    "type": "wiki",
+    "url": "https://minecraft.wiki/w/Biome",
+    "accessedAt": "2026-04-19",
+    "topics": [
+      "biomes-and-structures",
+      "nether-end-and-redstone"
+    ],
+    "canonScope": "common-canon",
+    "notes": "Primary biome reference for dimension and environment differences."
+  },
+  {
+    "id": "wiki-block",
+    "title": "Block - Minecraft Wiki",
+    "type": "wiki",
+    "url": "https://minecraft.wiki/w/Block",
+    "accessedAt": "2026-04-19",
+    "topics": [
+      "blocks-and-building",
+      "crafting-and-smelting",
+      "farming-and-animals",
+      "nether-end-and-redstone"
+    ],
+    "canonScope": "common-canon",
+    "notes": "Primary block reference for common block names, placement, and behavior."
+  },
+  {
+    "id": "wiki-brewing-stand",
+    "title": "Brewing Stand - Minecraft Wiki",
+    "type": "wiki",
+    "url": "https://minecraft.wiki/w/Brewing_Stand",
+    "accessedAt": "2026-04-19",
+    "topics": [
+      "crafting-and-smelting"
+    ],
+    "canonScope": "common-canon",
+    "notes": "Reference for brewing stand usage and potion crafting station behavior."
+  },
+  {
+    "id": "wiki-bubble-column",
+    "title": "Bubble Column - Minecraft Wiki",
+    "type": "wiki",
+    "url": "https://minecraft.wiki/w/Bubble_Column",
+    "accessedAt": "2026-04-19",
+    "topics": [
+      "blocks-and-building",
+      "nether-end-and-redstone"
+    ],
+    "canonScope": "common-canon",
+    "notes": "Reference for magma-block and soul-sand bubble-column behavior."
+  },
+  {
+    "id": "wiki-cartography-table",
+    "title": "Cartography Table - Minecraft Wiki",
+    "type": "wiki",
+    "url": "https://minecraft.wiki/w/Cartography_Table",
+    "accessedAt": "2026-04-19",
+    "topics": [
+      "crafting-and-smelting",
+      "villagers-and-enchanting"
+    ],
+    "canonScope": "common-canon",
+    "notes": "Reference for copying, locking, and scaling maps with a cartography table."
+  },
+  {
+    "id": "wiki-compass",
+    "title": "Compass - Minecraft Wiki",
+    "type": "wiki",
+    "url": "https://minecraft.wiki/w/Compass",
+    "accessedAt": "2026-04-19",
+    "topics": [
+      "survival-basics",
+      "crafting-and-smelting"
+    ],
+    "canonScope": "common-canon",
+    "notes": "Reference for compass crafting and the default direction it points."
+  },
+  {
+    "id": "wiki-crafting-table",
+    "title": "Crafting Table - Minecraft Wiki",
+    "type": "wiki",
+    "url": "https://minecraft.wiki/w/Crafting_Table",
+    "accessedAt": "2026-04-19",
+    "topics": [
+      "crafting-and-smelting"
+    ],
+    "canonScope": "common-canon",
+    "notes": "Reference for 3x3 crafting functionality and common crafting-table behavior."
+  },
+  {
+    "id": "wiki-creeper",
+    "title": "Creeper - Minecraft Wiki",
+    "type": "wiki",
+    "url": "https://minecraft.wiki/w/Creeper",
+    "accessedAt": "2026-04-19",
+    "topics": [
+      "mobs-and-combat"
+    ],
+    "canonScope": "common-canon",
+    "notes": "Reference for creeper behavior, explosions, and charged-creeper mechanics."
+  },
+  {
+    "id": "wiki-enchanting",
+    "title": "Enchanting - Minecraft Wiki",
+    "type": "wiki",
+    "url": "https://minecraft.wiki/w/Enchanting",
+    "accessedAt": "2026-04-19",
+    "topics": [
+      "villagers-and-enchanting"
+    ],
+    "canonScope": "common-canon",
+    "notes": "Reference for enchanting-table behavior, bookshelves, lapis, anvils, and enchantments."
+  },
+  {
+    "id": "wiki-grindstone",
+    "title": "Grindstone - Minecraft Wiki",
+    "type": "wiki",
+    "url": "https://minecraft.wiki/w/Grindstone",
+    "accessedAt": "2026-04-19",
+    "topics": [
+      "crafting-and-smelting",
+      "villagers-and-enchanting"
+    ],
+    "canonScope": "common-canon",
+    "notes": "Reference for removing enchantments and repairing items with a grindstone."
+  },
+  {
+    "id": "wiki-item",
+    "title": "Item - Minecraft Wiki",
+    "type": "wiki",
+    "url": "https://minecraft.wiki/w/Item",
+    "accessedAt": "2026-04-19",
+    "topics": [
+      "survival-basics",
+      "crafting-and-smelting",
+      "villagers-and-enchanting",
+      "nether-end-and-redstone"
+    ],
+    "canonScope": "common-canon",
+    "notes": "Broad item reference for common inventory items, fuels, and utility objects."
+  },
+  {
+    "id": "wiki-loom",
+    "title": "Loom - Minecraft Wiki",
+    "type": "wiki",
+    "url": "https://minecraft.wiki/w/Loom",
+    "accessedAt": "2026-04-19",
+    "topics": [
+      "crafting-and-smelting",
+      "villagers-and-enchanting"
+    ],
+    "canonScope": "common-canon",
+    "notes": "Reference for banner pattern crafting and loom workstation behavior."
+  },
+  {
+    "id": "wiki-mob",
+    "title": "Mob - Minecraft Wiki",
+    "type": "wiki",
+    "url": "https://minecraft.wiki/w/Mob",
+    "accessedAt": "2026-04-19",
+    "topics": [
+      "mobs-and-combat",
+      "farming-and-animals",
+      "survival-basics",
+      "nether-end-and-redstone"
+    ],
+    "canonScope": "common-canon",
+    "notes": "Primary mob reference for passive, neutral, and hostile mob behavior."
+  },
+  {
+    "id": "wiki-nether-portal",
+    "title": "Nether portal - Minecraft Wiki",
+    "type": "wiki",
+    "url": "https://minecraft.wiki/w/Nether_portal",
+    "accessedAt": "2026-04-19",
+    "topics": [
+      "nether-end-and-redstone"
+    ],
+    "canonScope": "common-canon",
+    "notes": "Reference for obsidian frames, portal activation, and travel between dimensions."
+  },
+  {
+    "id": "wiki-redstone-circuits",
+    "title": "Redstone circuits - Minecraft Wiki",
+    "type": "wiki",
+    "url": "https://minecraft.wiki/w/Redstone_circuits",
+    "accessedAt": "2026-04-19",
+    "topics": [
+      "nether-end-and-redstone"
+    ],
+    "canonScope": "common-canon",
+    "notes": "Reference for buttons, repeaters, observers, signal behavior, and beginner circuits."
+  },
+  {
+    "id": "wiki-respawn-anchor",
+    "title": "Respawn Anchor - Minecraft Wiki",
+    "type": "wiki",
+    "url": "https://minecraft.wiki/w/Respawn_Anchor",
+    "accessedAt": "2026-04-19",
+    "topics": [
+      "survival-basics",
+      "nether-end-and-redstone"
+    ],
+    "canonScope": "common-canon",
+    "notes": "Reference for setting respawn points in the Nether when charged with glowstone."
+  },
+  {
+    "id": "wiki-stonecutter",
+    "title": "Stonecutter - Minecraft Wiki",
+    "type": "wiki",
+    "url": "https://minecraft.wiki/w/Stonecutter",
+    "accessedAt": "2026-04-19",
+    "topics": [
+      "crafting-and-smelting",
+      "blocks-and-building"
+    ],
+    "canonScope": "common-canon",
+    "notes": "Reference for efficiently crafting stone-based building variants."
+  },
+  {
+    "id": "wiki-structure",
+    "title": "Structure - Minecraft Wiki",
+    "type": "wiki",
+    "url": "https://minecraft.wiki/w/Structure",
+    "accessedAt": "2026-04-19",
+    "topics": [
+      "biomes-and-structures",
+      "nether-end-and-redstone"
+    ],
+    "canonScope": "common-canon",
+    "notes": "Reference for generated structures across the Overworld, Nether, and End."
+  },
+  {
+    "id": "wiki-totem-of-undying",
+    "title": "Totem of Undying - Minecraft Wiki",
+    "type": "wiki",
+    "url": "https://minecraft.wiki/w/Totem_of_Undying",
+    "accessedAt": "2026-04-19",
+    "topics": [
+      "survival-basics",
+      "mobs-and-combat"
+    ],
+    "canonScope": "common-canon",
+    "notes": "Reference for one-time death-prevention behavior while the totem is held."
+  },
+  {
+    "id": "wiki-village",
+    "title": "Village - Minecraft Wiki",
+    "type": "wiki",
+    "url": "https://minecraft.wiki/w/Village",
+    "accessedAt": "2026-04-19",
+    "topics": [
+      "biomes-and-structures",
+      "villagers-and-enchanting"
+    ],
+    "canonScope": "common-canon",
+    "notes": "Reference for villages, villagers, beds, and village biome generation."
+  },
+  {
+    "id": "wiki-villager",
+    "title": "Villager - Minecraft Wiki",
+    "type": "wiki",
+    "url": "https://minecraft.wiki/w/Villager",
+    "accessedAt": "2026-04-19",
+    "topics": [
+      "villagers-and-enchanting",
+      "biomes-and-structures",
+      "mobs-and-combat"
+    ],
+    "canonScope": "common-canon",
+    "notes": "Reference for professions, workstations, breeding, and village economy behavior."
+  }
+]

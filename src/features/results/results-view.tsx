@@ -7,14 +7,15 @@ import { StatPill } from '../../components/ui/stat-pill';
 import { BadgeChip } from '../ui/badge-chip';
 import { WorldBackground } from '../ui/world-background';
 import { getResultBadgeModel } from './result-badges';
-import type { QuizResultSummary } from '../quiz/types';
-import { colors, spacing, typography } from '../../theme/tokens';
+import type { MatchRecord } from './match-record';
+import { colors, radii, spacing, typography } from '../../theme/tokens';
 
 type ResultsViewProps = {
   difficultyLabel: string;
+  matchRecord: MatchRecord;
   onBackHome: () => void;
   onPlayAgain: () => void;
-  result: QuizResultSummary;
+  sourceLabel: string;
   strings: {
     accuracyLabel: string;
     backHome: string;
@@ -31,16 +32,24 @@ type ResultsViewProps = {
     playAgain: string;
     roomCodePrefix: string;
     score: string;
+    source: string;
     subtitle: string;
     title: string;
     you: string;
   };
 };
 
-export function ResultsView({ difficultyLabel, onBackHome, onPlayAgain, result, strings }: ResultsViewProps) {
+export function ResultsView({
+  difficultyLabel,
+  matchRecord,
+  onBackHome,
+  onPlayAgain,
+  sourceLabel,
+  strings,
+}: ResultsViewProps) {
   const badge = getResultBadgeModel({
-    difficulty: result.difficulty ?? 'medium',
-    perfectRound: result.correctAnswers === result.questionCount,
+    difficulty: matchRecord.difficulty ?? 'medium',
+    perfectRound: matchRecord.correctAnswers === matchRecord.questionCount,
   });
   const badgeLabel = {
     'nether-pro-perfect': strings.badges.netherPerfect,
@@ -53,26 +62,33 @@ export function ResultsView({ difficultyLabel, onBackHome, onPlayAgain, result, 
       <Card highlight style={styles.hero}>
         <WorldBackground
           style={styles.worldCard}
-          variant={badge.id === 'nether-pro-perfect' ? 'nether' : 'overworld'}
+          variant={badge.id === 'nether-pro-perfect' ? 'nether' : 'reward'}
         >
-          <Text style={styles.kicker}>{strings.subtitle}</Text>
-          <Text style={styles.title}>{strings.title}</Text>
-          <BadgeChip icon={badge.icon} label={badgeLabel} tone={badge.tone} />
-          <View style={styles.heroStats}>
-            <StatPill label={strings.score} value={String(result.score)} />
-            <StatPill label={strings.bestStreak} value={String(result.bestStreak)} />
-            <StatPill
-              label={strings.accuracyLabel}
-              value={`${result.correctAnswers}/${result.questionCount}`}
-            />
-            <StatPill label={strings.difficulty} value={difficultyLabel} />
+          <View style={styles.trophyHeader}>
+            <View style={styles.heroHeader}>
+              <Text style={styles.kicker}>{strings.subtitle}</Text>
+              <Text style={styles.title}>{strings.title}</Text>
+            </View>
+            <BadgeChip icon={badge.icon} label={badgeLabel} tone={badge.tone} />
           </View>
-          {result.roomCode ? <Text style={styles.roomCode}>{strings.roomCodePrefix} {result.roomCode}</Text> : null}
+          <View style={styles.heroSummary}>
+            <View style={styles.heroStats}>
+              <StatPill label={strings.score} value={String(matchRecord.score)} />
+              <StatPill label={strings.bestStreak} value={String(matchRecord.bestStreak)} />
+              <StatPill
+                label={strings.accuracyLabel}
+                value={`${matchRecord.correctAnswers}/${matchRecord.questionCount}`}
+              />
+              <StatPill label={strings.difficulty} value={difficultyLabel} />
+              <StatPill label={strings.source} value={sourceLabel} />
+            </View>
+            {matchRecord.roomCode ? <Text style={styles.roomCode}>{strings.roomCodePrefix} {matchRecord.roomCode}</Text> : null}
+          </View>
         </WorldBackground>
       </Card>
 
-      <View style={styles.podiumRow}>
-        {result.standings.slice(0, 3).map((entry, index) => {
+      <View style={styles.podiumStage}>
+        {matchRecord.participants.slice(0, 3).map((entry, index) => {
           const isWinner = index === 0;
 
           return (
@@ -89,9 +105,9 @@ export function ResultsView({ difficultyLabel, onBackHome, onPlayAgain, result, 
         })}
       </View>
 
-      <Card>
+      <Card style={styles.fieldNotes} tone="panel">
         <Text style={styles.sectionTitle}>{strings.insights}</Text>
-        {result.breakdown.slice(0, 3).map((entry) => (
+        {matchRecord.breakdown.slice(0, 3).map((entry) => (
           <View key={entry.questionId} style={styles.insightRow}>
             <Text style={styles.insightPrompt}>{entry.prompt}</Text>
             <Text style={[styles.insightStatus, entry.isCorrect ? styles.correct : styles.wrong]}>
@@ -102,8 +118,10 @@ export function ResultsView({ difficultyLabel, onBackHome, onPlayAgain, result, 
         ))}
       </Card>
 
-      <PrimaryButton label={strings.playAgain} onPress={onPlayAgain} />
-      <SecondaryButton label={strings.backHome} onPress={onBackHome} />
+      <View style={styles.actionStack}>
+        <PrimaryButton label={strings.playAgain} onPress={onPlayAgain} />
+        <SecondaryButton label={strings.backHome} onPress={onBackHome} />
+      </View>
     </Screen>
   );
 }
@@ -124,6 +142,9 @@ const styles = StyleSheet.create({
     fontSize: typography.display,
     fontWeight: '800',
   },
+  trophyHeader: {
+    gap: spacing.sm,
+  },
   heroStats: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -134,23 +155,43 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     paddingTop: spacing.xl,
   },
+  heroHeader: {
+    gap: spacing.sm,
+    maxWidth: 720,
+  },
+  heroSummary: {
+    backgroundColor: colors.surfaceInset,
+    borderColor: colors.borderStrong,
+    borderRadius: radii.xl,
+    borderWidth: 2,
+    gap: spacing.sm,
+    padding: spacing.lg,
+  },
   roomCode: {
     color: colors.textSecondary,
     fontSize: typography.caption,
     fontWeight: '700',
   },
-  podiumRow: {
+  podiumStage: {
     alignItems: 'flex-end',
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: spacing.sm,
   },
+  fieldNotes: {
+    borderWidth: 2,
+  },
   podiumCenter: {
-    flex: 1.1,
+    flexBasis: 220,
+    flexGrow: 1.1,
     minHeight: 168,
+    minWidth: 180,
   },
   podiumSide: {
-    flex: 0.9,
+    flexBasis: 180,
+    flexGrow: 0.9,
     minHeight: 132,
+    minWidth: 150,
   },
   podiumPlace: {
     color: colors.textMuted,
@@ -164,6 +205,7 @@ const styles = StyleSheet.create({
   },
   podiumCopy: {
     color: colors.textSecondary,
+    flexShrink: 1,
     fontSize: typography.caption,
     fontWeight: '700',
   },
@@ -203,5 +245,8 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     fontSize: typography.caption,
     lineHeight: 20,
+  },
+  actionStack: {
+    gap: spacing.sm,
   },
 });

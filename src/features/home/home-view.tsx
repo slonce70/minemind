@@ -5,20 +5,21 @@ import { PrimaryButton, SecondaryButton } from '../../components/ui/button';
 import { StatPill } from '../../components/ui/stat-pill';
 import type { ContentDifficulty } from '../content/types';
 import { DifficultySelector } from './difficulty-selector';
-import type { QuizResultSummary } from '../quiz/types';
+import type { MatchRecord } from '../results/match-record';
 import { BadgeChip } from '../ui/badge-chip';
 import { WorldBackground } from '../ui/world-background';
-import { colors, spacing, typography } from '../../theme/tokens';
+import { colors, radii, spacing, typography } from '../../theme/tokens';
 
 type HomeViewProps = {
   difficultyLabel: string;
   difficultyStrings: Record<ContentDifficulty, string>;
   hasActiveRoom: boolean;
-  lastResult?: QuizResultSummary;
-  leaderboardEntries: Array<{ name: string; score: number }>;
+  latestMatch?: MatchRecord;
+  latestMatchSourceLabel?: string;
   localeLabel: string;
   modeLabel: string;
   nickname: string;
+  onOpenClassroom: () => void;
   onOpenResults: () => void;
   onPlaySolo: () => void;
   onResetProfile: () => void;
@@ -29,9 +30,11 @@ type HomeViewProps = {
   strings: {
     activeRoomTitle: string;
     activeRoomCopy: string;
+    classroomAction: string;
+    classroomCardCopy: string;
+    classroomCardTitle: string;
     difficultyHelper: string;
     difficultySelectorLabel: string;
-    leaderboardTitle: string;
     localeLabel: string;
     modeLabel: string;
     modeSelectorCopy: string;
@@ -39,6 +42,7 @@ type HomeViewProps = {
     primaryCardTitle: string;
     resultCorrectLabel: string;
     resultScoreLabel: string;
+    resultSourceLabel: string;
     resultStreakLabel: string;
     resultTitle: string;
     resultsAction: string;
@@ -53,11 +57,12 @@ export function HomeView({
   difficultyLabel,
   difficultyStrings,
   hasActiveRoom,
-  lastResult,
-  leaderboardEntries,
+  latestMatch,
+  latestMatchSourceLabel,
   localeLabel,
   modeLabel,
   nickname,
+  onOpenClassroom,
   onOpenResults,
   onPlaySolo,
   onResetProfile,
@@ -69,67 +74,79 @@ export function HomeView({
 }: HomeViewProps) {
   return (
     <View style={styles.container}>
-      <Card highlight style={styles.heroCard}>
+      <Card highlight style={styles.heroCard} tone="scene">
         <WorldBackground style={styles.worldCard} variant="overworld">
-          <Text style={styles.heroEyebrow}>{strings.modeSelectorCopy}</Text>
-          <Text style={styles.heroTitle}>{strings.title.replace('{{name}}', nickname)}</Text>
-          <Text style={styles.heroSubtitle}>{strings.primaryCardCopy}</Text>
-          <BadgeChip icon="pickaxe" label={difficultyLabel} tone="warning" />
-          <View style={styles.heroStats}>
-            <StatPill label={strings.localeLabel} value={localeLabel} />
-            <StatPill label={strings.modeLabel} value={modeLabel} />
-            <StatPill label={strings.difficultySelectorLabel} value={difficultyLabel} />
+          <View style={styles.heroHeader}>
+            <Text style={styles.heroEyebrow}>{strings.modeSelectorCopy}</Text>
+            <Text style={styles.heroTitle}>{strings.title.replace('{{name}}', nickname)}</Text>
+            <Text style={styles.heroSubtitle}>{strings.primaryCardCopy}</Text>
+            <BadgeChip icon="pickaxe" label={difficultyLabel} tone="warning" />
           </View>
-          <Text style={styles.selectorCopy}>{strings.difficultyHelper}</Text>
-          <DifficultySelector
-            label={strings.difficultySelectorLabel}
-            onSelect={onSelectDifficulty}
-            selectedDifficulty={selectedDifficulty}
-            strings={difficultyStrings}
-          />
-          <PrimaryButton label={strings.primaryCardTitle} onPress={onPlaySolo} />
+
+          <View style={styles.heroControlZone}>
+            <View style={styles.heroMetaGrid}>
+              <StatPill label={strings.localeLabel} value={localeLabel} />
+              <StatPill label={strings.modeLabel} value={modeLabel} />
+              <StatPill label={strings.difficultySelectorLabel} value={difficultyLabel} />
+            </View>
+            <Text style={styles.selectorCopy}>{strings.difficultyHelper}</Text>
+            <DifficultySelector
+              label={strings.difficultySelectorLabel}
+              onSelect={onSelectDifficulty}
+              selectedDifficulty={selectedDifficulty}
+              strings={difficultyStrings}
+            />
+          </View>
         </WorldBackground>
       </Card>
 
-      <Card>
-        <Text style={styles.sectionTitle}>{strings.roomCardTitle}</Text>
-        <Text style={styles.copy}>{strings.roomCardCopy}</Text>
-        <SecondaryButton label={roomActionLabel} onPress={onRoomAction} />
-      </Card>
+      <View style={styles.routeBoard}>
+        <Card style={styles.primaryRoute} tone="scene">
+          <Text style={styles.routeEyebrow}>{strings.primaryCardTitle}</Text>
+          <Text style={styles.routeTitle}>{strings.primaryCardCopy}</Text>
+          <PrimaryButton label={strings.primaryCardTitle} onPress={onPlaySolo} />
+        </Card>
+
+        <View style={styles.supportRoutes}>
+          <Card style={styles.supportRoute} tone="panel">
+            <Text style={styles.sectionTitle}>{strings.roomCardTitle}</Text>
+            <Text style={styles.copy}>{strings.roomCardCopy}</Text>
+            <SecondaryButton label={roomActionLabel} onPress={onRoomAction} />
+          </Card>
+
+          <Card style={styles.supportRoute} tone="panel">
+            <Text style={styles.sectionTitle}>{strings.classroomCardTitle}</Text>
+            <Text style={styles.copy}>{strings.classroomCardCopy}</Text>
+            <SecondaryButton label={strings.classroomAction} onPress={onOpenClassroom} />
+          </Card>
+        </View>
+      </View>
 
       {hasActiveRoom ? (
-        <Card>
+        <Card tone="panel">
           <Text style={styles.sectionTitle}>{strings.activeRoomTitle}</Text>
           <Text style={styles.copy}>{strings.activeRoomCopy}</Text>
           <PrimaryButton label={roomActionLabel} onPress={onRoomAction} />
         </Card>
       ) : null}
 
-      {lastResult ? (
-        <Card>
+      {latestMatch ? (
+        <Card style={styles.expeditionLog} tone="utility">
           <Text style={styles.sectionTitle}>{strings.resultTitle}</Text>
           <View style={styles.resultGrid}>
-            <StatPill label={strings.resultScoreLabel} value={String(lastResult.score)} />
+            <StatPill label={strings.resultScoreLabel} value={String(latestMatch.score)} />
             <StatPill
               label={strings.resultCorrectLabel}
-              value={`${lastResult.correctAnswers}/${lastResult.questionCount}`}
+              value={`${latestMatch.correctAnswers}/${latestMatch.questionCount}`}
             />
-            <StatPill label={strings.resultStreakLabel} value={String(lastResult.bestStreak)} />
+            <StatPill label={strings.resultStreakLabel} value={String(latestMatch.bestStreak)} />
+            {latestMatchSourceLabel ? (
+              <StatPill label={strings.resultSourceLabel} value={latestMatchSourceLabel} />
+            ) : null}
           </View>
           <PrimaryButton label={strings.resultsAction} onPress={onOpenResults} />
         </Card>
       ) : null}
-
-      <Card>
-        <Text style={styles.sectionTitle}>{strings.leaderboardTitle}</Text>
-        {leaderboardEntries.map((entry, index) => (
-          <View key={entry.name} style={styles.leaderboardRow}>
-            <Text style={styles.rank}>#{index + 1}</Text>
-            <Text style={styles.name}>{entry.name}</Text>
-            <Text style={styles.score}>{entry.score}</Text>
-          </View>
-        ))}
-      </Card>
 
       <SecondaryButton label={strings.switchProfile} onPress={onResetProfile} />
     </View>
@@ -140,8 +157,46 @@ const styles = StyleSheet.create({
   container: {
     gap: spacing.sm,
   },
+  routeBoard: {
+    gap: spacing.sm,
+  },
+  primaryRoute: {
+    padding: spacing.lg,
+  },
+  supportRoutes: {
+    gap: spacing.sm,
+  },
+  supportRoute: {
+    minWidth: 0,
+  },
+  expeditionLog: {
+    borderWidth: 2,
+  },
+  heroControlZone: {
+    backgroundColor: colors.surfaceRaised,
+    borderColor: colors.border,
+    borderRadius: radii.xl,
+    borderWidth: 1,
+    gap: spacing.sm,
+    padding: spacing.md,
+  },
+  heroHeader: {
+    gap: spacing.xs,
+  },
   heroCard: {
     padding: 0,
+  },
+  routeEyebrow: {
+    color: colors.torch,
+    fontSize: typography.overline,
+    fontWeight: '800',
+    letterSpacing: 1.4,
+    textTransform: 'uppercase',
+  },
+  routeTitle: {
+    color: colors.textSecondary,
+    fontSize: typography.body,
+    lineHeight: 24,
   },
   heroEyebrow: {
     color: colors.highlight,
@@ -160,7 +215,7 @@ const styles = StyleSheet.create({
     fontSize: typography.body,
     lineHeight: 24,
   },
-  heroStats: {
+  heroMetaGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.sm,
@@ -189,29 +244,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.sm,
-  },
-  leaderboardRow: {
-    alignItems: 'center',
-    borderBottomColor: colors.border,
-    borderBottomWidth: 1,
-    flexDirection: 'row',
-    paddingVertical: spacing.sm,
-  },
-  rank: {
-    color: colors.highlight,
-    fontSize: typography.caption,
-    fontWeight: '800',
-    width: 42,
-  },
-  name: {
-    color: colors.textPrimary,
-    flex: 1,
-    fontSize: typography.body,
-    fontWeight: '700',
-  },
-  score: {
-    color: colors.textSecondary,
-    fontSize: typography.caption,
-    fontWeight: '700',
   },
 });

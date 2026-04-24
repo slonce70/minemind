@@ -9,6 +9,8 @@ import { getAuthenticatedUser, invokeSupabaseFunction } from '../../lib/supabase
 import { createDefaultRoomMatchSettings } from './room-match-settings';
 import type { QuizResultSummary, QuizQuestion } from '../quiz/types';
 import type { ActiveRoom, ActiveRoomRound, RoomParticipant } from './types';
+import { buildRecoveredRoomResult } from '../results/recover-room-result';
+import { normalizeMatchRecord } from '../results/normalize-match-record';
 
 type RoomParticipantResponse = {
   avatar_id: string;
@@ -69,7 +71,20 @@ const FINALIZE_WAIT_INTERVAL_MS = 1500;
 const FINALIZE_WAIT_MAX_ATTEMPTS = 10;
 
 function normalizeRoomStatus(status: RoomResponse['status']): ActiveRoom['status'] {
-  return status === 'active' ? 'active' : 'lobby';
+  switch (status) {
+    case 'active':
+      return 'active';
+    case 'waiting':
+      return 'waiting';
+    case 'finalizing':
+      return 'finalizing';
+    case 'completed':
+    case 'finished':
+      return 'finished';
+    case 'lobby':
+    default:
+      return 'lobby';
+  }
 }
 
 async function mapParticipants(participants: RoomParticipantResponse[]) {
@@ -89,6 +104,7 @@ async function mapRoom(payload: CreateOrJoinRoomResponse) {
   const participants = await mapParticipants(payload.participants);
   const difficulty = payload.room.difficulty ?? 'medium';
   const settings = createDefaultRoomMatchSettings(difficulty);
+  const status = normalizeRoomStatus(payload.room.status);
 
   if (payload.room.content_pack_version) {
     settings.contentPackVersion = payload.room.content_pack_version;
@@ -111,12 +127,9 @@ async function mapRoom(payload: CreateOrJoinRoomResponse) {
       isHost: participant.id === payload.room.host_id,
     })),
     roomCode: payload.room.room_code,
-    roundId:
-      normalizeRoomStatus(payload.room.status) === 'active'
-        ? payload.room.current_round_id ?? undefined
-        : undefined,
+    roundId: payload.room.current_round_id ?? undefined,
     settings,
-    status: normalizeRoomStatus(payload.room.status),
+    status,
   } satisfies ActiveRoom;
 }
 
@@ -297,11 +310,20 @@ export async function submitLiveRoomAnswer(
 
 export async function finalizeLiveRoomRound(
   round: ActiveRoomRound,
-  localFallback: QuizResultSummary
+  localFallback?: QuizResultSummary
 ) {
   if (!round.roundId) {
     return {
-      result: localFallback,
+      record:
+        localFallback
+          ? normalizeMatchRecord({
+              authority: 'server',
+              input: localFallback,
+              isDemo: false,
+              syncStatus: 'synced',
+              transport: 'supabase',
+            })
+          : buildRecoveredRoomResult(round, [], ''),
       status: 'completed' as const,
     };
   }
@@ -332,7 +354,16 @@ export async function finalizeLiveRoomRound(
 
   if (!payload) {
     return {
-      result: localFallback,
+      record:
+        localFallback
+          ? normalizeMatchRecord({
+              authority: 'server',
+              input: localFallback,
+              isDemo: false,
+              syncStatus: 'recovered',
+              transport: 'supabase',
+            })
+          : undefined,
       status: 'pending' as const,
     };
   }
@@ -344,13 +375,23 @@ export async function finalizeLiveRoomRound(
       name: entry.nickname,
       score: entry.score,
     }));
+  const recoveredRecord = buildRecoveredRoomResult(round, payload.rankings, currentUser.id);
 
   return {
-    result: {
-      ...localFallback,
-      roomCode: round.roomCode,
-      standings: resolvedStandings.length > 0 ? resolvedStandings : localFallback.standings,
-    },
+    record:
+      localFallback
+        ? normalizeMatchRecord({
+            authority: 'server',
+            input: {
+              ...localFallback,
+              roomCode: round.roomCode,
+              standings: resolvedStandings.length > 0 ? resolvedStandings : localFallback.standings,
+            },
+            isDemo: false,
+            syncStatus: 'synced',
+            transport: 'supabase',
+          })
+        : recoveredRecord,
     status: payload.status,
   };
 }

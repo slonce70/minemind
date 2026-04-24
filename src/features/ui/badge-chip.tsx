@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-import { colors, radii, spacing, typography } from '../../theme/tokens';
+import { colors, radii, shadows, spacing, typography } from '../../theme/tokens';
 import { iconMap } from './icon-map';
 
 type BadgeChipProps = {
@@ -31,29 +31,34 @@ export function BadgeChip({ icon, label, tone = 'warning' }: BadgeChipProps) {
   const style = toneStyles[tone];
 
   return (
-    <View style={[styles.container, { backgroundColor: style.backgroundColor, borderColor: style.borderColor }]}>
+    <View style={[styles.plate, { backgroundColor: style.backgroundColor, borderColor: style.borderColor }]}>
       {icon ? <Text style={[styles.icon, { color: style.color }]}>{iconMap[icon]}</Text> : null}
-      <Text style={[styles.label, { color: style.color }]}>{label}</Text>
+      <Text numberOfLines={2} style={[styles.label, { color: style.color }]}>
+        {label}
+      </Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  plate: {
     alignItems: 'center',
     alignSelf: 'flex-start',
     borderRadius: radii.lg,
-    borderWidth: 1,
+    borderWidth: 2,
     flexDirection: 'row',
     gap: spacing.xs,
+    maxWidth: '100%',
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
+    ...shadows.soft,
   },
   icon: {
     fontSize: typography.micro,
     fontWeight: '900',
   },
   label: {
+    flexShrink: 1,
     fontSize: typography.micro,
     fontWeight: '900',
     letterSpacing: 0.4,

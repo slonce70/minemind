@@ -1,5 +1,5 @@
 import { Redirect, Stack, useLocalSearchParams } from 'expo-router';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, type ImageSourcePropType, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { PrimaryButton } from '../src/components/ui/button';
@@ -12,9 +12,25 @@ import { useSoloRound } from '../src/features/quiz/use-solo-round';
 import { useAppStore } from '../src/state/app-store';
 import { colors, radii, spacing, typography } from '../src/theme/tokens';
 
+const questionIllustrationSourceById: Record<string, ImageSourcePropType> = {
+  'badlands-has-terracotta': require('../assets/question-illustrations/badlands-has-terracotta.png'),
+  'bamboo-jungle-has-bamboo': require('../assets/question-illustrations/bamboo-jungle-has-bamboo.png'),
+  'bee-pollinates-crops': require('../assets/question-illustrations/bee-pollinates-crops.png'),
+  'creeper-explodes': require('../assets/question-illustrations/creeper-explodes.png'),
+  'igloo-in-snowy-biomes': require('../assets/question-illustrations/igloo-in-snowy-biomes.png'),
+  'ocean-monument-guardians': require('../assets/question-illustrations/ocean-monument-guardians.png'),
+  'obsidian-from-water-and-lava': require('../assets/question-illustrations/obsidian-from-water-and-lava.png'),
+  'redstone-dust-carries-power': require('../assets/question-illustrations/redstone-dust-carries-power.png'),
+  'sand-falls-with-gravity': require('../assets/question-illustrations/sand-falls-with-gravity.png'),
+  'skeleton-uses-bow': require('../assets/question-illustrations/skeleton-uses-bow.png'),
+  'torch-lights-caves': require('../assets/question-illustrations/torch-lights-caves.png'),
+  'village-has-villagers': require('../assets/question-illustrations/village-has-villagers.png'),
+};
+
 export default function SoloRoute() {
   const { t } = useTranslation();
   const { mode } = useLocalSearchParams<{ mode?: string }>();
+  const hasHydrated = useAppStore((state) => state.hasHydrated);
   const locale = useAppStore((state) => state.locale);
   const round = useSoloRound({
     locale,
@@ -26,8 +42,16 @@ export default function SoloRoute() {
   });
   const difficultyLabel = t(difficultyConfig[round.difficulty].translationKey);
 
+  if (!hasHydrated) {
+    return <LoadingScreen />;
+  }
+
   if (round.isRoomMode && !round.isLoading && (!round.currentRoom || !round.currentRoomRound)) {
     return <Redirect href="/rooms" />;
+  }
+
+  if (round.isClassroomMode && !round.isLoading && !round.currentClassroomSession) {
+    return <Redirect href="/classroom" />;
   }
 
   if (round.isLoading) {
@@ -53,15 +77,19 @@ export default function SoloRoute() {
   }
 
   if (!round.question) {
-    return <Redirect href={round.isRoomMode ? '/rooms' : '/home'} />;
+    return <Redirect href={round.isRoomMode ? '/rooms' : round.isClassroomMode ? '/classroom' : '/home'} />;
   }
 
   return (
-    <Screen scrollable={false}>
+    <Screen>
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.header}>
         <Text style={styles.kicker}>
-          {round.isRoomMode ? t('solo.roomModeLabel') : t('solo.modeLabel')}
+          {round.isRoomMode
+            ? t('solo.roomModeLabel')
+            : round.isClassroomMode
+              ? t('solo.classroomModeLabel')
+              : t('solo.modeLabel')}
         </Text>
         <Text style={styles.difficultyLabel}>{difficultyLabel}</Text>
         <Text style={styles.progressTitle}>
@@ -82,6 +110,21 @@ export default function SoloRoute() {
             {round.timeLeft}s / {round.timeLimit}s
           </Text>
         </View>
+        {round.question.illustration ? (
+          <View style={styles.questionIllustrationFrame}>
+            <Image
+              accessibilityIgnoresInvertColors
+              accessibilityLabel={round.question.illustration.alt}
+              resizeMode="cover"
+              source={
+                questionIllustrationSourceById[round.question.illustration.id] ?? {
+                  uri: round.question.illustration.imageUri,
+                }
+              }
+              style={styles.questionIllustration}
+            />
+          </View>
+        ) : null}
         <Text style={styles.questionPrompt}>{round.question.prompt}</Text>
       </Card>
 
@@ -125,7 +168,12 @@ export default function SoloRoute() {
         </Text>
       </Card>
 
-      {round.isRevealed ? null : (
+      {round.isRevealed ? (
+        <PrimaryButton
+          label={round.isSubmittingAnswer ? t('common.loading') : t('solo.next')}
+          onPress={() => void round.goNext()}
+        />
+      ) : (
         <PrimaryButton
           label={round.isSubmittingAnswer ? t('common.loading') : t('solo.skip')}
           onPress={() => round.handleAnswer(-1, 0)}
@@ -171,6 +219,19 @@ const styles = StyleSheet.create({
   },
   questionCard: {
     marginBottom: spacing.md,
+  },
+  questionIllustrationFrame: {
+    aspectRatio: 16 / 9,
+    backgroundColor: colors.surfaceInset,
+    borderColor: colors.border,
+    borderRadius: radii.lg,
+    borderWidth: 1,
+    marginBottom: spacing.md,
+    overflow: 'hidden',
+  },
+  questionIllustration: {
+    height: '100%',
+    width: '100%',
   },
   timerRow: {
     flexDirection: 'row',
