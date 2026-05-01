@@ -92,14 +92,14 @@ test('solo route keeps the active quiz screen scrollable so the fact card remain
   assert.match(soloSource, /return \(\s*<Screen>\s*<Stack\.Screen options=\{\{ headerShown: false \}\} \/>/);
 });
 
-test('solo route keeps an explicit follow-up action after the answer is revealed', () => {
+test('solo route keeps post-answer progression manual so facts remain readable', () => {
   const soloSource = readFileSync(new URL('../app/solo.tsx', import.meta.url), 'utf8');
   const roundSource = readFileSync(new URL('../src/features/quiz/use-solo-round.ts', import.meta.url), 'utf8');
 
   assert.match(soloSource, /round\.isRevealed \? \(/);
   assert.match(soloSource, /t\('solo\.next'\)/);
   assert.match(soloSource, /round\.goNext/);
-  assert.match(roundSource, /goNext,/);
+  assert.doesNotMatch(roundSource, /autoAdvanceTimeoutRef\.current\s*=\s*setTimeout/);
 });
 
 test('home route exposes the classroom lobby from the main menu', () => {

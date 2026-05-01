@@ -221,12 +221,13 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   questionIllustrationFrame: {
-    aspectRatio: 16 / 9,
+    aspectRatio: 16 / 7,
     backgroundColor: colors.surfaceInset,
     borderColor: colors.border,
     borderRadius: radii.lg,
     borderWidth: 1,
     marginBottom: spacing.md,
+    maxHeight: 180,
     overflow: 'hidden',
   },
   questionIllustration: {
@@ -250,9 +251,9 @@ const styles = StyleSheet.create({
   },
   questionPrompt: {
     color: colors.textPrimary,
-    fontSize: typography.h2,
+    fontSize: typography.body,
     fontWeight: '800',
-    lineHeight: 34,
+    lineHeight: 24,
   },
   optionList: {
     gap: spacing.sm,
