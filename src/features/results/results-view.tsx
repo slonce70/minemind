@@ -61,6 +61,7 @@ export function ResultsView({
     <Screen scrollable>
       <Card highlight style={styles.hero}>
         <WorldBackground
+          showTerrain={false}
           style={styles.worldCard}
           variant={badge.id === 'nether-pro-perfect' ? 'nether' : 'reward'}
         >
