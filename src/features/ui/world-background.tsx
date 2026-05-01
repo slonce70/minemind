@@ -5,21 +5,30 @@ import { themeArt } from './theme-art';
 
 type WorldBackgroundProps = ViewProps & {
   children: React.ReactNode;
+  showTerrain?: boolean;
   variant: keyof typeof themeArt;
 };
 
-export function WorldBackground({ children, style, variant, ...props }: WorldBackgroundProps) {
+export function WorldBackground({
+  children,
+  showTerrain = true,
+  style,
+  variant,
+  ...props
+}: WorldBackgroundProps) {
   const art = themeArt[variant];
 
   return (
     <View style={[styles.shell, { backgroundColor: art.backdrop }, style]} {...props}>
-      <View style={[styles.layers, styles.passThrough]}>
-        <View style={[styles.mist, { backgroundColor: art.mist }]} />
-        <View style={[styles.terrainTop, { backgroundColor: art.terrainTop }]} />
-        <View style={[styles.terrainMid, { backgroundColor: art.terrainMid }]} />
-        <View style={[styles.terrainBottom, { backgroundColor: art.terrainBottom }]} />
-        <View style={[styles.detail, { backgroundColor: art.detail }]} />
-      </View>
+      {showTerrain ? (
+        <View style={[styles.layers, styles.passThrough]}>
+          <View style={[styles.mist, { backgroundColor: art.mist }]} />
+          <View style={[styles.terrainTop, { backgroundColor: art.terrainTop }]} />
+          <View style={[styles.terrainMid, { backgroundColor: art.terrainMid }]} />
+          <View style={[styles.terrainBottom, { backgroundColor: art.terrainBottom }]} />
+          <View style={[styles.detail, { backgroundColor: art.detail }]} />
+        </View>
+      ) : null}
       <View style={styles.contentShell}>{children}</View>
     </View>
   );

@@ -344,8 +344,8 @@ test('shared primitives avoid deprecated web shadow props and pointerEvents attr
 
 test('world background uses layered terrain instead of horizon stripes', () => {
   const worldBackgroundModule = parseTsxModule('../src/features/ui/world-background.tsx');
-  const layersNode = findJsxNodeUsingStyle(worldBackgroundModule.sourceFile, 'WorldBackground', 'layers');
   const contentShellNode = findJsxNodeUsingStyle(worldBackgroundModule.sourceFile, 'WorldBackground', 'contentShell');
+  const source = readFileSync(new URL('../src/features/ui/world-background.tsx', import.meta.url), 'utf8');
 
   assert.ok(styleHasProperty(worldBackgroundModule.sourceFile, 'shell', 'borderRadius'));
   assert.ok(styleHasSpread(worldBackgroundModule.sourceFile, 'layers', 'StyleSheet.absoluteFillObject'));
@@ -370,12 +370,9 @@ test('world background uses layered terrain instead of horizon stripes', () => {
   assert.ok(functionStylePropUses(worldBackgroundModule.sourceFile, 'WorldBackground', 'terrainBottom'));
   assert.ok(functionStylePropUses(worldBackgroundModule.sourceFile, 'WorldBackground', 'detail'));
   assert.ok(functionStylePropUses(worldBackgroundModule.sourceFile, 'WorldBackground', 'contentShell'));
-  assert.equal(layersNode.parent, contentShellNode.parent);
-  assert.ok(ts.isJsxElement(layersNode.parent) || ts.isJsxFragment(layersNode.parent));
-  assert.deepEqual(
-    getDirectJsxChildren(layersNode.parent).slice(0, 2),
-    [layersNode, contentShellNode],
-  );
+  assert.match(source, /showTerrain\?: boolean/);
+  assert.match(source, /showTerrain = true/);
+  assert.match(source, /\{showTerrain \? \(/);
   assert.ok(!ts.isJsxSelfClosingElement(contentShellNode));
   assert.ok(jsxNodeContainsIdentifier(contentShellNode, 'children'));
 
@@ -516,6 +513,12 @@ test('results stage the trophy summary, podium, and field notes as distinct rewa
   assert.ok(functionStylePropUses(resultsModule.sourceFile, 'ResultsView', 'trophyHeader'));
   assert.ok(functionStylePropUses(resultsModule.sourceFile, 'ResultsView', 'podiumStage'));
   assert.ok(functionStylePropUses(resultsModule.sourceFile, 'ResultsView', 'fieldNotes'));
+});
+
+test('results view disables terrain overlays in the dense summary hero', () => {
+  const source = readFileSync(new URL('../src/features/results/results-view.tsx', import.meta.url), 'utf8');
+
+  assert.match(source, /<WorldBackground[\s\S]*showTerrain=\{false\}/);
 });
 
 test('room and classroom lobbies use command surfaces and roster surfaces for team hub layouts', () => {
