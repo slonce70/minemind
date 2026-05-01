@@ -26,3 +26,7 @@
 - smoke-run через Expo
 - privacy policy draft
 - app metadata draft
+
+### Android emulator smoke test
+
+Use `npm run android:qa` for local emulator installs. It limits the native build to the emulator ABI and avoids the much slower all-ABI debug build.
