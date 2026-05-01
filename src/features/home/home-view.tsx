@@ -96,6 +96,7 @@ export function HomeView({
               selectedDifficulty={selectedDifficulty}
               strings={difficultyStrings}
             />
+            <PrimaryButton label={strings.primaryCardTitle} onPress={onPlaySolo} />
           </View>
         </WorldBackground>
       </Card>
@@ -104,7 +105,6 @@ export function HomeView({
         <Card style={styles.primaryRoute} tone="scene">
           <Text style={styles.routeEyebrow}>{strings.primaryCardTitle}</Text>
           <Text style={styles.routeTitle}>{strings.primaryCardCopy}</Text>
-          <PrimaryButton label={strings.primaryCardTitle} onPress={onPlaySolo} />
         </Card>
 
         <View style={styles.supportRoutes}>
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     borderRadius: radii.xl,
     borderWidth: 1,
-    gap: spacing.sm,
+    gap: spacing.xs,
     padding: spacing.md,
   },
   heroHeader: {
@@ -221,9 +221,9 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   worldCard: {
-    gap: spacing.sm,
-    padding: spacing.lg,
-    paddingTop: spacing.xl,
+    gap: spacing.xs,
+    padding: spacing.md,
+    paddingTop: spacing.lg,
   },
   selectorCopy: {
     color: colors.textMuted,

@@ -414,6 +414,17 @@ test('home view promotes solo as the dominant expedition route and groups suppor
   assert.ok(functionStylePropUses(homeViewModule.sourceFile, 'HomeView', 'expeditionLog'));
 });
 
+test('home view keeps the solo CTA in the first expedition card', () => {
+  const source = readFileSync(new URL('../src/features/home/home-view.tsx', import.meta.url), 'utf8');
+  const heroIndex = source.indexOf('<Card highlight style={styles.heroCard}');
+  const soloButtonIndex = source.indexOf('<PrimaryButton label={strings.primaryCardTitle} onPress={onPlaySolo} />');
+  const routeBoardIndex = source.indexOf('<View style={styles.routeBoard}>');
+
+  assert.ok(heroIndex >= 0);
+  assert.ok(soloButtonIndex > heroIndex);
+  assert.ok(routeBoardIndex > soloButtonIndex, 'Solo CTA should appear before lower route board content');
+});
+
 test('difficulty selector keeps chunkier wrap-friendly block controls', () => {
   const difficultySelectorModule = parseTsxModule('../src/features/home/difficulty-selector.tsx');
 
