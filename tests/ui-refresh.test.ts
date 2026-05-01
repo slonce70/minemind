@@ -490,10 +490,20 @@ test('solo screen supports optional question illustrations without replacing the
   assert.match(soloSource, /round\.question\.illustration/);
   assert.match(soloSource, /styles\.questionIllustrationFrame/);
   assert.match(soloSource, /styles\.questionIllustration/);
-  assert.match(soloSource, /aspectRatio:\s*16\s*\/\s*9/);
+  assert.match(soloSource, /aspectRatio:\s*16\s*\/\s*7/);
+  assert.match(soloSource, /maxHeight:\s*180/);
   assert.match(soloSource, /resizeMode="cover"/);
   assert.match(soloSource, /styles\.factCard/);
   assert.match(soloSource, /t\('solo\.next'\)/);
+});
+
+test('solo screen renders answer options before the explanatory fact card', () => {
+  const source = readFileSync(new URL('../app/solo.tsx', import.meta.url), 'utf8');
+  const optionListIndex = source.indexOf('<View style={styles.optionList}>');
+  const factCardIndex = source.indexOf('<Card style={styles.factCard}>');
+
+  assert.ok(optionListIndex >= 0);
+  assert.ok(factCardIndex > optionListIndex);
 });
 
 test('results stage the trophy summary, podium, and field notes as distinct reward surfaces', () => {

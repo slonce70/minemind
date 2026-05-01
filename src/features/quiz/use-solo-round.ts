@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import {
   buildClassroomRoundResults,
@@ -71,8 +71,6 @@ export function useSoloRound(params: {
   const [hasSubmittedClassroomRound, setHasSubmittedClassroomRound] = useState(false);
   const [isPublishingClassroomResults, setIsPublishingClassroomResults] = useState(false);
   const classroomTransport = getSharedLocalHostTransport();
-  const autoAdvanceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
   const question = questions[currentIndex];
   const progress = questions.length > 0 ? Math.round(((currentIndex + 1) / questions.length) * 100) : 0;
   const isClassroomMode = params.mode === 'classroom';
@@ -541,11 +539,6 @@ export function useSoloRound(params: {
   };
 
   const goNext = async () => {
-    if (autoAdvanceTimeoutRef.current) {
-      clearTimeout(autoAdvanceTimeoutRef.current);
-      autoAdvanceTimeoutRef.current = null;
-    }
-
     if (currentIndex < questions.length - 1) {
       setCurrentIndex((value) => value + 1);
       setSelectedIndex(null);
@@ -603,32 +596,15 @@ export function useSoloRound(params: {
         })
         .finally(() => {
           setIsSubmittingAnswer(false);
-          autoAdvanceTimeoutRef.current = setTimeout(() => {
-            autoAdvanceTimeoutRef.current = null;
-            void goNext();
-          }, 1100);
         });
 
       return;
     }
-
-    autoAdvanceTimeoutRef.current = setTimeout(() => {
-      autoAdvanceTimeoutRef.current = null;
-      void goNext();
-    }, 1100);
   };
 
   useEffect(() => {
     setTimeLeft(questionTimeLimit);
   }, [questionTimeLimit]);
-
-  useEffect(() => {
-    return () => {
-      if (autoAdvanceTimeoutRef.current) {
-        clearTimeout(autoAdvanceTimeoutRef.current);
-      }
-    };
-  }, []);
 
   useEffect(() => {
     if (!question || isRevealed) {
