@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 
 import {
   buildClassroomRoundResults,
@@ -7,7 +7,6 @@ import {
   mergeClassroomRoundSubmission,
   type ClassroomRoundSubmissions,
 } from '../classroom/classroom-round-authority';
-import { finalizeClassroomRound } from '../classroom/use-classroom-round';
 import { getSharedLocalHostTransport } from '../classroom/local-host-transport';
 import { createRoomStandings } from '../rooms/demo-room-service';
 import {
@@ -22,6 +21,101 @@ import { normalizeMatchRecord } from '../results/normalize-match-record';
 import { startLiveSoloRound } from './live-quiz-service';
 import { buildQuizResult, getSoloQuestionSet } from './quiz-service';
 import type { QuizAnswerMap, QuizResultSummary } from './types';
+
+type RoundFlowState = {
+  classroomSubmissions: ClassroomRoundSubmissions;
+  hasSubmittedClassroomRound: boolean;
+  isAwaitingResults: boolean;
+  isPublishingClassroomResults: boolean;
+  loadError: string | null;
+  resultsPending: boolean;
+};
+
+type RoundFlowAction =
+  | { type: 'begin-awaiting-results'; resultsPending?: boolean }
+  | { type: 'begin-classroom-publish' }
+  | { type: 'clear-awaiting-results' }
+  | { type: 'clear-load-error' }
+  | { type: 'merge-classroom-submission'; answers: QuizAnswerMap; participantId: string }
+  | { type: 'reset-classroom-round' }
+  | { type: 'set-load-error'; message: string | null }
+  | { type: 'set-results-pending'; value: boolean }
+  | {
+      type: 'submit-local-classroom-round';
+      nextSubmissions: ClassroomRoundSubmissions;
+      resultsPending: boolean;
+    };
+
+const initialRoundFlowState: RoundFlowState = {
+  classroomSubmissions: {},
+  hasSubmittedClassroomRound: false,
+  isAwaitingResults: false,
+  isPublishingClassroomResults: false,
+  loadError: null,
+  resultsPending: false,
+};
+
+function roundFlowReducer(state: RoundFlowState, action: RoundFlowAction): RoundFlowState {
+  switch (action.type) {
+    case 'begin-awaiting-results':
+      return {
+        ...state,
+        isAwaitingResults: true,
+        loadError: null,
+        resultsPending: action.resultsPending ?? false,
+      };
+    case 'begin-classroom-publish':
+      return {
+        ...state,
+        isPublishingClassroomResults: true,
+      };
+    case 'clear-awaiting-results':
+      return {
+        ...state,
+        isAwaitingResults: false,
+        resultsPending: false,
+      };
+    case 'clear-load-error':
+      return {
+        ...state,
+        loadError: null,
+      };
+    case 'merge-classroom-submission':
+      return {
+        ...state,
+        classroomSubmissions: mergeClassroomRoundSubmission(state.classroomSubmissions, {
+          answers: action.answers,
+          participantId: action.participantId,
+        }),
+      };
+    case 'reset-classroom-round':
+      return {
+        ...state,
+        classroomSubmissions: {},
+        hasSubmittedClassroomRound: false,
+        isPublishingClassroomResults: false,
+      };
+    case 'set-load-error':
+      return {
+        ...state,
+        loadError: action.message,
+      };
+    case 'set-results-pending':
+      return {
+        ...state,
+        resultsPending: action.value,
+      };
+    case 'submit-local-classroom-round':
+      return {
+        ...state,
+        classroomSubmissions: action.nextSubmissions,
+        hasSubmittedClassroomRound: true,
+        isAwaitingResults: true,
+        loadError: null,
+        resultsPending: action.resultsPending,
+      };
+  }
+}
 
 export function useSoloRound(params: {
   locale: string;
@@ -58,19 +152,22 @@ export function useSoloRound(params: {
   const [isLoading, setIsLoading] = useState(
     params.mode === 'room' ? Boolean(activeRoom && !activeRoomRound) : true
   );
-  const [loadError, setLoadError] = useState<string | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(questionTimeLimit);
   const [answerMap, setAnswerMap] = useState<QuizAnswerMap>({});
-  const [isAwaitingResults, setIsAwaitingResults] = useState(false);
   const [isRevealed, setIsRevealed] = useState(false);
   const [isSubmittingAnswer, setIsSubmittingAnswer] = useState(false);
-  const [resultsPending, setResultsPending] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const [classroomSubmissions, setClassroomSubmissions] = useState<ClassroomRoundSubmissions>({});
-  const [hasSubmittedClassroomRound, setHasSubmittedClassroomRound] = useState(false);
-  const [isPublishingClassroomResults, setIsPublishingClassroomResults] = useState(false);
-  const classroomTransport = getSharedLocalHostTransport();
+  const [roundFlow, dispatchRoundFlow] = useReducer(roundFlowReducer, initialRoundFlowState);
+  const classroomTransport = useMemo(() => getSharedLocalHostTransport(), []);
+  const {
+    classroomSubmissions,
+    hasSubmittedClassroomRound,
+    isAwaitingResults,
+    isPublishingClassroomResults,
+    loadError,
+    resultsPending,
+  } = roundFlow;
   const question = questions[currentIndex];
   const progress = questions.length > 0 ? Math.round(((currentIndex + 1) / questions.length) * 100) : 0;
   const isClassroomMode = params.mode === 'classroom';
@@ -114,9 +211,7 @@ export function useSoloRound(params: {
       return;
     }
 
-    setClassroomSubmissions({});
-    setHasSubmittedClassroomRound(false);
-    setIsPublishingClassroomResults(false);
+    dispatchRoundFlow({ type: 'reset-classroom-round' });
   }, [currentClassroomSession?.id, activeRoomRound?.roomCode, isClassroomMode]);
 
   useEffect(() => {
@@ -129,7 +224,7 @@ export function useSoloRound(params: {
 
       if (isRoomMode) {
         setIsLoading(true);
-        setLoadError(null);
+        dispatchRoundFlow({ type: 'clear-load-error' });
 
         if (!currentRoom) {
           if (isMounted) {
@@ -141,6 +236,7 @@ export function useSoloRound(params: {
         if (activeRoomRound && !isRecoveringWaitingRoom) {
           if (isMounted) {
             setQuestions(activeRoomRound.questions);
+            setTimeLeft(questionTimeLimit);
             setIsLoading(false);
           }
           return;
@@ -165,10 +261,14 @@ export function useSoloRound(params: {
             setActiveRoom(resumed.room);
             setActiveRoomRound(resumed.round);
             setQuestions(resumed.round.questions);
+            setTimeLeft(questionTimeLimit);
           }
         } catch (error) {
           if (isMounted) {
-            setLoadError(error instanceof Error ? error.message : params.messages.loadError);
+            dispatchRoundFlow({
+              message: error instanceof Error ? error.message : params.messages.loadError,
+              type: 'set-load-error',
+            });
           }
         } finally {
           if (isMounted) {
@@ -181,7 +281,7 @@ export function useSoloRound(params: {
 
       if (isClassroomMode) {
         setIsLoading(true);
-        setLoadError(null);
+        dispatchRoundFlow({ type: 'clear-load-error' });
 
         if (!currentClassroomSession) {
           if (isMounted) {
@@ -202,10 +302,14 @@ export function useSoloRound(params: {
 
           if (isMounted) {
             setQuestions(nextQuestions);
+            setTimeLeft(questionTimeLimit);
           }
         } catch (error) {
           if (isMounted) {
-            setLoadError(error instanceof Error ? error.message : params.messages.loadError);
+            dispatchRoundFlow({
+              message: error instanceof Error ? error.message : params.messages.loadError,
+              type: 'set-load-error',
+            });
           }
         } finally {
           if (isMounted) {
@@ -217,7 +321,7 @@ export function useSoloRound(params: {
       }
 
       setIsLoading(true);
-      setLoadError(null);
+      dispatchRoundFlow({ type: 'clear-load-error' });
 
       try {
         const fallbackDifficulty = currentRoom?.settings.difficulty ?? selectedDifficulty;
@@ -227,6 +331,7 @@ export function useSoloRound(params: {
 
         if (isMounted) {
           setQuestions(nextQuestions);
+          setTimeLeft(questionTimeLimit);
         }
       } catch (error) {
         if (isMounted) {
@@ -237,7 +342,11 @@ export function useSoloRound(params: {
               currentRoom?.settings.difficulty ?? selectedDifficulty
             )
           );
-          setLoadError(error instanceof Error ? error.message : params.messages.loadError);
+          setTimeLeft(questionTimeLimit);
+          dispatchRoundFlow({
+            message: error instanceof Error ? error.message : params.messages.loadError,
+            type: 'set-load-error',
+          });
         }
       } finally {
         if (isMounted) {
@@ -261,6 +370,7 @@ export function useSoloRound(params: {
     isRoomMode,
     params.locale,
     params.messages.loadError,
+    questionTimeLimit,
     selectedDifficulty,
     setActiveRoom,
     setActiveRoomRound,
@@ -300,12 +410,11 @@ export function useSoloRound(params: {
       }
 
       if (event.type === 'round-submitted' && liveSession.role === 'host') {
-        setClassroomSubmissions((current) =>
-          mergeClassroomRoundSubmission(current, {
-            answers: event.answers,
-            participantId: event.participantId,
-          })
-        );
+        dispatchRoundFlow({
+          answers: event.answers,
+          participantId: event.participantId,
+          type: 'merge-classroom-submission',
+        });
         return;
       }
 
@@ -322,8 +431,7 @@ export function useSoloRound(params: {
         }
 
         saveMatchRecord(localRecord);
-        setResultsPending(false);
-        setIsAwaitingResults(false);
+        dispatchRoundFlow({ type: 'clear-awaiting-results' });
         clearActiveRound();
         setClassroomSession({
           ...liveSession,
@@ -341,9 +449,7 @@ export function useSoloRound(params: {
 
     let isMounted = true;
 
-    setIsAwaitingResults(true);
-    setResultsPending(false);
-    setLoadError(null);
+    dispatchRoundFlow({ type: 'begin-awaiting-results' });
 
     void finalizeLiveRoomRound(currentRoomRound)
       .then((finalized) => {
@@ -352,7 +458,7 @@ export function useSoloRound(params: {
         }
 
         if (finalized.status === 'pending') {
-          setResultsPending(true);
+          dispatchRoundFlow({ type: 'set-results-pending', value: true });
           return;
         }
 
@@ -367,8 +473,11 @@ export function useSoloRound(params: {
           return;
         }
 
-        setResultsPending(true);
-        setLoadError(error instanceof Error ? error.message : params.messages.loadError);
+        dispatchRoundFlow({ type: 'set-results-pending', value: true });
+        dispatchRoundFlow({
+          message: error instanceof Error ? error.message : params.messages.loadError,
+          type: 'set-load-error',
+        });
       });
 
     return () => {
@@ -398,11 +507,11 @@ export function useSoloRound(params: {
     }
 
     if (!hasClassroomRoundSubmissionsForAllParticipants(currentClassroomSession.participants, classroomSubmissions)) {
-      setResultsPending(true);
+      dispatchRoundFlow({ type: 'set-results-pending', value: true });
       return;
     }
 
-    setIsPublishingClassroomResults(true);
+    dispatchRoundFlow({ type: 'begin-classroom-publish' });
 
     const records = buildClassroomRoundResults({
       participants: currentClassroomSession.participants,
@@ -416,8 +525,7 @@ export function useSoloRound(params: {
     }
 
     clearActiveRound();
-    setResultsPending(false);
-    setIsAwaitingResults(false);
+    dispatchRoundFlow({ type: 'clear-awaiting-results' });
     setClassroomSession({
       ...currentClassroomSession,
       status: 'finished',
@@ -429,7 +537,10 @@ export function useSoloRound(params: {
       type: 'round-finished',
     })
       .catch((error) => {
-        setLoadError(error instanceof Error ? error.message : params.messages.loadError);
+        dispatchRoundFlow({
+          message: error instanceof Error ? error.message : params.messages.loadError,
+          type: 'set-load-error',
+        });
       })
       .finally(() => {
         router.replace('/results');
@@ -449,7 +560,7 @@ export function useSoloRound(params: {
     setClassroomSession,
   ]);
 
-  const finishRound = async () => {
+  const finishRound = useCallback(async () => {
     const result = buildQuizResult(questions, answerMap, {
       difficulty: roundDifficulty,
       mode: isRoomMode || isClassroomMode ? 'room' : 'solo',
@@ -477,11 +588,11 @@ export function useSoloRound(params: {
         participantId: localClassroomParticipantId,
       });
 
-      setClassroomSubmissions(nextSubmissions);
-      setHasSubmittedClassroomRound(true);
-      setIsAwaitingResults(true);
-      setResultsPending(currentClassroomSession.participants.length > 1);
-      setLoadError(null);
+      dispatchRoundFlow({
+        nextSubmissions,
+        resultsPending: currentClassroomSession.participants.length > 1,
+        type: 'submit-local-classroom-round',
+      });
 
       if (currentClassroomSession.role !== 'host') {
         try {
@@ -492,7 +603,10 @@ export function useSoloRound(params: {
             type: 'round-submitted',
           });
         } catch (error) {
-          setLoadError(error instanceof Error ? error.message : params.messages.loadError);
+          dispatchRoundFlow({
+            message: error instanceof Error ? error.message : params.messages.loadError,
+            type: 'set-load-error',
+          });
           return;
         }
       }
@@ -501,15 +615,13 @@ export function useSoloRound(params: {
     }
 
     if (isRoomMode && currentRoomRound?.source === 'supabase') {
-      setIsAwaitingResults(true);
-      setResultsPending(false);
-      setLoadError(null);
+      dispatchRoundFlow({ type: 'begin-awaiting-results' });
 
       try {
         const finalized = await finalizeLiveRoomRound(currentRoomRound, result);
 
         if (finalized.status === 'pending') {
-          setResultsPending(true);
+          dispatchRoundFlow({ type: 'set-results-pending', value: true });
           return;
         }
 
@@ -517,8 +629,11 @@ export function useSoloRound(params: {
           saveMatchRecord(finalized.record);
         }
       } catch (error) {
-        setResultsPending(true);
-        setLoadError(error instanceof Error ? error.message : params.messages.loadError);
+        dispatchRoundFlow({ type: 'set-results-pending', value: true });
+        dispatchRoundFlow({
+          message: error instanceof Error ? error.message : params.messages.loadError,
+          type: 'set-load-error',
+        });
         return;
       }
     } else {
@@ -536,9 +651,27 @@ export function useSoloRound(params: {
       });
     }
     router.replace('/results');
-  };
+  }, [
+    answerMap,
+    classroomSubmissions,
+    classroomTransport,
+    clearActiveRound,
+    currentClassroomSession,
+    currentRoom,
+    currentRoomRound,
+    isClassroomMode,
+    isRoomMode,
+    leaveRoom,
+    localClassroomParticipantId,
+    params.messages.loadError,
+    persistResult,
+    questions,
+    roundDifficulty,
+    saveMatchRecord,
+    setClassroomSession,
+  ]);
 
-  const goNext = async () => {
+  const goNext = useCallback(async () => {
     if (currentIndex < questions.length - 1) {
       setCurrentIndex((value) => value + 1);
       setSelectedIndex(null);
@@ -549,9 +682,9 @@ export function useSoloRound(params: {
     }
 
     await finishRound();
-  };
+  }, [currentIndex, finishRound, questionTimeLimit, questions.length]);
 
-  const handleAnswer = (optionIndex: number, recordedTimeLeft = timeLeft) => {
+  const answerQuestion = useCallback((optionIndex: number, recordedTimeLeft: number) => {
     if (!question || isRevealed) {
       return;
     }
@@ -600,11 +733,14 @@ export function useSoloRound(params: {
 
       return;
     }
-  };
+  }, [currentRoomRound, isRevealed, params.messages.factPending, question]);
 
-  useEffect(() => {
-    setTimeLeft(questionTimeLimit);
-  }, [questionTimeLimit]);
+  const handleAnswer = useCallback(
+    (optionIndex: number, recordedTimeLeft = timeLeft) => {
+      answerQuestion(optionIndex, recordedTimeLeft);
+    },
+    [answerQuestion, timeLeft]
+  );
 
   useEffect(() => {
     if (!question || isRevealed) {
@@ -615,7 +751,7 @@ export function useSoloRound(params: {
       setTimeLeft((value) => {
         if (value <= 1) {
           clearInterval(timer);
-          handleAnswer(-1, 0);
+          answerQuestion(-1, 0);
           return 0;
         }
 
@@ -624,7 +760,11 @@ export function useSoloRound(params: {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [currentIndex, isRevealed, question]);
+  }, [answerQuestion, currentIndex, isRevealed, question]);
+
+  const retryFinalize = useCallback(() => {
+    void finishRound();
+  }, [finishRound]);
 
   return {
     answerMap,
@@ -646,7 +786,7 @@ export function useSoloRound(params: {
     question,
     questions,
     resultsPending,
-    retryFinalize: () => void finishRound(),
+    retryFinalize,
     selectedIndex,
     timeLeft,
     timeLimit: questionTimeLimit,

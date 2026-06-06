@@ -15,11 +15,25 @@ type ButtonProps = PressableProps & {
   style?: StyleProp<ViewStyle>;
 };
 
-export function PrimaryButton({ label, selected = false, style, ...props }: ButtonProps) {
+export function PrimaryButton({
+  accessibilityLabel,
+  accessibilityState,
+  label,
+  selected = false,
+  style,
+  ...props
+}: ButtonProps) {
   const { disabled } = props;
 
   return (
     <Pressable
+      accessibilityLabel={accessibilityLabel ?? label}
+      accessibilityRole="button"
+      accessibilityState={{
+        disabled: Boolean(disabled),
+        selected,
+        ...accessibilityState,
+      }}
       style={({ pressed }) => [
         styles.base,
         styles.buttonRidge,
@@ -43,11 +57,25 @@ export function PrimaryButton({ label, selected = false, style, ...props }: Butt
   );
 }
 
-export function SecondaryButton({ label, selected = false, style, ...props }: ButtonProps) {
+export function SecondaryButton({
+  accessibilityLabel,
+  accessibilityState,
+  label,
+  selected = false,
+  style,
+  ...props
+}: ButtonProps) {
   const { disabled } = props;
 
   return (
     <Pressable
+      accessibilityLabel={accessibilityLabel ?? label}
+      accessibilityRole="button"
+      accessibilityState={{
+        disabled: Boolean(disabled),
+        selected,
+        ...accessibilityState,
+      }}
       style={({ pressed }) => [
         styles.base,
         styles.buttonRidge,

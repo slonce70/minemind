@@ -30,12 +30,20 @@ export async function listRoomParticipants(roomId: string) {
     throw error;
   }
 
-  return (data ?? []).map((row) => ({
-    avatar_id: row.guest_profiles.avatar_id,
-    nickname: row.guest_profiles.nickname,
-    player_id: row.player_id,
-    ready_state: row.ready_state,
-  }));
+  return (data ?? []).map((row) => {
+    const profile = Array.isArray(row.guest_profiles) ? row.guest_profiles[0] : row.guest_profiles;
+
+    if (!profile) {
+      throw new Error('Room participant profile not found.');
+    }
+
+    return {
+      avatar_id: profile.avatar_id,
+      nickname: profile.nickname,
+      player_id: row.player_id,
+      ready_state: row.ready_state,
+    };
+  });
 }
 
 export async function assertRoomMembership(roomId: string, playerId: string) {

@@ -105,12 +105,40 @@ test('live room server lifecycle starts in lobby and persists finalization snaps
     new URL('../supabase/migrations/20260419_room_realtime_and_results.sql', import.meta.url),
     'utf8'
   );
+  const finalizeTransactionSource = readFileSync(
+    new URL('../supabase/migrations/20260606_complete_room_round_transaction.sql', import.meta.url),
+    'utf8'
+  );
 
   assert.match(createRoomSource, /status:\s*'lobby'/);
   assert.match(migrationSource, /alter table public\.rooms\s+alter column status set default 'lobby';/);
   assert.match(finalizeRoundSource, /status:\s*'finalizing'/);
-  assert.match(finalizeRoundSource, /finalized_at:/);
-  assert.match(finalizeRoundSource, /result_snapshot:/);
+  assert.match(finalizeRoundSource, /complete_room_round/);
+  assert.match(finalizeTransactionSource, /finalized_at = coalesce\(finalized_at, now\(\)\)/);
+  assert.match(finalizeTransactionSource, /result_snapshot = ranking_snapshot/);
+});
+
+test('finalize round completes result persistence through an idempotent database transaction', () => {
+  const finalizeRoundSource = readFileSync(
+    new URL('../supabase/functions/finalize-round/index.ts', import.meta.url),
+    'utf8'
+  );
+  const finalizeTransactionSource = readFileSync(
+    new URL('../supabase/migrations/20260606_complete_room_round_transaction.sql', import.meta.url),
+    'utf8'
+  );
+
+  assert.match(finalizeRoundSource, /serviceClient\.rpc\('complete_room_round'/);
+  assert.doesNotMatch(finalizeRoundSource, /\.from\('match_results'\)\.insert\(ranking\)/);
+  assert.doesNotMatch(finalizeRoundSource, /touch_leaderboard_entry[\s\S]*target_scope:\s*'all_time'/);
+  assert.match(finalizeTransactionSource, /on conflict \(round_id, player_id\) do nothing/);
+  assert.match(finalizeTransactionSource, /if found then[\s\S]*touch_leaderboard_entry/);
+  assert.match(finalizeTransactionSource, /update public\.rooms[\s\S]*status = 'waiting'/);
+  assert.match(finalizeTransactionSource, /update public\.room_participants[\s\S]*ready_state = false/);
+  assert.match(finalizeTransactionSource, /revoke all on function public\.complete_room_round\(uuid, uuid, jsonb, jsonb\) from authenticated/);
+  assert.match(finalizeTransactionSource, /grant execute on function public\.complete_room_round\(uuid, uuid, jsonb, jsonb\) to service_role/);
+  assert.match(finalizeTransactionSource, /revoke all on function public\.touch_leaderboard_entry\(text, uuid, integer\) from authenticated/);
+  assert.match(finalizeTransactionSource, /grant execute on function public\.touch_leaderboard_entry\(text, uuid, integer\) to service_role/);
 });
 
 test('online room creation and start send canonical match settings', () => {

@@ -6,28 +6,40 @@
     "start": "expo start",
     "dev": "expo start --clear",
     "android": "expo start --android",
-    "android:qa": "cd android && ./gradlew :app:installDebug -PreactNativeArchitectures=arm64-v8a --console=plain",
+    "android:qa": "node scripts/run-android-qa.mjs",
     "ios": "expo start --ios",
     "web": "expo start --web",
+    "export:web": "npx expo export --platform web",
+    "serve:web-export": "node scripts/serve-web-export.mjs",
+    "smoke:web-export": "node scripts/smoke-web-export.mjs",
+    "check:web-budget": "node scripts/check-web-export-budget.mjs",
     "test": "tsx --test tests/**/*.test.ts",
     "typecheck": "tsc --noEmit",
-    "validate": "npm test && npm run typecheck && npx expo export --platform web"
+    "doctor:expo": "npx expo-doctor",
+    "audit:security": "npm audit --audit-level=moderate",
+    "doctor:react": "npx -y react-doctor@latest . --verbose",
+    "doctor:react:diff": "npx -y react-doctor@latest . --verbose --diff",
+    "check:edge": "node scripts/check-edge-functions.mjs",
+    "validate": "npm test && npm run typecheck && npm run export:web",
+    "validate:release": "npm test && npm run typecheck && npm run doctor:expo && npm run audit:security && npm run check:edge && npm run smoke:web-export && npm run check:web-budget"
   },
   "dependencies": {
-    "@expo/metro-runtime": "~55.0.6",
+    "@expo/metro-runtime": "~55.0.11",
     "@react-native-async-storage/async-storage": "2.2.0",
-    "@supabase/supabase-js": "^2.99.1",
+    "@supabase/supabase-js": "^2.107.0",
     "@tanstack/react-query": "^5.90.21",
-    "expo": "~55.0.18",
-    "expo-constants": "~55.0.14",
-    "expo-dev-client": "~55.0.28",
-    "expo-linear-gradient": "~55.0.13",
-    "expo-linking": "~55.0.14",
-    "expo-localization": "~55.0.13",
-    "expo-network": "~55.0.13",
-    "expo-router": "~55.0.13",
-    "expo-secure-store": "~55.0.13",
-    "expo-status-bar": "~55.0.5",
+    "expo": "~55.0.26",
+    "expo-constants": "~55.0.16",
+    "expo-dev-client": "~55.0.35",
+    "expo-font": "~55.0.8",
+    "expo-image": "~55.0.11",
+    "expo-linear-gradient": "~55.0.14",
+    "expo-linking": "~55.0.15",
+    "expo-localization": "~55.0.15",
+    "expo-network": "~55.0.14",
+    "expo-router": "~55.0.16",
+    "expo-secure-store": "~55.0.14",
+    "expo-status-bar": "~55.0.6",
     "i18next": "^25.8.18",
     "qrcode-generator": "^2.0.4",
     "react": "19.2.0",
@@ -47,6 +59,7 @@
   "devDependencies": {
     "@types/node": "^25.5.0",
     "@types/react": "~19.2.2",
+    "deno": "^2.8.2",
     "tsx": "^4.21.0",
     "typescript": "~5.9.2"
   },
@@ -57,6 +70,11 @@
           "react-native-tcp-socket"
         ]
       }
+    }
+  },
+  "overrides": {
+    "xcode": {
+      "uuid": "^11.1.1"
     }
   },
   "private": true

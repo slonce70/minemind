@@ -10,16 +10,17 @@ type FinalizeRoundPayload = {
   roundId: string;
 };
 
+type RankingEntry = {
+  best_streak: number;
+  correct_count: number;
+  player_id: string;
+  rank: number;
+  round_id: string;
+  score: number;
+};
+
 function buildRankingSnapshot(
-  ranking: Array<{
-    best_streak: number;
-    correct_count: number;
-    nickname: string;
-    player_id: string;
-    rank: number;
-    round_id: string;
-    score: number;
-  }>
+  ranking: Array<RankingEntry & { nickname: string }>
 ) {
   return ranking.map((entry) => ({
     best_streak: entry.best_streak,
@@ -47,6 +48,34 @@ async function buildNicknameMap(playerIds: string[]) {
   }
 
   return new Map((profiles ?? []).map((profile) => [profile.id, profile.nickname]));
+}
+
+function attachNicknames(ranking: RankingEntry[], nicknameMap: Map<string, string>) {
+  return ranking.map((entry) => ({
+    ...entry,
+    nickname: nicknameMap.get(entry.player_id) ?? 'Player',
+  }));
+}
+
+async function completeRoomRound(input: {
+  nicknameMap: Map<string, string>;
+  ranking: RankingEntry[];
+  roomId: string;
+  roundId: string;
+}) {
+  const rankingsWithNicknames = attachNicknames(input.ranking, input.nicknameMap);
+  const { error } = await serviceClient.rpc('complete_room_round', {
+    ranking_snapshot: buildRankingSnapshot(rankingsWithNicknames),
+    rankings: input.ranking,
+    target_room_id: input.roomId,
+    target_round_id: input.roundId,
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return rankingsWithNicknames;
 }
 
 serve(async (request) => {
@@ -84,15 +113,22 @@ serve(async (request) => {
     }
 
     if ((existingResults ?? []).length > 0) {
+      const existingRanking = existingResults.map((entry) => ({
+        ...entry,
+        rank: entry.rank ?? 0,
+      }));
       const nicknameMap = await buildNicknameMap(
-        existingResults.map((entry) => entry.player_id)
+        existingRanking.map((entry) => entry.player_id)
       );
+      const rankings = await completeRoomRound({
+        nicknameMap,
+        ranking: existingRanking,
+        roomId: round.room_id,
+        roundId: round.id,
+      });
 
       return jsonResponse({
-        rankings: existingResults.map((entry) => ({
-          ...entry,
-          nickname: nicknameMap.get(entry.player_id) ?? 'Player',
-        })),
+        rankings,
         roomId: round.room_id,
         roundId: round.id,
         status: 'completed',
@@ -188,59 +224,22 @@ serve(async (request) => {
         .eq('id', round.room_id);
 
       return jsonResponse({
-        rankings: ranking.map((entry) => ({
-          ...entry,
-          nickname: nicknameMap.get(entry.player_id) ?? 'Player',
-        })),
+        rankings: attachNicknames(ranking, nicknameMap),
         roomId: round.room_id,
         roundId: round.id,
         status: 'pending',
       });
     }
 
-    if (ranking.length > 0) {
-      const { error: insertResultsError } = await serviceClient.from('match_results').insert(ranking);
-
-      if (insertResultsError) {
-        throw insertResultsError;
-      }
-
-      for (const entry of ranking) {
-        await serviceClient.rpc('touch_leaderboard_entry', {
-          additional_score: entry.score,
-          target_player_id: entry.player_id,
-          target_scope: 'all_time',
-        });
-      }
-    }
-
-    await serviceClient
-      .from('round_sessions')
-      .update({
-        ends_at: new Date().toISOString(),
-        finalized_at: new Date().toISOString(),
-        result_snapshot: buildRankingSnapshot(
-          ranking.map((entry) => ({
-            ...entry,
-            nickname: nicknameMap.get(entry.player_id) ?? 'Player',
-          }))
-        ),
-      })
-      .eq('id', round.id);
-    await serviceClient
-      .from('rooms')
-      .update({ current_round_id: null, status: 'waiting' })
-      .eq('id', round.room_id);
-    await serviceClient
-      .from('room_participants')
-      .update({ ready_state: false })
-      .eq('room_id', round.room_id);
+    const rankings = await completeRoomRound({
+      nicknameMap,
+      ranking,
+      roomId: round.room_id,
+      roundId: round.id,
+    });
 
     return jsonResponse({
-      rankings: ranking.map((entry) => ({
-        ...entry,
-        nickname: nicknameMap.get(entry.player_id) ?? 'Player',
-      })),
+      rankings,
       roomId: round.room_id,
       roundId: round.id,
       status: 'completed',

@@ -21,6 +21,8 @@ Modes:
   --tunnel, tunnel Start Expo using tunnel transport
   --export-web, export-web
                    Export the web build locally
+  --serve-web, serve-web
+                   Serve the exported web build with app-route fallback
   --doctor, doctor Run Expo diagnostics
   --help, help     Show this help
 USAGE
@@ -80,6 +82,9 @@ case "$MODE" in
     ;;
   --export-web|export-web)
     exec "${EXPO_CMD[@]}" export --platform web
+    ;;
+  --serve-web|serve-web)
+    exec node scripts/serve-web-export.mjs
     ;;
   --doctor|doctor)
     run_doctor

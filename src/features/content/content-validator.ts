@@ -11,14 +11,12 @@ import {
   type LocalizedString,
 } from './types';
 
-export const minecraftLocalizedStringSchema: z.ZodType<LocalizedString> = z
-  .object(
-    Object.fromEntries(contentLocales.map((locale) => [locale, z.string().min(1)])) as Record<
-      (typeof contentLocales)[number],
-      z.ZodString
-    >
-  )
-  .strict();
+export const minecraftLocalizedStringSchema: z.ZodType<LocalizedString> = z.strictObject(
+  Object.fromEntries(contentLocales.map((locale) => [locale, z.string().min(1)])) as Record<
+    (typeof contentLocales)[number],
+    z.ZodString
+  >
+);
 
 export const minecraftAgeBandSchema = z.enum(contentAgeBands);
 
@@ -28,8 +26,7 @@ export const minecraftCategorySchema = z.enum(contentCategoryIds);
 
 export const minecraftTopicSchema = z.enum(contentTopics);
 
-export const minecraftQuestionRecordSchema: z.ZodType<ContentQuestionRecord> = z
-  .object({
+export const minecraftQuestionRecordSchema: z.ZodType<ContentQuestionRecord> = z.strictObject({
     ageBand: minecraftAgeBandSchema,
     categoryId: minecraftCategorySchema,
     correctIndex: z.number().int().min(0).max(3),
@@ -47,8 +44,7 @@ export const minecraftQuestionRecordSchema: z.ZodType<ContentQuestionRecord> = z
     sourceVersion: z.string().trim().regex(/^[a-z0-9]+(?:[-.][a-z0-9]+)*$/),
     tags: z.array(z.string().trim().min(1).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)).min(1),
     topicId: minecraftTopicSchema,
-  })
-  .superRefine((record, ctx) => {
+}).superRefine((record, ctx) => {
     const uniqueTags = new Set(record.tags);
 
     if (uniqueTags.size !== record.tags.length) {

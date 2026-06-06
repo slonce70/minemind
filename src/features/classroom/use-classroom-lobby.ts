@@ -28,9 +28,14 @@ export function useClassroomLobby(messages?: {
   const setActiveRoomRound = useAppStore((state) => state.setActiveRoomRound);
   const setClassroomSession = useAppStore((state) => state.setClassroomSession);
   const clearClassroomSession = useAppStore((state) => state.clearClassroomSession);
+  const initialInviteInput = messages?.initialInviteInput ?? '';
+  const initialParsedInvite = useMemo(
+    () => initialInviteInput ? parseClassroomInviteInput(initialInviteInput) : null,
+    [initialInviteInput]
+  );
   const [hostAddress, setHostAddress] = useState('');
-  const [joinInviteInput, setJoinInviteInput] = useState('');
-  const [joinCode, setJoinCode] = useState('');
+  const [joinInviteInput, setJoinInviteInput] = useState(() => initialParsedInvite ? initialInviteInput : '');
+  const [joinCode, setJoinCode] = useState(() => initialParsedInvite?.roomCode ?? '');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isBusy, setIsBusy] = useState(false);
   const localHostTransport = useMemo(() => getSharedLocalHostTransport(), []);
@@ -58,21 +63,6 @@ export function useClassroomLobby(messages?: {
       })
     : null;
   const lobbyState = classroomSession ? deriveClassroomLobbyState(classroomSession) : null;
-
-  useEffect(() => {
-    if (classroomSession || !messages?.initialInviteInput) {
-      return;
-    }
-
-    const parsedInvite = parseClassroomInviteInput(messages.initialInviteInput);
-
-    if (!parsedInvite) {
-      return;
-    }
-
-    setJoinInviteInput(messages.initialInviteInput);
-    setJoinCode(parsedInvite.roomCode ?? '');
-  }, [classroomSession, messages?.initialInviteInput]);
 
   useEffect(
     () =>

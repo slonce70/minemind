@@ -489,7 +489,7 @@ test('solo screen supports optional question illustrations without replacing the
   assert.match(soloSource, /styles\.questionIllustration/);
   assert.match(soloSource, /aspectRatio:\s*16\s*\/\s*7/);
   assert.match(soloSource, /maxHeight:\s*180/);
-  assert.match(soloSource, /resizeMode="cover"/);
+  assert.match(soloSource, /contentFit="cover"/);
   assert.match(soloSource, /styles\.factCard/);
   assert.match(soloSource, /t\('solo\.next'\)/);
 });

@@ -40,6 +40,46 @@ test('onboarding route binds visible copy to the in-progress selected locale', (
   assert.match(source, /lng:\s*selectedLocale/);
 });
 
+test('onboarding route groups form state in a reducer', () => {
+  const source = readFileSync(new URL('../app/onboarding.tsx', import.meta.url), 'utf8');
+
+  assert.match(source, /useReducer/);
+  assert.match(source, /function onboardingReducer/);
+  assert.match(source, /dispatch\(\{ type: 'nickname'/);
+  assert.doesNotMatch(source, /const \[nickname, setNickname\]/);
+});
+
+test('production web hosting uses Netlify SPA fallback for exported routes', () => {
+  const netlifyConfig = readFileSync(new URL('../netlify.toml', import.meta.url), 'utf8');
+
+  assert.match(netlifyConfig, /\[\[redirects\]\]/);
+  assert.match(netlifyConfig, /from = "\/\*"/);
+  assert.match(netlifyConfig, /to = "\/index\.html"/);
+  assert.match(netlifyConfig, /status = 200/);
+});
+
+test('release validation enforces exported web bundle budgets', () => {
+  const packageSource = readFileSync(new URL('../package.json', import.meta.url), 'utf8');
+  const scriptSource = readFileSync(new URL('../scripts/check-web-export-budget.mjs', import.meta.url), 'utf8');
+
+  assert.match(packageSource, /"check:web-budget": "node scripts\/check-web-export-budget\.mjs"/);
+  assert.match(packageSource, /npm run check:web-budget/);
+  assert.match(scriptSource, /maxWebEntryBundleBytes/);
+  assert.match(scriptSource, /maxWebExportBytes/);
+  assert.match(scriptSource, /maxQuestionIllustrationsBytes/);
+});
+
+test('content validators use Zod 4 schema factories', () => {
+  const contentSource = readFileSync(new URL('../src/features/content/content-validator.ts', import.meta.url), 'utf8');
+  const masterSource = readFileSync(new URL('../src/features/content/master-content-validator.ts', import.meta.url), 'utf8');
+
+  assert.match(contentSource, /z\.strictObject/);
+  assert.match(masterSource, /z\.strictObject/);
+  assert.match(masterSource, /z\.url\(\)/);
+  assert.doesNotMatch(contentSource, /z\.object\(/);
+  assert.doesNotMatch(masterSource, /z\.string\(\)\.url\(\)/);
+});
+
 test('onboarding only commits the profile after guest session setup succeeds', () => {
   const source = readFileSync(new URL('../app/onboarding.tsx', import.meta.url), 'utf8');
   const ensureIndex = source.indexOf('await ensureGuestSession(profile);');
@@ -64,6 +104,13 @@ test('i18n keeps ukrainian as the primary fallback language', () => {
 
   assert.match(source, /fallbackLng:\s*'uk'/);
   assert.match(source, /lng:\s*defaultAppLocale/);
+});
+
+test('web shell synchronizes the html language with the selected locale', () => {
+  const source = readFileSync(new URL('../app/_layout.tsx', import.meta.url), 'utf8');
+
+  assert.match(source, /Platform\.OS === 'web'/);
+  assert.match(source, /document\.documentElement\.lang = locale/);
 });
 
 test('persisted routes wait for hydration before redirecting from restored app state', () => {
@@ -100,6 +147,28 @@ test('solo route keeps post-answer progression manual so facts remain readable',
   assert.match(soloSource, /t\('solo\.next'\)/);
   assert.match(soloSource, /round\.goNext/);
   assert.doesNotMatch(roundSource, /autoAdvanceTimeoutRef\.current\s*=\s*setTimeout/);
+});
+
+test('shared buttons and solo answers expose semantic web accessibility state', () => {
+  const buttonSource = readFileSync(new URL('../src/components/ui/button.tsx', import.meta.url), 'utf8');
+  const soloSource = readFileSync(new URL('../app/solo.tsx', import.meta.url), 'utf8');
+
+  assert.match(buttonSource, /accessibilityRole="button"/);
+  assert.match(buttonSource, /accessibilityLabel=\{accessibilityLabel \?\? label\}/);
+  assert.match(buttonSource, /accessibilityState=\{\{/);
+  assert.match(soloSource, /import \{ Image, type ImageSource \} from 'expo-image';/);
+  assert.match(soloSource, /accessibilityRole="button"/);
+  assert.match(soloSource, /selected: isSelected/);
+});
+
+test('android qa command can regenerate the ignored native project before install', () => {
+  const packageSource = readFileSync(new URL('../package.json', import.meta.url), 'utf8');
+  const scriptSource = readFileSync(new URL('../scripts/run-android-qa.mjs', import.meta.url), 'utf8');
+
+  assert.match(packageSource, /"android:qa": "node scripts\/run-android-qa\.mjs"/);
+  assert.match(scriptSource, /run\('npx', \['expo', 'prebuild', '--platform', 'android', '--non-interactive'\]\)/);
+  assert.match(scriptSource, /:app:installDebug/);
+  assert.match(scriptSource, /reactNativeArchitectures=arm64-v8a/);
 });
 
 test('home route exposes the classroom lobby from the main menu', () => {

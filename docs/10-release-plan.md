@@ -5,10 +5,16 @@
 - заповнити `.env.local`
 - зібрати іконки, splash, app name assets
 - перевірити nickname filter
+- пройти `npm run validate:release`
+- перевірити exported web routes через `npm run smoke:web-export`
+- перевірити web bundle/assets budget через `npm run check:web-budget`
+- підтвердити, що Supabase Edge Functions проходять `npm run check:edge`
+- підтвердити Android QA шлях через `npm run android:qa` на чистому checkout або після prebuild
+- для web deploy використовувати Netlify config з `netlify.toml`, який публікує `dist` і переписує всі routes на `/index.html`
 
 ## Internal Testing
 - iOS: TestFlight після Apple Developer enrollment
-- Android: Play internal testing
+- Android: Play internal testing; локальний AVD debug install/launch уже перевіряє базову native install path, але Play Console testing лишається окремим release-кроком
 
 ## Metadata
 - app description
