@@ -10,15 +10,15 @@ import {
   contentTopics,
 } from './types';
 
-const sourceRecordSchema = z.object({
+const sourceRecordSchema = z.strictObject({
   accessedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   evidenceNote: z.string().min(1),
   title: z.string().min(1),
   type: z.enum(['wiki', 'official-article', 'official-release-note', 'technical-reference']),
-  url: z.string().url(),
+  url: z.url(),
 });
 
-const sourceRegisterEntrySchema = z.object({
+const sourceRegisterEntrySchema = z.strictObject({
   accessedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   canonScope: z.enum(canonScopes),
   id: z.string().trim().min(1),
@@ -26,17 +26,17 @@ const sourceRegisterEntrySchema = z.object({
   title: z.string().min(1),
   topics: z.array(z.enum(contentTopics)).min(1),
   type: z.enum(['wiki', 'official-article', 'official-release-note', 'technical-reference']),
-  url: z.string().url(),
+  url: z.url(),
 });
 
-const slotBlueprintEntrySchema = z.object({
+const slotBlueprintEntrySchema = z.strictObject({
   clusterId: z.string().trim().min(1),
   difficulty: z.enum(contentDifficulties),
   targetCount: z.number().int().positive(),
   topicId: z.enum(contentTopics),
 });
 
-const masterQuestionRecordSchema = z.object({
+const masterQuestionRecordSchema = z.strictObject({
   ageBand: z.literal('8-12'),
   canonScope: z.enum(canonScopes),
   categoryId: z.literal('minecraft'),
@@ -63,7 +63,7 @@ const masterQuestionRecordSchema = z.object({
   versionGated: z.boolean(),
 });
 
-export const masterQuestionProgramSchema = z.object({
+export const masterQuestionProgramSchema = z.strictObject({
   sourceRegister: z.array(sourceRegisterEntrySchema),
   slotBlueprint: z.array(slotBlueprintEntrySchema),
   masterBank: z.array(masterQuestionRecordSchema),

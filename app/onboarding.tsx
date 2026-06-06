@@ -1,5 +1,5 @@
-import { Stack, router } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { Redirect, Stack, router } from 'expo-router';
+import { useMemo, useReducer } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { LoadingScreen } from '../src/components/ui/loading-screen';
@@ -10,7 +10,59 @@ import { ensureGuestSession } from '../src/features/profile/profile-service';
 import type { AppLocale } from '../src/lib/locale';
 import { appLocales } from '../src/lib/locale';
 import { useAppStore } from '../src/state/app-store';
-import { Redirect } from 'expo-router';
+
+type OnboardingFormState = {
+  errorKey: string | null;
+  isSaving: boolean;
+  nickname: string;
+  selectedAvatarId: string;
+  selectedLocale: AppLocale;
+  serverError: string | null;
+};
+
+type OnboardingAction =
+  | { type: 'avatar'; value: string }
+  | { type: 'locale'; value: AppLocale }
+  | { type: 'nickname'; value: string }
+  | { type: 'saveFailed'; message: string }
+  | { type: 'saving'; value: boolean }
+  | { type: 'validationError'; reasonKey: string }
+  | { type: 'validationPassed' };
+
+function createInitialOnboardingState(currentLocale: AppLocale): OnboardingFormState {
+  return {
+    errorKey: null,
+    isSaving: false,
+    nickname: '',
+    selectedAvatarId: avatarPresets[0].id,
+    selectedLocale: currentLocale,
+    serverError: null,
+  };
+}
+
+function onboardingReducer(
+  state: OnboardingFormState,
+  action: OnboardingAction
+): OnboardingFormState {
+  switch (action.type) {
+    case 'avatar':
+      return { ...state, selectedAvatarId: action.value };
+    case 'locale':
+      return { ...state, selectedLocale: action.value };
+    case 'nickname':
+      return { ...state, nickname: action.value };
+    case 'saveFailed':
+      return { ...state, serverError: action.message };
+    case 'saving':
+      return { ...state, isSaving: action.value };
+    case 'validationError':
+      return { ...state, errorKey: action.reasonKey };
+    case 'validationPassed':
+      return { ...state, errorKey: null, serverError: null };
+    default:
+      return state;
+  }
+}
 
 export default function OnboardingRoute() {
   const { t } = useTranslation();
@@ -18,12 +70,12 @@ export default function OnboardingRoute() {
   const currentLocale = useAppStore((state) => state.locale);
   const profile = useAppStore((state) => state.profile);
   const completeOnboarding = useAppStore((state) => state.completeOnboarding);
-  const [nickname, setNickname] = useState('');
-  const [selectedAvatarId, setSelectedAvatarId] = useState<string>(avatarPresets[0].id);
-  const [selectedLocale, setSelectedLocale] = useState<AppLocale>(currentLocale);
-  const [errorKey, setErrorKey] = useState<string | null>(null);
-  const [serverError, setServerError] = useState<string | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
+  const [formState, dispatch] = useReducer(
+    onboardingReducer,
+    currentLocale,
+    createInitialOnboardingState
+  );
+  const { errorKey, isSaving, nickname, selectedAvatarId, selectedLocale, serverError } = formState;
   const translationOptions = useMemo(() => ({ lng: selectedLocale }), [selectedLocale]);
 
   const localeOptions = useMemo(
@@ -54,13 +106,12 @@ export default function OnboardingRoute() {
     const validation = validateNickname(nickname);
 
     if (!validation.valid) {
-      setErrorKey(validation.reasonKey);
+      dispatch({ type: 'validationError', reasonKey: validation.reasonKey });
       return;
     }
 
-    setErrorKey(null);
-    setServerError(null);
-    setIsSaving(true);
+    dispatch({ type: 'validationPassed' });
+    dispatch({ type: 'saving', value: true });
 
     const profile = {
       nickname: validation.sanitizedValue,
@@ -73,9 +124,9 @@ export default function OnboardingRoute() {
       completeOnboarding(profile);
       router.replace('/home');
     } catch {
-      setServerError(t('onboarding.serverError', translationOptions));
+      dispatch({ type: 'saveFailed', message: t('onboarding.serverError', translationOptions) });
     } finally {
-      setIsSaving(false);
+      dispatch({ type: 'saving', value: false });
     }
   };
 
@@ -88,9 +139,9 @@ export default function OnboardingRoute() {
         isSaving={isSaving}
         localeOptions={localeOptions}
         nickname={nickname}
-        onChangeNickname={setNickname}
-        onSelectAvatar={setSelectedAvatarId}
-        onSelectLocale={setSelectedLocale}
+        onChangeNickname={(value) => dispatch({ type: 'nickname', value })}
+        onSelectAvatar={(value) => dispatch({ type: 'avatar', value })}
+        onSelectLocale={(value) => dispatch({ type: 'locale', value })}
         onSubmit={() => void handleContinue()}
         privacyNote={t('onboarding.privacyNote', translationOptions)}
         avatarLabels={avatarLabels}

@@ -4,6 +4,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
+import { Platform } from 'react-native';
 
 import '../src/i18n';
 
@@ -17,6 +18,10 @@ export default function RootLayout() {
 
   useEffect(() => {
     void setI18nLanguage(locale);
+
+    if (Platform.OS === 'web' && typeof document !== 'undefined') {
+      document.documentElement.lang = locale;
+    }
   }, [locale]);
 
   return (

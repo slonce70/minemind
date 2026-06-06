@@ -23,5 +23,11 @@ export function handleCors(request: Request) {
 }
 
 export async function requireJsonBody<T>(request: Request): Promise<T> {
-  return (await request.json()) as T;
+  const body = await request.json();
+
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    throw new Error('Expected a JSON object body.');
+  }
+
+  return body as T;
 }

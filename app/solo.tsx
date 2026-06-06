@@ -1,5 +1,6 @@
 import { Redirect, Stack, useLocalSearchParams } from 'expo-router';
-import { Image, type ImageSourcePropType, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, type ImageSource } from 'expo-image';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { PrimaryButton } from '../src/components/ui/button';
@@ -12,7 +13,7 @@ import { useSoloRound } from '../src/features/quiz/use-solo-round';
 import { useAppStore } from '../src/state/app-store';
 import { colors, radii, spacing, typography } from '../src/theme/tokens';
 
-const questionIllustrationSourceById: Record<string, ImageSourcePropType> = {
+const questionIllustrationSourceById: Record<string, ImageSource> = {
   'badlands-has-terracotta': require('../assets/question-illustrations/badlands-has-terracotta.png'),
   'bamboo-jungle-has-bamboo': require('../assets/question-illustrations/bamboo-jungle-has-bamboo.png'),
   'bee-pollinates-crops': require('../assets/question-illustrations/bee-pollinates-crops.png'),
@@ -113,9 +114,8 @@ export default function SoloRoute() {
         {round.question.illustration ? (
           <View style={styles.questionIllustrationFrame}>
             <Image
-              accessibilityIgnoresInvertColors
               accessibilityLabel={round.question.illustration.alt}
-              resizeMode="cover"
+              contentFit="cover"
               source={
                 questionIllustrationSourceById[round.question.illustration.id] ?? {
                   uri: round.question.illustration.imageUri,
@@ -143,6 +143,12 @@ export default function SoloRoute() {
 
           return (
             <Pressable
+              accessibilityLabel={option}
+              accessibilityRole="button"
+              accessibilityState={{
+                disabled: round.isRevealed,
+                selected: isSelected,
+              }}
               disabled={round.isRevealed}
               key={`${round.question.id}-${optionIndex}`}
               onPress={() => round.handleAnswer(optionIndex)}

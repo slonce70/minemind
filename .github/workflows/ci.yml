@@ -21,8 +21,13 @@ jobs:
           node-version: 24
           cache: npm
 
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
       - name: Install dependencies
         run: npm ci
 
-      - name: Run validation suite
-        run: npm run validate
+      - name: Run release validation suite
+        run: npm run validate:release

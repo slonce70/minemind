@@ -103,7 +103,7 @@ export function HomeView({
 
       <View style={styles.routeBoard}>
         <Card style={styles.primaryRoute} tone="scene">
-          <Text style={styles.routeEyebrow}>{strings.primaryCardTitle}</Text>
+          <Text style={styles.routeEyebrow}>{difficultyLabel}</Text>
           <Text style={styles.routeTitle}>{strings.primaryCardCopy}</Text>
         </Card>
 
