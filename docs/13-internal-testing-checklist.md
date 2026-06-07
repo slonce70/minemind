@@ -27,6 +27,17 @@
 - room participants receive the same question set
 - final podium is shown after finalize
 
+## Classroom LAN Evidence
+
+- Host device creates a classroom session on Android dev-client build.
+- Second physical device joins through QR invite on the same LAN or hotspot.
+- Guest ready state appears on host within one second after tapping ready.
+- Host starts a classroom round and guest receives the same question IDs in the same order.
+- Guest submits the round and host waits until all participants have submitted.
+- Host publishes final results and guest lands on results without manual refresh.
+- Repeat the flow once after closing and reopening the guest app.
+- Record devices, OS versions, network type, and observed failures in the test notes for the release candidate.
+
 ## Release Assets
 - icon and splash finalized
 - privacy policy URL prepared

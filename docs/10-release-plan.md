@@ -11,6 +11,7 @@
 - підтвердити, що Supabase Edge Functions проходять `npm run check:edge`
 - підтвердити Android QA шлях через `npm run android:qa` на чистому checkout або після prebuild
 - для web deploy використовувати Netlify config з `netlify.toml`, який публікує `dist` і переписує всі routes на `/index.html`
+- classroom LAN режим не описувати як production-ready, доки `docs/13-internal-testing-checklist.md` не має записаних результатів для мінімум двох фізичних пристроїв
 
 ## Internal Testing
 - iOS: TestFlight після Apple Developer enrollment
