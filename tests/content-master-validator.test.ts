@@ -56,6 +56,75 @@ test('master question program rejects records without sources', () => {
   );
 });
 
+test('master question program accepts localized export-ready records', () => {
+  const validated = validateMasterQuestionProgram({
+    sourceRegister: [
+      {
+        accessedAt: '2026-04-19',
+        canonScope: 'common-canon',
+        id: 'wiki-food',
+        notes: 'Food source reference for hunger recovery questions.',
+        title: 'Food - Minecraft Wiki',
+        topics: ['survival-basics'],
+        type: 'wiki',
+        url: 'https://minecraft.wiki/w/Food',
+      },
+    ],
+    slotBlueprint: [
+      {
+        clusterId: 'health-hunger-safety',
+        difficulty: 'easy',
+        targetCount: 15,
+        topicId: 'survival-basics',
+      },
+    ],
+    masterBank: [
+      {
+        ageBand: '8-12',
+        canonScope: 'common-canon',
+        categoryId: 'minecraft',
+        clusterId: 'health-hunger-safety',
+        correctAnswer: 'Bread',
+        difficulty: 'easy',
+        distractors: ['Stone', 'Sand', 'Stick'],
+        explanationEn: 'Bread is a food item that restores hunger.',
+        id: 'bread-restores-hunger',
+        isActive: true,
+        localized: {
+          en: {
+            explanation: 'Bread is a food item that restores hunger.',
+            options: ['Bread', 'Stone', 'Sand', 'Stick'],
+            prompt: 'Which item restores hunger?',
+          },
+          uk: {
+            explanation: 'Хліб є їжею, яка відновлює голод.',
+            options: ['Хліб', 'Камінь', 'Пісок', 'Палиця'],
+            prompt: 'Який предмет відновлює голод?',
+          },
+        },
+        promptEn: 'Which item restores hunger?',
+        reviewStatus: 'approved',
+        sourceVersion: 'minecraft-v2',
+        sources: [
+          {
+            accessedAt: '2026-04-19',
+            evidenceNote: 'Food reference for bread and hunger restoration.',
+            title: 'Food - Minecraft Wiki',
+            type: 'wiki',
+            url: 'https://minecraft.wiki/w/Food',
+          },
+        ],
+        tags: ['food'],
+        topicId: 'survival-basics',
+        translationStatus: 'complete',
+        versionGated: false,
+      },
+    ],
+  });
+
+  assert.equal(validated.masterBank[0].localized.uk.options[0], 'Хліб');
+});
+
 test('approved master bank keeps the wave one floor with balanced topic-difficulty coverage', () => {
   const bank = JSON.parse(
     readFileSync(new URL('../content/minecraft/minecraft-master-bank.v2.json', import.meta.url), 'utf8')

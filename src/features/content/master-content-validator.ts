@@ -36,6 +36,17 @@ const slotBlueprintEntrySchema = z.strictObject({
   topicId: z.enum(contentTopics),
 });
 
+const localizedMasterPayloadSchema = z.strictObject({
+  explanation: z.string().trim().min(1),
+  options: z.tuple([
+    z.string().trim().min(1),
+    z.string().trim().min(1),
+    z.string().trim().min(1),
+    z.string().trim().min(1),
+  ]),
+  prompt: z.string().trim().min(1),
+});
+
 const masterQuestionRecordSchema = z.strictObject({
   ageBand: z.literal('8-12'),
   canonScope: z.enum(canonScopes),
@@ -51,6 +62,11 @@ const masterQuestionRecordSchema = z.strictObject({
   explanationEn: z.string().trim().min(1),
   id: z.string().trim().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
   isActive: z.boolean(),
+  localized: z.strictObject({
+    en: localizedMasterPayloadSchema,
+    uk: localizedMasterPayloadSchema,
+    ru: localizedMasterPayloadSchema.optional(),
+  }),
   notes: z.string().trim().min(1).optional(),
   promptEn: z.string().trim().min(1),
   reviewNotes: z.string().trim().min(1).optional(),
