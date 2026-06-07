@@ -20,8 +20,9 @@
     "doctor:react": "npx -y react-doctor@latest . --verbose",
     "doctor:react:diff": "npx -y react-doctor@latest . --verbose --diff",
     "check:edge": "node scripts/check-edge-functions.mjs",
+    "validate:content": "npx tsx scripts/validate-question-bank.ts && npx tsx scripts/validate-master-question-program.ts && npx tsx scripts/lint-question-duplicates.ts",
     "validate": "npm test && npm run typecheck && npm run export:web",
-    "validate:release": "npm test && npm run typecheck && npm run doctor:expo && npm run audit:security && npm run check:edge && npm run smoke:web-export && npm run check:web-budget"
+    "validate:release": "npm test && npm run typecheck && npm run validate:content && npm run doctor:expo && npm run audit:security && npm run check:edge && npm run smoke:web-export && npm run check:web-budget"
   },
   "dependencies": {
     "@expo/metro-runtime": "~55.0.11",
