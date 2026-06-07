@@ -45,6 +45,12 @@ export type QuestionSourceRecord = {
   url: string;
 };
 
+export type MasterLocalizedPayload = {
+  explanation: string;
+  options: [string, string, string, string];
+  prompt: string;
+};
+
 export type MasterQuestionRecord = {
   ageBand: '8-12';
   canonScope: CanonScope;
@@ -56,6 +62,11 @@ export type MasterQuestionRecord = {
   explanationEn: string;
   id: string;
   isActive: boolean;
+  localized: {
+    en: MasterLocalizedPayload;
+    uk: MasterLocalizedPayload;
+    ru?: MasterLocalizedPayload;
+  };
   notes?: string;
   promptEn: string;
   reviewNotes?: string;
