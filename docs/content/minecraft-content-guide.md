@@ -55,10 +55,11 @@
 | Biomes And Structures | 15 | 15 | 15 | 45 |
 | Nether, End, And Redstone | 15 | 15 | 15 | 45 |
 
-## Milestone A
-- First milestone target: at least `60` approved records.
-- Coverage target: all three difficulties represented and at least four topics represented.
-- Editorial preference: spread milestone records broadly across the topic matrix instead of overfilling only one area.
+## Current Bank Status
+- Runtime bank: `360` active localized records in `content/minecraft/minecraft-question-bank.v1.json`.
+- Master bank: `360` approved source records in `content/minecraft/minecraft-master-bank.v2.json`.
+- Coverage: eight topics, three difficulties, `45` records per topic, and `120` records per difficulty.
+- Next master-program target: expand toward `1080` approved source records without reducing the current localized runtime coverage.
 
 ## Review Checklist
 - `id` is present, slug-like, and unique across the full question bank.
@@ -69,4 +70,4 @@
 - The prompt reads naturally to a player in the target age band.
 - The explanation teaches something useful and stays short.
 - The record is active only if it is ready to ship.
-- Run the validator script before merging content changes.
+- Run `npm run validate:content` before merging content changes.
