@@ -19,6 +19,7 @@ Mobile quiz app prototype for `iOS + Android` built with `Expo`, `React Native`,
 - `npm run dev`
 - `npm test`
 - `npm run typecheck`
+- `npm run validate:content`
 - `npm run validate`
 - `npm run validate:release`
 - `npm run doctor:expo`

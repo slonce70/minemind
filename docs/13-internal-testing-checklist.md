@@ -9,7 +9,12 @@
 ## Validation Commands
 - `npm test`
 - `npm run typecheck`
+- `npm run validate:content`
+- `npm run check:edge`
+- `npm run smoke:web-export`
+- `npm run check:web-budget`
 - `npm run validate`
+- `npm run validate:release`
 
 ## Manual Smoke Checks
 - onboarding completes with a safe nickname

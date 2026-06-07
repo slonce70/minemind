@@ -23,6 +23,7 @@
 
 ## Release Checks
 - `npm run typecheck`
+- `npm run validate:content`
 - `npm test`
 - `npm run doctor:expo`
 - `npm run audit:security`
@@ -55,6 +56,10 @@ The release gate runs this after `npm run smoke:web-export`.
 Use `npm run check:edge` to run Deno checks across all Supabase Edge Function entrypoints. This is separate from `npm run typecheck`, because the app TypeScript config excludes `supabase/functions`.
 
 The shared Edge HTTP helper rejects non-object JSON bodies so functions do not silently accept arrays or primitive payloads.
+
+### Content authoring gate
+
+Use `npm run validate:content` before release validation and after any content-bank change. It validates the runtime question bank, validates the master question program, and runs duplicate lint so `content/minecraft/minecraft-question-bank.v1.json` stays aligned with the localized master bank.
 
 ### Android emulator smoke test
 

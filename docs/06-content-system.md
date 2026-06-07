@@ -4,7 +4,8 @@
 - одна категорія: `Minecraft`
 - три мови: `uk`, `en`, `ru`
 - базовий тон: дружній, енергійний, без токсичності
-- milestone A: `60` активних запитань у локальному банку
+- поточний runtime bank: `360` валідованих записів у `content/minecraft/minecraft-question-bank.v1.json`
+- master content program: `360` approved localized records today, з target-моделлю `1080` records у slot blueprint
 
 ## Content Principles
 - короткі питання
@@ -20,8 +21,9 @@
 - `hard` уже включає deeper mechanics, але без niche edge cases
 
 ## Editorial Workflow
-- авторинг іде через canonical JSON bank у репозиторії
-- `npx tsx scripts/validate-question-bank.ts` перевіряє schema та editorial shape
-- `npx tsx scripts/export-question-packs.ts` готує derived pack slices для runtime/backend path
+- авторинг іде через master JSON bank у `content/minecraft/minecraft-master-bank.v2.json`
+- `npm run validate:content` перевіряє runtime bank, master program schema, і duplicate lint
+- `npx tsx scripts/export-master-question-packs.ts --out content/minecraft/minecraft-question-bank.v1.json` синхронізує runtime bank з localized master records
+- `npm run validate:release` запускає content gate разом із tests, typecheck, Expo Doctor, security audit, Edge Function check, web smoke, і bundle budget
 - для backend path готуємо `question_packs` і `questions` у Supabase
-- далі можна перенести контент у CSV/JSON import pipeline, але canonical source лишається в repo
+- canonical source лишається в repo, навіть якщо згодом з'явиться CSV/JSON import workflow
