@@ -70,3 +70,7 @@ The 2026-06-06 verification created `minemind_qa_api35` from the installed `syst
 ### Mobile web visual smoke
 
 For mobile web inspection, serve the exported app and use a `390x844` viewport. Seed `minemind-store` with a profile before protected routes. The 2026-06-06 smoke checked `/home`, `/solo`, and `/classroom` for rendered text, semantic buttons, and `overflowX: 0`, with screenshots saved under `/tmp/minemind-*-seeded-mobile.png`.
+
+### React Doctor maintainability triage
+
+Use `npm run doctor:react` for full-repository maintainability review and `npm run doctor:react:diff` before PR handoff. Current reviewed classifications live in `docs/14-maintainability-triage.md`; do not delete Supabase Edge Function entrypoints or change live-room finalization polling based only on static analyzer output.
