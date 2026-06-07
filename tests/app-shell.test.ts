@@ -69,6 +69,24 @@ test('release validation enforces exported web bundle budgets', () => {
   assert.match(scriptSource, /maxQuestionIllustrationsBytes/);
 });
 
+test('release validation runs the full content authoring gate', () => {
+  const packageJson = JSON.parse(
+    readFileSync(new URL('../package.json', import.meta.url), 'utf8')
+  ) as {
+    scripts: Record<string, string>;
+  };
+
+  assert.equal(
+    packageJson.scripts['validate:content'],
+    'npx tsx scripts/validate-question-bank.ts && npx tsx scripts/validate-master-question-program.ts && npx tsx scripts/lint-question-duplicates.ts'
+  );
+  assert.match(packageJson.scripts['validate:release'], /npm run validate:content/);
+  assert.ok(
+    packageJson.scripts['validate:release'].indexOf('npm run validate:content') <
+      packageJson.scripts['validate:release'].indexOf('npm run doctor:expo')
+  );
+});
+
 test('content validators use Zod 4 schema factories', () => {
   const contentSource = readFileSync(new URL('../src/features/content/content-validator.ts', import.meta.url), 'utf8');
   const masterSource = readFileSync(new URL('../src/features/content/master-content-validator.ts', import.meta.url), 'utf8');

@@ -23,6 +23,7 @@
 
 ## Release Checks
 - `npm run typecheck`
+- `npm run validate:content`
 - `npm test`
 - `npm run doctor:expo`
 - `npm run audit:security`
@@ -56,6 +57,10 @@ Use `npm run check:edge` to run Deno checks across all Supabase Edge Function en
 
 The shared Edge HTTP helper rejects non-object JSON bodies so functions do not silently accept arrays or primitive payloads.
 
+### Content authoring gate
+
+Use `npm run validate:content` before release validation and after any content-bank change. It validates the runtime question bank, validates the master question program, and runs duplicate lint so `content/minecraft/minecraft-question-bank.v1.json` stays aligned with the localized master bank.
+
 ### Android emulator smoke test
 
 Use `npm run android:qa` for local emulator installs. It regenerates the ignored `android/` project with Expo prebuild when needed, then limits the native build to the emulator ABI and avoids the much slower all-ABI debug build.
@@ -65,3 +70,7 @@ The 2026-06-06 verification created `minemind_qa_api35` from the installed `syst
 ### Mobile web visual smoke
 
 For mobile web inspection, serve the exported app and use a `390x844` viewport. Seed `minemind-store` with a profile before protected routes. The 2026-06-06 smoke checked `/home`, `/solo`, and `/classroom` for rendered text, semantic buttons, and `overflowX: 0`, with screenshots saved under `/tmp/minemind-*-seeded-mobile.png`.
+
+### React Doctor maintainability triage
+
+Use `npm run doctor:react` for full-repository maintainability review and `npm run doctor:react:diff` before PR handoff. Current reviewed classifications live in `docs/14-maintainability-triage.md`; do not delete Supabase Edge Function entrypoints or change live-room finalization polling based only on static analyzer output.
