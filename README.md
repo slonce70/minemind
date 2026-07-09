@@ -2,6 +2,8 @@
 
 Mobile quiz app prototype for `iOS + Android` built with `Expo`, `React Native`, and `Supabase-first` architecture.
 
+MineMind is a mobile quiz app for iOS and Android, built with Expo and React Native in TypeScript on top of a Supabase-first backend that leans on Postgres, Edge Functions, and Realtime. The UI is fully localized across Ukrainian, English, and Russian, and questions are drawn from a validated content bank of 360 items organized into difficulty tiers. You can play through a solo mode or join private live multiplayer rooms, with a built-in demo fallback so the experience keeps working even without a live backend connection.
+
 ## Current Status
 - guest onboarding
 - localized UI: `uk`, `en`, `ru`
@@ -54,3 +56,7 @@ If env vars are missing, the app still works in offline/demo mode.
 ## Web Hosting
 
 The production web target is Netlify static hosting. `netlify.toml` publishes `dist` and rewrites all routes to `/index.html` so Expo Router deep links and refreshes keep working.
+
+## Disclaimer
+
+MineMind is an unofficial fan-made quiz app. It is not affiliated with, endorsed by, or sponsored by Mojang Synergies AB or Microsoft. Minecraft is a trademark of Mojang Synergies AB.
