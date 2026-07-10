@@ -18,7 +18,11 @@ export async function getLocalizedQuestionPack(
   difficulty: ContentDifficulty = 'medium',
   count = 8
 ) {
-  const { data: pack, error: packError } = await serviceClient
+  // Prefer a pack that matches the requested difficulty exactly, but fall back
+  // to any pack for the locale. Seed/demo databases ship a single pack per
+  // locale, so an exact-difficulty-only lookup left online rounds unable to
+  // start ("No question pack found") for every difficulty.
+  const { data: exactPack, error: packError } = await serviceClient
     .from('question_packs')
     .select('id,title')
     .eq('locale', locale)
@@ -29,6 +33,24 @@ export async function getLocalizedQuestionPack(
 
   if (packError) {
     throw packError;
+  }
+
+  let pack = exactPack;
+
+  if (!pack) {
+    const { data: fallbackPack, error: fallbackError } = await serviceClient
+      .from('question_packs')
+      .select('id,title')
+      .eq('locale', locale)
+      .order('created_at', { ascending: true })
+      .limit(1)
+      .maybeSingle();
+
+    if (fallbackError) {
+      throw fallbackError;
+    }
+
+    pack = fallbackPack;
   }
 
   if (!pack) {

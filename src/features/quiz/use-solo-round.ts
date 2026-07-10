@@ -18,7 +18,6 @@ import { useAppStore } from '../../state/app-store';
 import { isSupabaseConfigured } from '../../lib/supabase';
 import { difficultyConfig } from '../content/difficulty-config';
 import { normalizeMatchRecord } from '../results/normalize-match-record';
-import { startLiveSoloRound } from './live-quiz-service';
 import { buildQuizResult, getSoloQuestionSet } from './quiz-service';
 import type { QuizAnswerMap, QuizResultSummary } from './types';
 
@@ -324,10 +323,18 @@ export function useSoloRound(params: {
       dispatchRoundFlow({ type: 'clear-load-error' });
 
       try {
+        // Solo is single-player and client-scored: it must use the local bank,
+        // which carries correctIndex/explanation. The server start-solo-round
+        // returns sanitized questions (no correct answer) and never records a
+        // solo result, so routing solo through it left every answer marked
+        // wrong with a score of 0. Selecting locally also honors the chosen
+        // difficulty and shuffles answer positions per round.
         const fallbackDifficulty = currentRoom?.settings.difficulty ?? selectedDifficulty;
-        const nextQuestions = isSupabaseConfigured
-          ? await startLiveSoloRound(params.locale as 'uk' | 'en' | 'ru')
-          : getSoloQuestionSet(params.locale as 'uk' | 'en' | 'ru', 8, fallbackDifficulty);
+        const nextQuestions = getSoloQuestionSet(
+          params.locale as 'uk' | 'en' | 'ru',
+          8,
+          fallbackDifficulty
+        );
 
         if (isMounted) {
           setQuestions(nextQuestions);
@@ -335,14 +342,6 @@ export function useSoloRound(params: {
         }
       } catch (error) {
         if (isMounted) {
-          setQuestions(
-            getSoloQuestionSet(
-              params.locale as 'uk' | 'en' | 'ru',
-              8,
-              currentRoom?.settings.difficulty ?? selectedDifficulty
-            )
-          );
-          setTimeLeft(questionTimeLimit);
           dispatchRoundFlow({
             message: error instanceof Error ? error.message : params.messages.loadError,
             type: 'set-load-error',

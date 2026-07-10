@@ -132,6 +132,24 @@ test('getSoloQuestionSet returns localized questions for the requested difficult
   assert.ok(round.every((question) => question.prompt.length >= 40));
 });
 
+test('solo questions carry a valid correctIndex so answers can be scored', () => {
+  // Regression guard: online solo previously routed through the server, which
+  // returns sanitized questions without a correct answer, so every solo answer
+  // scored 0. Solo must always come from the local bank with correctIndex set.
+  const round = getSoloQuestionSet('en', 8, 'hard', 'scoring-seed');
+
+  assert.ok(round.length > 0);
+  assert.ok(
+    round.every(
+      (question) =>
+        typeof question.correctIndex === 'number' &&
+        question.correctIndex >= 0 &&
+        question.correctIndex < question.options.length
+    ),
+    'every solo question must expose a scorable correctIndex'
+  );
+});
+
 test('getSoloQuestionSet does not mix in the old legacy question bank', () => {
   const legacyQuestionIds = new Set([
     'biomes',
