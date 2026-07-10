@@ -4,7 +4,10 @@ import { requireAuthenticatedUser } from '../_shared/auth.ts';
 import { serviceClient } from '../_shared/client.ts';
 import { handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
 import { assertQuestionBelongsToRound } from '../_shared/round-questions.ts';
+import { clampTimeLeftMs } from '../_shared/round-timing.ts';
 import { assertRoomMembership } from '../_shared/rooms.ts';
+
+type ContentDifficulty = 'easy' | 'medium' | 'hard';
 
 type SubmitAnswerPayload = {
   questionId: string;
@@ -22,9 +25,20 @@ serve(async (request) => {
   try {
     const user = await requireAuthenticatedUser(request);
     const body = await requireJsonBody<SubmitAnswerPayload>(request);
+
+    // Reject invalid options outright instead of silently clamping (99 -> 3).
+    if (
+      typeof body.selectedOption !== 'number' ||
+      !Number.isInteger(body.selectedOption) ||
+      body.selectedOption < -1 ||
+      body.selectedOption > 3
+    ) {
+      throw new Error('Invalid selected option.');
+    }
+
     const { data: round, error: roundError } = await serviceClient
       .from('round_sessions')
-      .select('id, room_id, question_ids')
+      .select('id, room_id, question_ids, ends_at, difficulty')
       .eq('id', body.roundId)
       .single();
 
@@ -41,25 +55,34 @@ serve(async (request) => {
       roundQuestionIds: round.question_ids,
     });
 
-    const sanitizedOption = Math.max(-1, Math.min(3, body.selectedOption));
-    const sanitizedTimeLeft = Math.max(0, Math.min(18000, body.timeLeftMs ?? 0));
+    // Reject answers once the round deadline has passed so a stalled client
+    // cannot backfill answers after the round has effectively ended.
+    if (round.ends_at && new Date(round.ends_at).getTime() < Date.now()) {
+      throw new Error('Round has already ended.');
+    }
 
-    const { error: upsertError } = await serviceClient.from('answer_submissions').upsert(
-      {
-        player_id: user.id,
-        question_id: body.questionId,
-        round_id: body.roundId,
-        selected_option: sanitizedOption,
-        submitted_at: new Date().toISOString(),
-        time_left_ms: sanitizedTimeLeft,
-      },
-      {
-        onConflict: 'round_id,player_id,question_id',
+    const difficulty = (round.difficulty as ContentDifficulty | null) ?? 'medium';
+    const sanitizedOption = body.selectedOption;
+    const sanitizedTimeLeft = clampTimeLeftMs(body.timeLeftMs, difficulty);
+
+    // Answers are immutable: one submission per (round, player, question). This
+    // defeats the "submit, read correctness, resubmit until right" cheat while
+    // still allowing immediate per-question feedback below.
+    const { error: insertError } = await serviceClient.from('answer_submissions').insert({
+      player_id: user.id,
+      question_id: body.questionId,
+      round_id: body.roundId,
+      selected_option: sanitizedOption,
+      submitted_at: new Date().toISOString(),
+      time_left_ms: sanitizedTimeLeft,
+    });
+
+    if (insertError) {
+      // 23505 = unique_violation on (round_id, player_id, question_id).
+      if ((insertError as { code?: string }).code === '23505') {
+        throw new Error('This question was already answered.');
       }
-    );
-
-    if (upsertError) {
-      throw upsertError;
+      throw insertError;
     }
 
     const { data: question, error: questionError } = await serviceClient
