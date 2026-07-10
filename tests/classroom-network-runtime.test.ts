@@ -11,10 +11,19 @@ import type { RoomParticipant } from '../src/features/rooms/types';
 
 type SocketHandler = (value?: unknown) => void;
 
-function createFakeSocket() {
+type FakeSocket = {
+  destroy: () => void;
+  on: (event: string, handler: SocketHandler) => FakeSocket;
+  peer: FakeSocket | undefined;
+  writes: string[];
+  write: (value: string) => boolean;
+  emit: (event: string, value?: unknown) => void;
+};
+
+function createFakeSocket(): FakeSocket {
   const handlers = new Map<string, SocketHandler[]>();
 
-  const socket = {
+  const socket: FakeSocket = {
     destroy() {
       emit('close');
     },
@@ -22,8 +31,8 @@ function createFakeSocket() {
       handlers.set(event, [...(handlers.get(event) ?? []), handler]);
       return socket;
     },
-    peer: undefined as undefined | ReturnType<typeof createFakeSocket>,
-    writes: [] as string[],
+    peer: undefined,
+    writes: [],
     write(value: string) {
       socket.writes.push(value);
       socket.peer?.emit('data', value);

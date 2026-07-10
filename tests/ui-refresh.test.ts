@@ -173,6 +173,7 @@ function functionStylePropUses(sourceFile: ts.SourceFile, functionName: string, 
 
     if (
       ts.isJsxAttribute(node) &&
+      ts.isIdentifier(node.name) &&
       node.name.text === 'style' &&
       node.initializer &&
       ts.isJsxExpression(node.initializer) &&
@@ -212,6 +213,7 @@ function jsxNodeUsesStyle(node: JsxNode, styleName: string, sourceFile: ts.Sourc
   return getJsxAttributes(node).some(
     (property) =>
       ts.isJsxAttribute(property) &&
+      ts.isIdentifier(property.name) &&
       property.name.text === 'style' &&
       property.initializer &&
       ts.isJsxExpression(property.initializer) &&
@@ -222,7 +224,12 @@ function jsxNodeUsesStyle(node: JsxNode, styleName: string, sourceFile: ts.Sourc
 
 function jsxNodeHasStringProp(node: JsxNode, propName: string, expectedValue: string) {
   return getJsxAttributes(node).some((property) => {
-    if (!ts.isJsxAttribute(property) || property.name.text !== propName || !property.initializer) {
+    if (
+      !ts.isJsxAttribute(property) ||
+      !ts.isIdentifier(property.name) ||
+      property.name.text !== propName ||
+      !property.initializer
+    ) {
       return false;
     }
 
