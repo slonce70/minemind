@@ -173,6 +173,7 @@ function functionStylePropUses(sourceFile: ts.SourceFile, functionName: string, 
 
     if (
       ts.isJsxAttribute(node) &&
+      ts.isIdentifier(node.name) &&
       node.name.text === 'style' &&
       node.initializer &&
       ts.isJsxExpression(node.initializer) &&
@@ -212,22 +213,13 @@ function jsxNodeUsesStyle(node: JsxNode, styleName: string, sourceFile: ts.Sourc
   return getJsxAttributes(node).some(
     (property) =>
       ts.isJsxAttribute(property) &&
+      ts.isIdentifier(property.name) &&
       property.name.text === 'style' &&
       property.initializer &&
       ts.isJsxExpression(property.initializer) &&
       property.initializer.expression &&
       nodeReferencesStyle(property.initializer.expression, styleName, sourceFile),
   );
-}
-
-function jsxNodeHasStringProp(node: JsxNode, propName: string, expectedValue: string) {
-  return getJsxAttributes(node).some((property) => {
-    if (!ts.isJsxAttribute(property) || property.name.text !== propName || !property.initializer) {
-      return false;
-    }
-
-    return ts.isStringLiteral(property.initializer) && property.initializer.text === expectedValue;
-  });
 }
 
 function jsxNodeContainsIdentifier(node: ts.Node, identifierName: string): boolean {
@@ -338,7 +330,7 @@ test('shared primitives avoid deprecated web shadow props and pointerEvents attr
 
   assert.doesNotMatch(cardSource, /shadowColor|shadowOffset|shadowOpacity|shadowRadius/);
   assert.doesNotMatch(buttonSource, /shadowColor|shadowOffset|shadowOpacity|shadowRadius/);
-  assert.doesNotMatch(worldSource, /pointerEvents=\"none\"/);
+  assert.doesNotMatch(worldSource, /pointerEvents="none"/);
   assert.match(worldSource, /pointerEvents:\s*'none'/);
 });
 

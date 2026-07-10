@@ -36,6 +36,13 @@ export type NormalizeMatchRecordInput = {
   input: QuizResultSummary;
   isDemo: boolean;
   modeOverride?: MatchMode;
+  /**
+   * Stable identifier of the round this record came from. When provided it
+   * anchors the record id so the same round produces the same id whether it was
+   * built at finalize time or recovered later, letting saveMatchRecord dedupe
+   * instead of storing two entries with drifting completedAt timestamps.
+   */
+  roundId?: string;
   syncStatus?: MatchSyncStatus;
   transport: MatchTransport;
 };

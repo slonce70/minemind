@@ -11,7 +11,7 @@ values (
   (select id from public.quiz_categories where slug = 'minecraft'),
   'uk',
   '8-12',
-  'starter',
+  'medium',
   'Launch Pack - Ukrainian'
 );
 
@@ -272,7 +272,7 @@ values (
   (select id from public.quiz_categories where slug = 'minecraft'),
   'en',
   '8-12',
-  'starter',
+  'medium',
   'Launch Pack - English'
 );
 
@@ -533,7 +533,7 @@ values (
   (select id from public.quiz_categories where slug = 'minecraft'),
   'ru',
   '8-12',
-  'starter',
+  'medium',
   'Launch Pack - Russian'
 );
 

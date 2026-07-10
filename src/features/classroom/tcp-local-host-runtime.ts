@@ -34,21 +34,42 @@ function encodeEvent(event: ClassroomTransportEvent) {
   return `${JSON.stringify(event)}\n`;
 }
 
+const KNOWN_EVENT_TYPES: ReadonlySet<ClassroomTransportEvent['type']> = new Set([
+  'participant-joined',
+  'participant-ready',
+  'round-submitted',
+  'round-started',
+  'round-finished',
+]);
+
+// Data arriving over the LAN is untrusted: any device on the network can open
+// the socket and send arbitrary JSON. Validate the envelope (known event type +
+// string room code) before it is applied to session state so a malformed or
+// hostile frame cannot poison or crash the lobby.
 function isTransportEvent(value: unknown): value is ClassroomTransportEvent {
-  return Boolean(
-    value &&
-      typeof value === 'object' &&
-      'type' in value &&
-      typeof (value as { type?: unknown }).type === 'string'
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+
+  const candidate = value as { type?: unknown; roomCode?: unknown };
+
+  return (
+    typeof candidate.type === 'string' &&
+    KNOWN_EVENT_TYPES.has(candidate.type as ClassroomTransportEvent['type']) &&
+    typeof candidate.roomCode === 'string'
   );
 }
 
+const CONNECT_TIMEOUT_MS = 8000;
+
 export function createTcpLocalHostRuntime(options?: {
+  connectTimeoutMs?: number;
   defaultPort?: number;
   tcp?: TcpSocketModuleLike;
 }) {
   const tcp = options?.tcp ?? getTcpSocketModule();
   const port = options?.defaultPort ?? classroomDefaultPort;
+  const connectTimeoutMs = options?.connectTimeoutMs ?? CONNECT_TIMEOUT_MS;
   const listeners = new Set<(event: ClassroomTransportEvent) => void>();
   const peerSockets = new Set<TcpSocketLike>();
   const socketBuffers = new Map<TcpSocketLike, string>();
@@ -83,6 +104,20 @@ export function createTcpLocalHostRuntime(options?: {
 
           if (isTransportEvent(parsed)) {
             emit(parsed);
+
+            // Host acts as a hub: relay each peer's event to every other peer
+            // so participants learn about one another. Without this the
+            // topology is a pure star and each participant only ever sees
+            // itself in the roster. Only the host (which owns `server`) relays;
+            // clients never rebroadcast.
+            if (server) {
+              const relayed = `${frame}\n`;
+              for (const peer of peerSockets) {
+                if (peer !== socket) {
+                  peer.write(relayed);
+                }
+              }
+            }
           }
         } catch {
           // Ignore malformed frames from peers and keep the socket alive.
@@ -143,14 +178,29 @@ export function createTcpLocalHostRuntime(options?: {
 
       await new Promise<void>((resolve, reject) => {
         clientSocket?.destroy();
-        let nextSocket: TcpSocketLike | undefined;
-        let handshakeComplete = false;
-        const flushHandshake = () => {
-          if (handshakeComplete || !nextSocket) {
+        let settled = false;
+        const timeout = setTimeout(() => {
+          if (settled) {
             return;
           }
 
-          handshakeComplete = true;
+          settled = true;
+          nextSocket?.destroy();
+          clientSocket = undefined;
+          reject(new Error('CLASSROOM_CONNECT_TIMEOUT'));
+        }, connectTimeoutMs);
+
+        // Only complete the handshake once the socket is actually connected.
+        // Previously this ran synchronously right after connect(), so joining a
+        // classroom "succeeded" even when the host was unreachable and the
+        // promise resolved before any connection existed.
+        const flushHandshake = () => {
+          if (settled || !nextSocket) {
+            return;
+          }
+
+          settled = true;
+          clearTimeout(timeout);
           attachSocket(nextSocket);
           nextSocket.write(
             encodeEvent({
@@ -162,7 +212,7 @@ export function createTcpLocalHostRuntime(options?: {
           resolve();
         };
 
-        nextSocket = tcpModule.connect(
+        const nextSocket: TcpSocketLike = tcpModule.connect(
           {
             host: payload.hostAddress,
             port: payload.port ?? port,
@@ -171,8 +221,16 @@ export function createTcpLocalHostRuntime(options?: {
         );
 
         clientSocket = nextSocket;
-        nextSocket.on('error', reject);
-        flushHandshake();
+        nextSocket.on('error', (error) => {
+          if (settled) {
+            return;
+          }
+
+          settled = true;
+          clearTimeout(timeout);
+          clientSocket = undefined;
+          reject(error instanceof Error ? error : new Error('CLASSROOM_CONNECT_FAILED'));
+        });
       });
     },
     publish: async (event: ClassroomTransportEvent) => {

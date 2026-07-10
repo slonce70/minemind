@@ -4,6 +4,7 @@ import { requireAuthenticatedUser } from '../_shared/auth.ts';
 import { serviceClient } from '../_shared/client.ts';
 import { handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
 import { getLocalizedQuestionPack, sanitizeQuestionsForClient } from '../_shared/questions.ts';
+import { computeRoundEndsAt } from '../_shared/round-timing.ts';
 import { getRoomByCode, listRoomParticipants } from '../_shared/rooms.ts';
 
 type StartRoomRoundPayload = {
@@ -50,15 +51,19 @@ serve(async (request) => {
       room.question_count
     );
     const questionIds = questions.map((question) => question.id);
+    const startedAt = new Date().toISOString();
+    const endsAt = computeRoundEndsAt(startedAt, room.difficulty, room.question_count);
 
     const { data: round, error: roundError } = await serviceClient
       .from('round_sessions')
       .insert({
         content_pack_version: room.content_pack_version,
         difficulty: room.difficulty,
+        ends_at: endsAt,
         question_count: room.question_count,
         question_ids: questionIds,
         room_id: room.id,
+        started_at: startedAt,
         topic_mode: room.topic_mode,
       })
       .select('id, room_id, question_ids, started_at, ends_at, content_pack_version, difficulty, question_count, topic_mode')

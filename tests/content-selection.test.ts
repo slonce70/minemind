@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { selectQuestionRound } from '../src/features/content/content-selection';
+import { selectQuestionRound, shuffleRecordOptions } from '../src/features/content/content-selection';
 import type { ContentQuestionRecord } from '../src/features/content/types';
 
 const sampleQuestionBank: ContentQuestionRecord[] = [
@@ -216,4 +216,56 @@ test('round selection spreads topics before repeating when enough topics exist',
   });
 
   assert.equal(new Set(round.map((entry) => entry.topicId)).size, 4);
+});
+
+test('shuffling keeps correctIndex pointed at the original correct option text', () => {
+  for (const record of sampleQuestionBank) {
+    const originalCorrect = record.options[record.correctIndex];
+
+    for (const seed of ['alpha', 'beta', 'gamma', 'delta']) {
+      const shuffled = shuffleRecordOptions(record, seed);
+
+      assert.equal(shuffled.options.length, 4);
+      assert.deepEqual(shuffled.options[shuffled.correctIndex], originalCorrect);
+      // Every original option is still present exactly once.
+      assert.deepEqual(
+        [...shuffled.options].map((option) => option.en).sort(),
+        [...record.options].map((option) => option.en).sort()
+      );
+    }
+  }
+});
+
+test('shuffling is deterministic for the same seed and question', () => {
+  const record = sampleQuestionBank[0];
+  const first = shuffleRecordOptions(record, 'stable-seed');
+  const second = shuffleRecordOptions(record, 'stable-seed');
+
+  assert.deepEqual(first.options, second.options);
+  assert.equal(first.correctIndex, second.correctIndex);
+});
+
+test('correct answer position is spread across all four slots, not pinned to A', () => {
+  // The stored bank is ~93% option A; selection-time shuffling must break that
+  // so players cannot memorize the position. Sample every option-bearing seed.
+  const positions = new Map<number, number>([
+    [0, 0],
+    [1, 0],
+    [2, 0],
+    [3, 0],
+  ]);
+
+  const record = sampleQuestionBank[0];
+  for (let index = 0; index < 400; index += 1) {
+    const shuffled = shuffleRecordOptions(record, `seed-${index}`);
+    positions.set(shuffled.correctIndex, (positions.get(shuffled.correctIndex) ?? 0) + 1);
+  }
+
+  for (const [slot, count] of positions) {
+    assert.ok(count > 0, `expected correct answer to land on slot ${slot} at least once`);
+  }
+
+  // No single slot should dominate the way the raw bank does (93% on A).
+  const maxShare = Math.max(...positions.values()) / 400;
+  assert.ok(maxShare < 0.5, `correct-answer position is too skewed (max share ${maxShare})`);
 });

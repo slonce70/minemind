@@ -329,5 +329,5 @@ test('fantasy layer exposes themed backgrounds and icon markers', () => {
 test('room lobby hero no longer renders the empty block glyph marker', () => {
   const roomSource = readFileSync(new URL('../src/features/rooms/room-lobby-view.tsx', import.meta.url), 'utf8');
 
-  assert.doesNotMatch(roomSource, /icon=\"block\"/);
+  assert.doesNotMatch(roomSource, /icon="block"/);
 });

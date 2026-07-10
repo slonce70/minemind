@@ -89,7 +89,7 @@ serve(async (request) => {
     const body = await requireJsonBody<FinalizeRoundPayload>(request);
     const { data: round, error: roundError } = await serviceClient
       .from('round_sessions')
-      .select('id, room_id, question_ids')
+      .select('id, room_id, question_ids, ends_at')
       .eq('id', body.roundId)
       .single();
 
@@ -113,6 +113,9 @@ serve(async (request) => {
     }
 
     if ((existingResults ?? []).length > 0) {
+      // Results already exist: this round is finalized. Return the stored
+      // ranking without re-running complete_room_round, which would otherwise
+      // risk resetting a room that may have already moved on to a new round.
       const existingRanking = existingResults.map((entry) => ({
         ...entry,
         rank: entry.rank ?? 0,
@@ -120,15 +123,9 @@ serve(async (request) => {
       const nicknameMap = await buildNicknameMap(
         existingRanking.map((entry) => entry.player_id)
       );
-      const rankings = await completeRoomRound({
-        nicknameMap,
-        ranking: existingRanking,
-        roomId: round.room_id,
-        roundId: round.id,
-      });
 
       return jsonResponse({
-        rankings,
+        rankings: attachNicknames(existingRanking, nicknameMap),
         roomId: round.room_id,
         roundId: round.id,
         status: 'completed',
@@ -216,8 +213,12 @@ serve(async (request) => {
       }));
     const expectedSubmissions = participants.length * round.question_ids.length;
     const nicknameMap = await buildNicknameMap(ranking.map((entry) => entry.player_id));
+    const deadlinePassed = Boolean(round.ends_at) && new Date(round.ends_at).getTime() < Date.now();
 
-    if (validSubmissions.length < expectedSubmissions) {
+    // Stay pending only while the round is still live. Once the deadline passes
+    // we finalize with whatever answers arrived (missing ones score as 0) so a
+    // disconnected player can no longer freeze the room forever.
+    if (validSubmissions.length < expectedSubmissions && !deadlinePassed) {
       await serviceClient
         .from('rooms')
         .update({ status: 'finalizing' })

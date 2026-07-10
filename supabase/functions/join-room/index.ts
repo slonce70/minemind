@@ -28,6 +28,23 @@ serve(async (request) => {
       throw new Error('Room already has a battle in progress.');
     }
 
+    // Only a room waiting in the lobby accepts new players. Joining during
+    // 'finalizing' would inflate the expected submission count and freeze the
+    // finalize, while 'finished' rooms are effectively closed.
+    if (room.status !== 'waiting') {
+      throw new Error('Room is not accepting new players.');
+    }
+
+    const existingParticipants = await listRoomParticipants(room.id);
+    const isAlreadyParticipant = existingParticipants.some(
+      (participant) => participant.player_id === user.id
+    );
+    const MAX_ROOM_PARTICIPANTS = 8;
+
+    if (!isAlreadyParticipant && existingParticipants.length >= MAX_ROOM_PARTICIPANTS) {
+      throw new Error('Room is full.');
+    }
+
     const { error: upsertError } = await serviceClient.from('room_participants').upsert(
       {
         player_id: user.id,

@@ -52,6 +52,7 @@ export function buildRecoveredRoomResult(
     authority: 'server',
     input: buildRecoveredRoomSummary(round, rankings, currentUserId),
     isDemo: false,
+    roundId: round.roundId,
     syncStatus: 'synced',
     transport: 'supabase',
   });

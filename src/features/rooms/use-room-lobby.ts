@@ -5,13 +5,13 @@ import { useAppStore } from '../../state/app-store';
 import { isSupabaseConfigured } from '../../lib/supabase';
 import { createDemoRoomRound } from './live-room-service';
 import { getSoloQuestionSet } from '../quiz/quiz-service';
-import { deriveRoomLobbyState } from './room-lobby-state';
 import { canStartOfflineRoom } from './demo-room-service';
 import { createDefaultRoomMatchSettings } from './room-match-settings';
 import { subscribeToRoomChannel } from './realtime-room-channel';
 import {
   createLiveRoom,
   joinLiveRoom,
+  leaveLiveRoom,
   refreshLiveRoom,
   resumeLiveRoomRound,
   startLiveRoomRound,
@@ -41,8 +41,10 @@ export function useRoomLobby(messages: { genericError: string }) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const canResumeRound = Boolean(activeRoomRound && (!isSupabaseConfigured || activeRoom?.roundId));
 
+  const activeRoomCode = activeRoom?.roomCode;
+
   useEffect(() => {
-    if (!isSupabaseConfigured || !activeRoom) {
+    if (!isSupabaseConfigured || !activeRoomCode) {
       return undefined;
     }
 
@@ -50,13 +52,20 @@ export function useRoomLobby(messages: { genericError: string }) {
 
     const syncRoomState = async () => {
       try {
-        const room = await refreshLiveRoom(activeRoom.roomCode);
+        const room = await refreshLiveRoom(activeRoomCode);
 
         if (isCancelled) {
           return;
         }
 
         setActiveRoom(room);
+
+        // Read the round fresh from the store rather than closing over it, so
+        // this effect can depend only on the stable room code. Depending on the
+        // activeRoom/activeRoomRound objects re-ran the effect on every sync
+        // (mapRoom mints a new identity each time), tearing down and recreating
+        // the realtime subscription in a tight loop.
+        const activeRoomRound = useAppStore.getState().activeRoomRound;
 
         if ((room.status === 'active' || room.status === 'finalizing') && room.roundId && !activeRoomRound) {
           const resumed = await resumeLiveRoomRound(room.roomCode);
@@ -78,7 +87,7 @@ export function useRoomLobby(messages: { genericError: string }) {
     };
 
     void syncRoomState();
-    const unsubscribe = subscribeToRoomChannel(activeRoom.roomCode, {
+    const unsubscribe = subscribeToRoomChannel(activeRoomCode, {
       onRoomFinished: () => void syncRoomState(),
       onRoomUpdated: () => void syncRoomState(),
       onRoundFinalizing: () => void syncRoomState(),
@@ -94,7 +103,7 @@ export function useRoomLobby(messages: { genericError: string }) {
       clearInterval(interval);
       unsubscribe();
     };
-  }, [activeRoom, activeRoomRound, clearActiveRound, setActiveRoom, setActiveRoomRound]);
+  }, [activeRoomCode, clearActiveRound, setActiveRoom, setActiveRoomRound]);
 
   const handleCreateRoom = async () => {
     if (!profile) {
@@ -254,7 +263,12 @@ export function useRoomLobby(messages: { genericError: string }) {
     errorMessage,
     handleCreateRoom,
     handleJoinRoom,
-    handleLeaveRoom: () => leaveRoom(),
+    handleLeaveRoom: () => {
+      if (isSupabaseConfigured && activeRoom) {
+        void leaveLiveRoom(activeRoom.roomCode);
+      }
+      leaveRoom();
+    },
     handleSelectDifficulty,
     handleStartBattle,
     handleToggleReady,

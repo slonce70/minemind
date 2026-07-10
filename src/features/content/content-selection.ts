@@ -35,6 +35,51 @@ function seededTopicOrder(topics: ContentTopicId[], seed: string) {
   });
 }
 
+function mulberry32(seed: number) {
+  let state = seed >>> 0;
+
+  return () => {
+    state = (state + 0x6d2b79f5) >>> 0;
+    let t = state;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/**
+ * Deterministically permute a question's answer options so the correct answer
+ * does not sit in a fixed position across rounds. The stored bank is heavily
+ * skewed toward option A, so without this players could memorize positions
+ * instead of answers. The permutation is seeded by the round seed plus the
+ * question id, keeping the same round reproducible while still rotating
+ * positions between rounds. `correctIndex` is remapped to follow the option it
+ * points at.
+ */
+export function shuffleRecordOptions(
+  record: ContentQuestionRecord,
+  seed: string
+): ContentQuestionRecord {
+  const order = [0, 1, 2, 3];
+  const random = mulberry32(hashString(`${seed}:options:${record.id}`));
+
+  for (let index = order.length - 1; index > 0; index -= 1) {
+    const swapWith = Math.floor(random() * (index + 1));
+    const temp = order[index];
+    order[index] = order[swapWith];
+    order[swapWith] = temp;
+  }
+
+  const options = order.map((originalIndex) => record.options[originalIndex]) as ContentQuestionRecord['options'];
+  const correctIndex = order.indexOf(record.correctIndex);
+
+  return {
+    ...record,
+    correctIndex,
+    options,
+  };
+}
+
 function groupByTopic(records: ContentQuestionRecord[]) {
   return records.reduce<Record<ContentTopicId, ContentQuestionRecord[]>>((groups, record) => {
     const existing = groups[record.topicId] ?? [];
@@ -91,5 +136,5 @@ export function selectQuestionRound(params: {
     }
   }
 
-  return round;
+  return round.map((record) => shuffleRecordOptions(record, params.seed));
 }
