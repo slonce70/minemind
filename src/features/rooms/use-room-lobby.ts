@@ -5,7 +5,6 @@ import { useAppStore } from '../../state/app-store';
 import { isSupabaseConfigured } from '../../lib/supabase';
 import { createDemoRoomRound } from './live-room-service';
 import { getSoloQuestionSet } from '../quiz/quiz-service';
-import { deriveRoomLobbyState } from './room-lobby-state';
 import { canStartOfflineRoom } from './demo-room-service';
 import { createDefaultRoomMatchSettings } from './room-match-settings';
 import { subscribeToRoomChannel } from './realtime-room-channel';

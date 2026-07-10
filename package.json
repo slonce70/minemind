@@ -16,14 +16,17 @@
     "test": "tsx --test tests/**/*.test.ts",
     "typecheck": "tsc --noEmit",
     "typecheck:tests": "tsc --noEmit -p tsconfig.tests.json",
+    "lint": "eslint .",
+    "format": "prettier --write \"{src,tests,scripts}/**/*.{ts,tsx}\"",
+    "format:check": "prettier --check \"{src,tests,scripts}/**/*.{ts,tsx}\"",
     "doctor:expo": "npx expo-doctor",
     "audit:security": "npm audit --audit-level=moderate",
     "doctor:react": "npx -y react-doctor@latest . --verbose",
     "doctor:react:diff": "npx -y react-doctor@latest . --verbose --diff",
     "check:edge": "node scripts/check-edge-functions.mjs",
     "validate:content": "npx tsx scripts/validate-question-bank.ts && npx tsx scripts/validate-master-question-program.ts && npx tsx scripts/lint-question-duplicates.ts",
-    "validate": "npm test && npm run typecheck && npm run typecheck:tests && npm run export:web",
-    "validate:release": "npm test && npm run typecheck && npm run typecheck:tests && npm run validate:content && npm run doctor:expo && npm run audit:security && npm run check:edge && npm run smoke:web-export && npm run check:web-budget"
+    "validate": "npm test && npm run typecheck && npm run typecheck:tests && npm run lint && npm run export:web",
+    "validate:release": "npm test && npm run typecheck && npm run typecheck:tests && npm run lint && npm run validate:content && npm run doctor:expo && npm run audit:security && npm run check:edge && npm run smoke:web-export && npm run check:web-budget"
   },
   "dependencies": {
     "@expo/metro-runtime": "~55.0.11",
@@ -62,8 +65,12 @@
     "@types/node": "^25.5.0",
     "@types/react": "~19.2.2",
     "deno": "^2.8.2",
+    "eslint": "^9.39.4",
+    "globals": "^17.7.0",
+    "prettier": "^3.9.5",
     "tsx": "^4.21.0",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "typescript-eslint": "^8.63.0"
   },
   "expo": {
     "doctor": {

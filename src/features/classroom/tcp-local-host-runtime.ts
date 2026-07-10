@@ -178,7 +178,6 @@ export function createTcpLocalHostRuntime(options?: {
 
       await new Promise<void>((resolve, reject) => {
         clientSocket?.destroy();
-        let nextSocket: TcpSocketLike | undefined;
         let settled = false;
         const timeout = setTimeout(() => {
           if (settled) {
@@ -213,7 +212,7 @@ export function createTcpLocalHostRuntime(options?: {
           resolve();
         };
 
-        nextSocket = tcpModule.connect(
+        const nextSocket: TcpSocketLike = tcpModule.connect(
           {
             host: payload.hostAddress,
             port: payload.port ?? port,

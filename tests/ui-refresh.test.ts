@@ -222,21 +222,6 @@ function jsxNodeUsesStyle(node: JsxNode, styleName: string, sourceFile: ts.Sourc
   );
 }
 
-function jsxNodeHasStringProp(node: JsxNode, propName: string, expectedValue: string) {
-  return getJsxAttributes(node).some((property) => {
-    if (
-      !ts.isJsxAttribute(property) ||
-      !ts.isIdentifier(property.name) ||
-      property.name.text !== propName ||
-      !property.initializer
-    ) {
-      return false;
-    }
-
-    return ts.isStringLiteral(property.initializer) && property.initializer.text === expectedValue;
-  });
-}
-
 function jsxNodeContainsIdentifier(node: ts.Node, identifierName: string): boolean {
   let found = false;
 
@@ -345,7 +330,7 @@ test('shared primitives avoid deprecated web shadow props and pointerEvents attr
 
   assert.doesNotMatch(cardSource, /shadowColor|shadowOffset|shadowOpacity|shadowRadius/);
   assert.doesNotMatch(buttonSource, /shadowColor|shadowOffset|shadowOpacity|shadowRadius/);
-  assert.doesNotMatch(worldSource, /pointerEvents=\"none\"/);
+  assert.doesNotMatch(worldSource, /pointerEvents="none"/);
   assert.match(worldSource, /pointerEvents:\s*'none'/);
 });
 
