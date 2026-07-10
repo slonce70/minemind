@@ -421,6 +421,7 @@ export async function finalizeLiveRoomRound(
               authority: 'server',
               input: localFallback,
               isDemo: false,
+              roundId: round.roundId,
               syncStatus: 'recovered',
               transport: 'supabase',
             })
@@ -449,6 +450,7 @@ export async function finalizeLiveRoomRound(
               standings: resolvedStandings.length > 0 ? resolvedStandings : localFallback.standings,
             },
             isDemo: false,
+            roundId: round.roundId,
             syncStatus: 'synced',
             transport: 'supabase',
           })

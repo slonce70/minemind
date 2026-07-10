@@ -197,12 +197,20 @@ export function useSoloRound(params: {
           authority: isLiveRoomResult ? 'server' : 'client',
           input: result,
           isDemo: isRoomMode && currentRoomRound?.source !== 'supabase',
+          roundId: isLiveRoomResult ? currentRoomRound?.roundId : undefined,
           syncStatus: isLiveRoomResult ? 'synced' : 'local-only',
           transport: isLiveRoomResult ? 'supabase' : 'local',
         })
       );
     },
-    [currentClassroomSession, currentRoomRound?.source, isClassroomMode, isRoomMode, saveMatchRecord]
+    [
+      currentClassroomSession,
+      currentRoomRound?.roundId,
+      currentRoomRound?.source,
+      isClassroomMode,
+      isRoomMode,
+      saveMatchRecord,
+    ]
   );
 
   useEffect(() => {

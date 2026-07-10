@@ -34,6 +34,45 @@ function buildResult(overrides?: Partial<QuizResultSummary>): QuizResultSummary 
   };
 }
 
+test('records for the same round share a stable id regardless of completedAt', () => {
+  // A room round finalized and later recovered builds two summaries with
+  // different completedAt timestamps. Anchoring on roundId keeps the id stable
+  // so saveMatchRecord dedupes them instead of storing two history entries.
+  const finalized = normalizeMatchRecord({
+    authority: 'server',
+    input: buildResult({ completedAt: '2026-04-19T12:00:00.000Z', mode: 'room', roomCode: 'AB12CD' }),
+    isDemo: false,
+    roundId: 'round-123',
+    transport: 'supabase',
+  });
+  const recovered = normalizeMatchRecord({
+    authority: 'server',
+    input: buildResult({ completedAt: '2026-04-19T12:05:30.000Z', mode: 'room', roomCode: 'AB12CD' }),
+    isDemo: false,
+    roundId: 'round-123',
+    transport: 'supabase',
+  });
+
+  assert.equal(finalized.id, recovered.id);
+});
+
+test('records without a roundId still get unique ids per play', () => {
+  const first = normalizeMatchRecord({
+    authority: 'client',
+    input: buildResult({ completedAt: '2026-04-19T12:00:00.000Z' }),
+    isDemo: false,
+    transport: 'local',
+  });
+  const second = normalizeMatchRecord({
+    authority: 'client',
+    input: buildResult({ completedAt: '2026-04-19T12:09:00.000Z' }),
+    isDemo: false,
+    transport: 'local',
+  });
+
+  assert.notEqual(first.id, second.id);
+});
+
 test('normalizeMatchRecord creates a truthful local solo match record', () => {
   const record = normalizeMatchRecord({
     authority: 'client',

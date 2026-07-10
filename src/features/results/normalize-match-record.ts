@@ -9,13 +9,22 @@ function buildMatchRecordId({
   completedAt,
   mode,
   roomCode,
+  roundId,
   score,
 }: {
   completedAt: string;
   mode: MatchRecord['mode'];
   roomCode?: string;
+  roundId?: string;
   score: number;
 }) {
+  // A round id is the stable anchor when available (room/live rounds). Solo and
+  // demo rounds have none, so fall back to completedAt + score, which are
+  // unique enough per play.
+  if (roundId) {
+    return [mode, roomCode ?? 'local', 'round', roundId].join(':');
+  }
+
   return [mode, roomCode ?? 'local', completedAt, String(score)].join(':');
 }
 
@@ -46,6 +55,7 @@ export function normalizeMatchRecord(input: NormalizeMatchRecordInput): MatchRec
       completedAt: normalized.completedAt,
       mode,
       roomCode: normalized.roomCode,
+      roundId: input.roundId,
       score: normalized.score,
     }),
     isDemo: input.isDemo,
