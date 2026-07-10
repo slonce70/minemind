@@ -203,6 +203,19 @@ export async function joinLiveRoom(roomCode: string) {
   }
 }
 
+export async function leaveLiveRoom(roomCode: string) {
+  // Best-effort: releases the participant slot server-side (reassigns host or
+  // closes an empty room) so a departing player cannot freeze the lobby or the
+  // finalize count. Failures are non-fatal — the local state is cleared anyway.
+  try {
+    await invokeSupabaseFunction<{ left: boolean }, { roomCode: string }>('leave-room', {
+      roomCode,
+    });
+  } catch {
+    // Swallow: leaving is a local action from the user's perspective.
+  }
+}
+
 export async function refreshLiveRoom(roomCode: string) {
   try {
     const payload = await invokeSupabaseFunction<CreateOrJoinRoomResponse, { roomCode: string }>(
