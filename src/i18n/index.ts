@@ -1,8 +1,24 @@
-import i18n from 'i18next';
+import i18n, { type Resource } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
-import { defaultAppLocale, type AppLocale } from '../lib/locale';
+import { appLocales, defaultAppLocale, type AppLocale } from '../lib/locale';
+import { playerErrorResources } from './player-error-resources';
 import { resources } from './resources';
+
+const localizedResources = Object.fromEntries(
+  appLocales.map((locale) => [
+    locale,
+    {
+      translation: {
+        ...resources[locale].translation,
+        errors: {
+          ...resources[locale].translation.errors,
+          player: playerErrorResources[locale],
+        },
+      },
+    },
+  ])
+) as Resource;
 
 if (!i18n.isInitialized) {
   void i18n.use(initReactI18next).init({
@@ -12,7 +28,7 @@ if (!i18n.isInitialized) {
       escapeValue: false,
     },
     lng: defaultAppLocale,
-    resources,
+    resources: localizedResources,
   });
 }
 
