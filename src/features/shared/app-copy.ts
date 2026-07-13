@@ -1,7 +1,21 @@
+import i18n from '../../i18n';
+
+const playerErrorTranslationKeys = {
+  generic: 'errors.player.generic',
+  network: 'errors.player.network',
+  session: 'errors.player.session',
+} as const;
+
 export const defaultPlayerErrorMessages = {
-  generic: 'Something went wrong. Please try again.',
-  network: 'Connection problem. Please try again.',
-  session: 'Your session expired. Please try again.',
+  get generic() {
+    return i18n.t(playerErrorTranslationKeys.generic);
+  },
+  get network() {
+    return i18n.t(playerErrorTranslationKeys.network);
+  },
+  get session() {
+    return i18n.t(playerErrorTranslationKeys.session);
+  },
 } as const;
 
 export function toPlayerSafeErrorMessage(
