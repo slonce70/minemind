@@ -57,7 +57,7 @@
 
 ## Current Bank Status
 - Runtime bank: `360` active localized records in `content/minecraft/minecraft-question-bank.v1.json`.
-- Master bank: `360` approved source records in `content/minecraft/minecraft-master-bank.v2.json`.
+- Master bank: `360` approved source records in `content/minecraft/minecraft-master-bank.v2.json`; master options are stored correct-answer-first, the export spreads the answer across positions.
 - Coverage: eight topics, three difficulties, `45` records per topic, and `120` records per difficulty.
 - Next master-program target: expand toward `1080` approved source records without reducing the current localized runtime coverage.
 
@@ -70,4 +70,6 @@
 - The prompt reads naturally to a player in the target age band.
 - The explanation teaches something useful and stays short.
 - The record is active only if it is ready to ship.
-- Run `npm run validate:content` before merging content changes.
+- Options are real in-game names (official `uk_ua` / `ru_ru` strings), never descriptions that hint at the answer.
+- The prompt does not contain the answer, and distractors are the same kind of thing as the answer.
+- Run `npm run export:content` and `npm run validate:content` before merging content changes.

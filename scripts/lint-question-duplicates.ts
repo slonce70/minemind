@@ -26,9 +26,14 @@ function normalizePrompt(value: string) {
   return normalizeText(value);
 }
 
+// Same right answer among the same options is almost always the same fact asked twice.
+// (Option sets alone repeat legitimately, e.g. 1/2/3/4 or the four basic tools.)
 function normalizeAnswerSet(correctAnswer: string, distractors: string[]) {
-  return [correctAnswer, ...distractors].map(normalizeText).sort().join('|');
+  return `${normalizeText(correctAnswer)}>${distractors.map(normalizeText).sort().join('|')}`;
 }
+
+// Short natural prompts share openings ("Which item do you…"); flag only real overuse.
+const maxPromptsPerOpening = 8;
 
 function buildTemplateSignature(promptEn: string) {
   return normalizePrompt(promptEn)
@@ -55,7 +60,9 @@ export function findDuplicateQuestionRisks(records: DuplicateLintRecord[]): Dupl
 
     const answerSetKey = normalizeAnswerSet(record.correctAnswer, record.distractors);
     const previousAnswerSetId = seenAnswerSets.get(answerSetKey);
-    if (previousAnswerSetId) {
+    // Numeric answers ("3" among 1/2/4) repeat across unrelated facts.
+    const isNumericAnswer = /^\d+$/.test(record.correctAnswer.trim());
+    if (previousAnswerSetId && !isNumericAnswer) {
       issues.push({ ids: [previousAnswerSetId, record.id], kind: 'same-answer-set' });
     } else {
       seenAnswerSets.set(answerSetKey, record.id);
@@ -64,7 +71,7 @@ export function findDuplicateQuestionRisks(records: DuplicateLintRecord[]): Dupl
     const templateKey = buildTemplateSignature(record.promptEn);
     const previousTemplateId = seenTemplates.get(templateKey);
     const templateCount = templateCounts.get(templateKey) ?? 0;
-    if (previousTemplateId && templateKey.length > 0 && templateCount >= 2) {
+    if (previousTemplateId && templateKey.length > 0 && templateCount >= maxPromptsPerOpening) {
       issues.push({ ids: [previousTemplateId, record.id], kind: 'template-overuse' });
     } else if (!previousTemplateId) {
       seenTemplates.set(templateKey, record.id);
@@ -89,4 +96,6 @@ function main() {
   console.log(`Duplicate lint passed for ${masterBank.length} master question record(s).`);
 }
 
-main();
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  main();
+}

@@ -20,6 +20,8 @@ port = 54323
 enabled = true
 site_url = "http://localhost:8081"
 enable_signup = true
+# Players are guests: the app signs in anonymously.
+enable_anonymous_sign_ins = true
 
 [edge_runtime]
 enabled = true

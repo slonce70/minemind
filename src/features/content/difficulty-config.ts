@@ -1,3 +1,4 @@
+import { difficultyRules } from '../../../supabase/functions/_shared/game-rules';
 import type { ContentDifficulty } from './types';
 
 export type DifficultyBadgeTone = 'success' | 'warning' | 'danger';
@@ -11,21 +12,18 @@ export type DifficultyConfigEntry = {
 
 export const difficultyConfig: Record<ContentDifficulty, DifficultyConfigEntry> = {
   easy: {
+    ...difficultyRules.easy,
     badgeTone: 'success',
-    scoreMultiplier: 1,
     translationKey: 'content.difficulty.easy',
-    timerSeconds: 20,
   },
   medium: {
+    ...difficultyRules.medium,
     badgeTone: 'warning',
-    scoreMultiplier: 1.25,
     translationKey: 'content.difficulty.medium',
-    timerSeconds: 18,
   },
   hard: {
+    ...difficultyRules.hard,
     badgeTone: 'danger',
-    scoreMultiplier: 2,
     translationKey: 'content.difficulty.hard',
-    timerSeconds: 12,
   },
 };

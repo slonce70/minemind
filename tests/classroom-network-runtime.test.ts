@@ -277,7 +277,7 @@ test('classroom sync builds a shared round and applies transport events to the l
 
   assert.equal(joined.session.participants.length, 2);
 
-  const started = applyClassroomTransportEvent(joined.session, {
+  const started = applyClassroomTransportEvent({ ...joined.session, role: 'participant' }, {
     round,
     roomCode: 'CLASS1',
     type: 'round-started',
@@ -285,4 +285,95 @@ test('classroom sync builds a shared round and applies transport events to the l
 
   assert.equal(started.session.status, 'active');
   assert.deepEqual(started.round, round);
+
+  // The host already holds the full manifest and must not swap in the broadcast copy.
+  const hostEcho = applyClassroomTransportEvent(joined.session, {
+    round,
+    roomCode: 'CLASS1',
+    type: 'round-started',
+  });
+
+  assert.equal(hostEcho.round, undefined);
+});
+
+test('host sends answer reveals only to the guest who answered and drops spoofed answers', async () => {
+  let connectionListener: ((socket: ReturnType<typeof createFakeSocket>) => void) | undefined;
+  const runtime = createTcpLocalHostRuntime({
+    tcp: {
+      connect: () => createFakeSocket(),
+      createServer: (listener) => {
+        connectionListener = listener;
+        return {
+          close: (callback?: () => void) => callback?.(),
+          listen: (_options, callback?: () => void) => callback?.(),
+          on: () => undefined,
+        };
+      },
+    },
+  });
+  const events: ClassroomTransportEvent[] = [];
+  runtime.subscribe((event) => events.push(event));
+  await runtime.advertise({
+    difficulty: 'medium',
+    hostProfile: { avatarId: 'fox', id: 'teacher', isHost: true, isLocalPlayer: true, name: 'Teacher', ready: true },
+    roomCode: 'CLASS1',
+  });
+
+  const guests = ['bee', 'fox'].map((id) => {
+    const socket = createFakeSocket();
+    connectionListener?.(socket);
+    socket.emit(
+      'data',
+      `${JSON.stringify({
+        participant: { avatarId: id, id, isHost: false, isLocalPlayer: false, name: id, ready: true },
+        roomCode: 'CLASS1',
+        type: 'participant-joined',
+      })}\n`
+    );
+    return socket;
+  });
+
+  // "fox" pretends to answer for "bee".
+  guests[1].emit(
+    'data',
+    `${JSON.stringify({
+      participantId: 'bee',
+      questionId: 'q1',
+      roomCode: 'CLASS1',
+      selectedIndex: 0,
+      timeLeft: 5,
+      type: 'answer-submitted',
+    })}\n`
+  );
+  assert.equal(events.filter((event) => event.type === 'answer-submitted').length, 0);
+
+  // A genuine answer reaches the host but is not relayed to the other guest.
+  guests[0].emit(
+    'data',
+    `${JSON.stringify({
+      participantId: 'bee',
+      questionId: 'q1',
+      roomCode: 'CLASS1',
+      selectedIndex: 1,
+      timeLeft: 5,
+      type: 'answer-submitted',
+    })}\n`
+  );
+  assert.equal(events.filter((event) => event.type === 'answer-submitted').length, 1);
+  assert.ok(guests[1].writes.every((frame) => !frame.includes('answer-submitted')));
+
+  await runtime.publish({
+    correctIndex: 2,
+    isCorrect: false,
+    participantId: 'bee',
+    questionId: 'q1',
+    roomCode: 'CLASS1',
+    type: 'answer-revealed',
+  });
+
+  const reveals = (socket: ReturnType<typeof createFakeSocket>) =>
+    socket.writes.filter((frame) => frame.includes('"answer-revealed"')).length;
+
+  assert.equal(reveals(guests[0]), 1);
+  assert.equal(reveals(guests[1]), 0);
 });

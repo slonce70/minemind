@@ -116,10 +116,11 @@ test('buildQuizResult can derive fallback standings from the final multiplied sc
     ],
   });
 
-  assert.equal(result.score, 580);
+  // hard = x1.5: (100 + 10*6) * 1.5 + (100 + 5*6) * 1.5
+  assert.equal(result.score, 435);
   assert.deepEqual(result.standings, [
-    { isPlayer: true, name: 'Player', score: 580 },
-    { isPlayer: false, name: 'BeeBot', score: 622 },
+    { isPlayer: true, name: 'Player', score: 435 },
+    { isPlayer: false, name: 'BeeBot', score: 477 },
   ]);
 });
 

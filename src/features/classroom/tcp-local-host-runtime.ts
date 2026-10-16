@@ -40,6 +40,15 @@ const KNOWN_EVENT_TYPES: ReadonlySet<ClassroomTransportEvent['type']> = new Set(
   'round-submitted',
   'round-started',
   'round-finished',
+  'answer-submitted',
+  'answer-revealed',
+]);
+
+// Only roster updates are relayed between guests. Answers and reveals stay between one guest
+// and the host, so a guest can never read another guest's answers off the wire.
+const RELAYED_EVENT_TYPES: ReadonlySet<ClassroomTransportEvent['type']> = new Set([
+  'participant-joined',
+  'participant-ready',
 ]);
 
 // Data arriving over the LAN is untrusted: any device on the network can open
@@ -73,6 +82,8 @@ export function createTcpLocalHostRuntime(options?: {
   const listeners = new Set<(event: ClassroomTransportEvent) => void>();
   const peerSockets = new Set<TcpSocketLike>();
   const socketBuffers = new Map<TcpSocketLike, string>();
+  // Host side: which participant joined over which socket.
+  const socketParticipants = new Map<TcpSocketLike, string>();
   let server: TcpServerLike | undefined;
   let clientSocket: TcpSocketLike | undefined;
 
@@ -103,6 +114,17 @@ export function createTcpLocalHostRuntime(options?: {
           const parsed = JSON.parse(frame) as unknown;
 
           if (isTransportEvent(parsed)) {
+            if (parsed.type === 'participant-joined') {
+              socketParticipants.set(socket, parsed.participant.id);
+            } else if (
+              'participantId' in parsed &&
+              socketParticipants.has(socket) &&
+              socketParticipants.get(socket) !== parsed.participantId
+            ) {
+              // A guest may only speak for itself.
+              continue;
+            }
+
             emit(parsed);
 
             // Host acts as a hub: relay each peer's event to every other peer
@@ -110,7 +132,7 @@ export function createTcpLocalHostRuntime(options?: {
             // topology is a pure star and each participant only ever sees
             // itself in the roster. Only the host (which owns `server`) relays;
             // clients never rebroadcast.
-            if (server) {
+            if (server && RELAYED_EVENT_TYPES.has(parsed.type)) {
               const relayed = `${frame}\n`;
               for (const peer of peerSockets) {
                 if (peer !== socket) {
@@ -128,6 +150,7 @@ export function createTcpLocalHostRuntime(options?: {
     socket.on('close', () => {
       peerSockets.delete(socket);
       socketBuffers.delete(socket);
+      socketParticipants.delete(socket);
     });
   };
 
@@ -155,6 +178,7 @@ export function createTcpLocalHostRuntime(options?: {
     close: async () => {
       clientSocket?.destroy();
       clientSocket = undefined;
+      socketParticipants.clear();
 
       for (const socket of peerSockets) {
         socket.destroy();
@@ -240,6 +264,11 @@ export function createTcpLocalHostRuntime(options?: {
 
       if (peerSockets.size > 0) {
         for (const socket of peerSockets) {
+          // Reveals go only to the guest who answered.
+          if (event.type === 'answer-revealed' && socketParticipants.get(socket) !== event.participantId) {
+            continue;
+          }
+
           socket.write(payload);
         }
         return;

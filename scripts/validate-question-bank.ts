@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { lintQuestionBank } from '../src/features/content/content-lint';
 import { validateQuestionBank } from '../src/features/content/content-validator';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -11,6 +12,11 @@ function main() {
   const raw = readFileSync(questionBankPath, 'utf8');
   const data = JSON.parse(raw);
   const validated = validateQuestionBank(data);
+  const lintIssues = lintQuestionBank(validated);
+
+  if (lintIssues.length > 0) {
+    throw new Error(`${lintIssues.length} content lint issue(s):\n${lintIssues.join('\n')}`);
+  }
 
   console.log(`Validated ${validated.length} Minecraft question record(s) from ${path.relative(repoRoot, questionBankPath)}`);
 }

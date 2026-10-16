@@ -1,16 +1,6 @@
+import { hashString, seededPermutation } from '../../../supabase/functions/_shared/game-rules';
 import { minecraftTopicConfig } from './topic-config';
 import type { ContentDifficulty, ContentQuestionBank, ContentQuestionRecord, ContentTopicId } from './types';
-
-function hashString(input: string) {
-  let hash = 2166136261;
-
-  for (let index = 0; index < input.length; index += 1) {
-    hash ^= input.charCodeAt(index);
-    hash = Math.imul(hash, 16777619);
-  }
-
-  return hash >>> 0;
-}
 
 function seededCompare(left: string, right: string, seed: string) {
   const leftHash = hashString(`${seed}:${left}`);
@@ -35,18 +25,6 @@ function seededTopicOrder(topics: ContentTopicId[], seed: string) {
   });
 }
 
-function mulberry32(seed: number) {
-  let state = seed >>> 0;
-
-  return () => {
-    state = (state + 0x6d2b79f5) >>> 0;
-    let t = state;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
 /**
  * Deterministically permute a question's answer options so the correct answer
  * does not sit in a fixed position across rounds. The stored bank is heavily
@@ -60,16 +38,7 @@ export function shuffleRecordOptions(
   record: ContentQuestionRecord,
   seed: string
 ): ContentQuestionRecord {
-  const order = [0, 1, 2, 3];
-  const random = mulberry32(hashString(`${seed}:options:${record.id}`));
-
-  for (let index = order.length - 1; index > 0; index -= 1) {
-    const swapWith = Math.floor(random() * (index + 1));
-    const temp = order[index];
-    order[index] = order[swapWith];
-    order[swapWith] = temp;
-  }
-
+  const order = seededPermutation(4, `${seed}:options:${record.id}`);
   const options = order.map((originalIndex) => record.options[originalIndex]) as ContentQuestionRecord['options'];
   const correctIndex = order.indexOf(record.correctIndex);
 

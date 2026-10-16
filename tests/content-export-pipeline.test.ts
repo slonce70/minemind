@@ -31,12 +31,13 @@ test('approved translated master records map to runtime question shape', () => {
     },
   });
 
-  assert.equal(runtimeRecord.correctIndex, 0);
   assert.equal(runtimeRecord.prompt.en, 'Which food item can restore hunger?');
-  assert.equal(runtimeRecord.options[0].uk, 'Хліб');
+  assert.equal(runtimeRecord.options[runtimeRecord.correctIndex].en, 'Bread');
+  assert.equal(runtimeRecord.options[runtimeRecord.correctIndex].uk, 'Хліб');
+  assert.equal(runtimeRecord.options[runtimeRecord.correctIndex].ru, 'Хлеб');
 });
 
-test('export pipeline derives correctIndex from the localized english answer order', () => {
+test('export pipeline derives correctIndex from the english answer and keeps locales aligned', () => {
   const runtimeRecord = buildRuntimeQuestionRecord({
     id: 'crafting-medium-001',
     topicId: 'crafting-and-smelting',
@@ -64,8 +65,11 @@ test('export pipeline derives correctIndex from the localized english answer ord
     },
   });
 
-  assert.equal(runtimeRecord.correctIndex, 2);
-  assert.equal(runtimeRecord.options[2].en, 'Pickaxe');
+  assert.equal(runtimeRecord.options[runtimeRecord.correctIndex].en, 'Pickaxe');
+  for (const option of runtimeRecord.options) {
+    const englishIndex = ['Hoe', 'Shovel', 'Pickaxe', 'Axe'].indexOf(option.en);
+    assert.equal(option.uk, ['Мотика', 'Лопата', 'Кайло', 'Сокира'][englishIndex]);
+  }
 });
 
 test('export pipeline falls back russian content to ukrainian when ukrainian is the only ship-ready localization', () => {
@@ -93,5 +97,27 @@ test('export pipeline falls back russian content to ukrainian when ukrainian is 
 
   assert.equal(runtimeRecord.prompt.ru, runtimeRecord.prompt.uk);
   assert.equal(runtimeRecord.explanation.ru, runtimeRecord.explanation.uk);
-  assert.equal(runtimeRecord.options[1].ru, 'Бджола');
+  assert.equal(runtimeRecord.options[runtimeRecord.correctIndex].ru, 'Бджола');
+});
+
+test('export spreads the correct answer across all four positions', () => {
+  const positions = new Set(
+    Array.from({ length: 40 }, (_, index) =>
+      buildRuntimeQuestionRecord({
+        id: `spread-check-${index}`,
+        topicId: 'survival-basics',
+        difficulty: 'easy',
+        correctAnswer: 'Bread',
+        tags: ['food'],
+        sourceVersion: 'minecraft-v2',
+        isActive: true,
+        localized: {
+          en: { prompt: 'p', explanation: 'e', options: ['Bread', 'Stone', 'Stick', 'Sand'] },
+          uk: { prompt: 'p', explanation: 'e', options: ['Хліб', 'Камінь', 'Палиця', 'Пісок'] },
+        },
+      }).correctIndex
+    )
+  );
+
+  assert.deepEqual([...positions].sort(), [0, 1, 2, 3]);
 });

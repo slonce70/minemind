@@ -64,6 +64,30 @@ export const minecraftQuestionRecordSchema: z.ZodType<ContentQuestionRecord> = z
     }
   });
 
+// Below this many records the distribution is too noisy to judge.
+const minRecordsForCorrectIndexCheck = 40;
+const maxCorrectIndexShare = 0.35;
+const minCorrectIndexShare = 0.15;
+
+/** Returns a message when the correct answer sits in one position too often (or too rarely). */
+export function findCorrectIndexSkew(records: Pick<ContentQuestionRecord, 'correctIndex'>[]) {
+  if (records.length < minRecordsForCorrectIndexCheck) {
+    return null;
+  }
+
+  const counts = [0, 0, 0, 0];
+  records.forEach((record) => {
+    counts[record.correctIndex] += 1;
+  });
+  const shares = counts.map((count) => count / records.length);
+
+  if (shares.every((share) => share >= minCorrectIndexShare && share <= maxCorrectIndexShare)) {
+    return null;
+  }
+
+  return `correctIndex distribution is skewed: ${counts.join('/')} for positions 0/1/2/3`;
+}
+
 export const minecraftQuestionBankSchema: z.ZodType<ContentQuestionBank> = z
   .array(minecraftQuestionRecordSchema)
   .min(1)
@@ -82,6 +106,16 @@ export const minecraftQuestionBankSchema: z.ZodType<ContentQuestionBank> = z
 
       seenIds.add(record.id);
     });
+
+    const skew = findCorrectIndexSkew(records);
+
+    if (skew) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: skew,
+        path: [],
+      });
+    }
   });
 
 export type MinecraftQuestionRecord = z.infer<typeof minecraftQuestionRecordSchema>;

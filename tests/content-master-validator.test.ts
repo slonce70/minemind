@@ -2,8 +2,10 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
 
+import { lintQuestionBank } from '../src/features/content/content-lint';
+import { validateQuestionBank } from '../src/features/content/content-validator';
 import { validateMasterQuestionProgram } from '../src/features/content/master-content-validator';
-import type { ContentDifficulty, ContentTopicId } from '../src/features/content/types';
+import { contentTopics, type ContentDifficulty, type ContentTopicId } from '../src/features/content/types';
 
 test('question slot blueprint sums to 1080 records', () => {
   const slots = JSON.parse(
@@ -319,7 +321,6 @@ test('ukrainian localization avoids placeholder phrasing and known broken terms'
     /Кінцеве місто/,
     /\bЗовнішні острови Енд\b/,
     /Руїни океану/,
-    /Тропічна колода/,
     /щитівки/,
     /покинуті покинуті/,
     /Пливу над/,
@@ -378,48 +379,26 @@ test('ukrainian prompts do not give away the correct answer text', () => {
   }
 });
 
-test('hard ukrainian questions are framed as pro-mode scenarios', () => {
-  const bank = JSON.parse(
-    readFileSync(new URL('../content/minecraft/minecraft-master-bank.v2.json', import.meta.url), 'utf8')
-  ) as Array<{
-    difficulty: ContentDifficulty;
-    id: string;
-    localized: {
-      uk: { prompt: string };
-    };
-  }>;
+test('runtime question bank passes the editorial content lint', () => {
+  const runtimeBank = validateQuestionBank(
+    JSON.parse(readFileSync(new URL('../content/minecraft/minecraft-question-bank.v1.json', import.meta.url), 'utf8'))
+  );
 
-  const hardQuestions = bank.filter((record) => record.difficulty === 'hard');
-
-  assert.ok(hardQuestions.length > 0);
-  for (const record of hardQuestions) {
-    assert.match(record.localized.uk.prompt, /^Про-режим: /, `${record.id} should be framed as pro mode`);
-    assert.ok(record.localized.uk.prompt.length >= 90, `${record.id} pro prompt should have scenario context`);
-  }
+  assert.deepEqual(lintQuestionBank(runtimeBank), []);
 });
 
-test('all ukrainian questions keep scenario-level difficulty', () => {
-  const bank = JSON.parse(
-    readFileSync(new URL('../content/minecraft/minecraft-master-bank.v2.json', import.meta.url), 'utf8')
-  ) as Array<{
-    difficulty: ContentDifficulty;
-    id: string;
-    localized: {
-      uk: { prompt: string };
-    };
-  }>;
+test('the shipped bank keeps 300+ active questions spread over every difficulty and topic', () => {
+  const activeRecords = validateQuestionBank(
+    JSON.parse(readFileSync(new URL('../content/minecraft/minecraft-question-bank.v1.json', import.meta.url), 'utf8'))
+  ).filter((record) => record.isActive);
 
-  const minimumPromptLength: Record<ContentDifficulty, number> = {
-    easy: 140,
-    medium: 160,
-    hard: 220,
-  };
+  assert.ok(activeRecords.length >= 300, `only ${activeRecords.length} active questions`);
+  for (const difficulty of ['easy', 'medium', 'hard'] as const) {
+    for (const topicId of contentTopics) {
+      const count = activeRecords.filter((record) => record.difficulty === difficulty && record.topicId === topicId).length;
 
-  for (const record of bank) {
-    assert.ok(
-      record.localized.uk.prompt.length >= minimumPromptLength[record.difficulty],
-      `${record.id} ${record.difficulty} prompt should have enough scenario context`
-    );
+      assert.ok(count >= 10, `${topicId}/${difficulty} has only ${count} active questions`);
+    }
   }
 });
 

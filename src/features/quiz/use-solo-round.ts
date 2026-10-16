@@ -1,16 +1,18 @@
 import { router } from 'expo-router';
-import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 
 import {
   buildClassroomRoundResults,
   hasClassroomRoundSubmissionsForAllParticipants,
   mergeClassroomRoundSubmission,
+  recordClassroomAnswer,
   type ClassroomRoundSubmissions,
 } from '../classroom/classroom-round-authority';
 import { getSharedLocalHostTransport } from '../classroom/local-host-transport';
 import { createRoomStandings } from '../rooms/demo-room-service';
 import {
   finalizeLiveRoomRound,
+  openLiveRoomQuestion,
   resumeLiveRoomRound,
   submitLiveRoomAnswer,
 } from '../rooms/live-room-service';
@@ -22,6 +24,7 @@ import { buildQuizResult, getSoloQuestionSet } from './quiz-service';
 import type { QuizAnswerMap, QuizResultSummary } from './types';
 
 type RoundFlowState = {
+  classroomDeadlinePassed: boolean;
   classroomSubmissions: ClassroomRoundSubmissions;
   hasSubmittedClassroomRound: boolean;
   isAwaitingResults: boolean;
@@ -33,6 +36,7 @@ type RoundFlowState = {
 type RoundFlowAction =
   | { type: 'begin-awaiting-results'; resultsPending?: boolean }
   | { type: 'begin-classroom-publish' }
+  | { type: 'classroom-deadline-passed' }
   | { type: 'clear-awaiting-results' }
   | { type: 'clear-load-error' }
   | { type: 'merge-classroom-submission'; answers: QuizAnswerMap; participantId: string }
@@ -46,6 +50,7 @@ type RoundFlowAction =
     };
 
 const initialRoundFlowState: RoundFlowState = {
+  classroomDeadlinePassed: false,
   classroomSubmissions: {},
   hasSubmittedClassroomRound: false,
   isAwaitingResults: false,
@@ -67,6 +72,11 @@ function roundFlowReducer(state: RoundFlowState, action: RoundFlowAction): Round
       return {
         ...state,
         isPublishingClassroomResults: true,
+      };
+    case 'classroom-deadline-passed':
+      return {
+        ...state,
+        classroomDeadlinePassed: true,
       };
     case 'clear-awaiting-results':
       return {
@@ -90,6 +100,7 @@ function roundFlowReducer(state: RoundFlowState, action: RoundFlowAction): Round
     case 'reset-classroom-round':
       return {
         ...state,
+        classroomDeadlinePassed: false,
         classroomSubmissions: {},
         hasSubmittedClassroomRound: false,
         isPublishingClassroomResults: false,
@@ -159,7 +170,10 @@ export function useSoloRound(params: {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [roundFlow, dispatchRoundFlow] = useReducer(roundFlowReducer, initialRoundFlowState);
   const classroomTransport = useMemo(() => getSharedLocalHostTransport(), []);
+  // Host only: guest answers as the host recorded them, one per question (never the guest's own verdict).
+  const hostRecordedAnswersRef = useRef<ClassroomRoundSubmissions>({});
   const {
+    classroomDeadlinePassed,
     classroomSubmissions,
     hasSubmittedClassroomRound,
     isAwaitingResults,
@@ -218,6 +232,7 @@ export function useSoloRound(params: {
       return;
     }
 
+    hostRecordedAnswersRef.current = {};
     dispatchRoundFlow({ type: 'reset-classroom-round' });
   }, [currentClassroomSession?.id, activeRoomRound?.roomCode, isClassroomMode]);
 
@@ -416,9 +431,54 @@ export function useSoloRound(params: {
         return;
       }
 
+      if (event.type === 'answer-submitted' && liveSession.role === 'host') {
+        const liveRound = useAppStore.getState().activeRoomRound;
+        const recorded = liveRound
+          ? recordClassroomAnswer(hostRecordedAnswersRef.current[event.participantId] ?? {}, liveRound, event)
+          : null;
+
+        if (!recorded) {
+          return;
+        }
+
+        hostRecordedAnswersRef.current = {
+          ...hostRecordedAnswersRef.current,
+          [event.participantId]: recorded.answers,
+        };
+        void classroomTransport.publishEvent({
+          ...recorded.reveal,
+          participantId: event.participantId,
+          questionId: event.questionId,
+          roomCode: liveSession.roomCode,
+          type: 'answer-revealed',
+        }).catch(() => undefined);
+        return;
+      }
+
+      if (event.type === 'answer-revealed' && liveSession.role !== 'host') {
+        const localParticipant = liveSession.participants.find((participant) => participant.isLocalPlayer);
+
+        if (event.participantId !== localParticipant?.id) {
+          return;
+        }
+
+        setAnswerMap((current) => ({
+          ...current,
+          [event.questionId]: {
+            ...current[event.questionId],
+            correctIndex: event.correctIndex,
+            explanation: event.explanation,
+            isCorrect: event.isCorrect,
+          },
+        }));
+        setIsSubmittingAnswer(false);
+        return;
+      }
+
       if (event.type === 'round-submitted' && liveSession.role === 'host') {
+        // The guest's own answer map is ignored: it could claim anything.
         dispatchRoundFlow({
-          answers: event.answers,
+          answers: hostRecordedAnswersRef.current[event.participantId] ?? {},
           participantId: event.participantId,
           type: 'merge-classroom-submission',
         });
@@ -513,17 +573,24 @@ export function useSoloRound(params: {
       return;
     }
 
-    if (!hasClassroomRoundSubmissionsForAllParticipants(currentClassroomSession.participants, classroomSubmissions)) {
+    if (
+      !classroomDeadlinePassed &&
+      !hasClassroomRoundSubmissionsForAllParticipants(currentClassroomSession.participants, classroomSubmissions)
+    ) {
       dispatchRoundFlow({ type: 'set-results-pending', value: true });
       return;
     }
 
     dispatchRoundFlow({ type: 'begin-classroom-publish' });
 
+    // After the deadline, guests who never finished are scored on what they answered so far.
     const records = buildClassroomRoundResults({
       participants: currentClassroomSession.participants,
       round: activeRoomRound,
-      submissionsByParticipantId: classroomSubmissions,
+      submissionsByParticipantId: {
+        ...hostRecordedAnswersRef.current,
+        ...classroomSubmissions,
+      },
     });
     const localRecord = records.find((entry) => entry.participantId === localClassroomParticipantId)?.record;
 
@@ -554,6 +621,7 @@ export function useSoloRound(params: {
       });
   }, [
     activeRoomRound,
+    classroomDeadlinePassed,
     classroomSubmissions,
     classroomTransport,
     clearActiveRound,
@@ -691,6 +759,17 @@ export function useSoloRound(params: {
     await finishRound();
   }, [currentIndex, finishRound, questionTimeLimit, questions.length]);
 
+  // Live rooms: tell the server when the question appears so it can time the answer itself.
+  const openedQuestionRef = useRef<Promise<unknown>>(Promise.resolve());
+
+  useEffect(() => {
+    if (currentRoomRound?.source !== 'supabase' || !question) {
+      return;
+    }
+
+    openedQuestionRef.current = openLiveRoomQuestion(currentRoomRound, question.id).catch(() => undefined);
+  }, [currentRoomRound, question]);
+
   const answerQuestion = useCallback((optionIndex: number, recordedTimeLeft: number) => {
     if (!question || isRevealed) {
       return;
@@ -708,7 +787,8 @@ export function useSoloRound(params: {
 
     if (currentRoomRound?.source === 'supabase') {
       setIsSubmittingAnswer(true);
-      void submitLiveRoomAnswer(currentRoomRound, question.id, optionIndex, Math.max(0, recordedTimeLeft * 1000))
+      void openedQuestionRef.current
+        .then(() => submitLiveRoomAnswer(currentRoomRound, question.id, optionIndex))
         .then((submission) => {
           if (!submission) {
             return;
@@ -718,7 +798,7 @@ export function useSoloRound(params: {
             ...current,
             [question.id]: {
               ...current[question.id],
-              correctIndex: submission.isCorrect ? optionIndex : undefined,
+              correctIndex: submission.correctOption,
               explanation: submission.explanation,
               isCorrect: submission.isCorrect,
             },
@@ -740,7 +820,38 @@ export function useSoloRound(params: {
 
       return;
     }
-  }, [currentRoomRound, isRevealed, params.messages.factPending, question]);
+
+    if (isClassroomMode && currentClassroomSession?.role === 'participant' && localClassroomParticipantId) {
+      // The guest has no correct answers; the host replies with answer-revealed.
+      setIsSubmittingAnswer(true);
+      void classroomTransport.publishEvent({
+        participantId: localClassroomParticipantId,
+        questionId: question.id,
+        roomCode: currentClassroomSession.roomCode,
+        selectedIndex: optionIndex,
+        timeLeft: recordedTimeLeft,
+        type: 'answer-submitted',
+      }).catch(() => {
+        setAnswerMap((current) => ({
+          ...current,
+          [question.id]: {
+            ...current[question.id],
+            explanation: params.messages.factPending,
+          },
+        }));
+        setIsSubmittingAnswer(false);
+      });
+    }
+  }, [
+    classroomTransport,
+    currentClassroomSession,
+    currentRoomRound,
+    isClassroomMode,
+    isRevealed,
+    localClassroomParticipantId,
+    params.messages.factPending,
+    question,
+  ]);
 
   const handleAnswer = useCallback(
     (optionIndex: number, recordedTimeLeft = timeLeft) => {
@@ -772,6 +883,36 @@ export function useSoloRound(params: {
   const retryFinalize = useCallback(() => {
     void finishRound();
   }, [finishRound]);
+
+  // Classroom host: stop waiting for guests once the round deadline passes.
+  const classroomEndsAt =
+    isClassroomMode && currentClassroomSession?.role === 'host' ? activeRoomRound?.endsAt : undefined;
+
+  useEffect(() => {
+    if (!classroomEndsAt) {
+      return undefined;
+    }
+
+    const deadlineTimer = setTimeout(
+      () => dispatchRoundFlow({ type: 'classroom-deadline-passed' }),
+      Math.max(0, Date.parse(classroomEndsAt) - Date.now())
+    );
+
+    return () => clearTimeout(deadlineTimer);
+  }, [classroomEndsAt]);
+
+  // Waiting for other players: once the server deadline passes, the round closes without them.
+  const roundEndsAt = currentRoomRound?.source === 'supabase' ? currentRoomRound.endsAt : undefined;
+
+  useEffect(() => {
+    if (!resultsPending || !roundEndsAt) {
+      return undefined;
+    }
+
+    const retryTimer = setTimeout(retryFinalize, Math.max(0, Date.parse(roundEndsAt) - Date.now()) + 1500);
+
+    return () => clearTimeout(retryTimer);
+  }, [resultsPending, retryFinalize, roundEndsAt]);
 
   return {
     answerMap,

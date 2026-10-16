@@ -16,6 +16,7 @@ export default function RoomsRoute() {
   const selectedDifficulty = useAppStore((state) => state.selectedDifficulty);
   const lobby = useRoomLobby({
     genericError: t('rooms.genericError'),
+    onlineUnavailable: t('rooms.onlineUnavailable'),
   });
   const canResumeRound = Boolean(lobby.activeRoomRound && (!isSupabaseConfigured || lobby.activeRoom?.roundId));
 

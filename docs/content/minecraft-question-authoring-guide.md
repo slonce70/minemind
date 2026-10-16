@@ -42,6 +42,8 @@
 - Only `approved` English records should move into translation.
 - Use the exact meaning of the English correct answer, not a looser paraphrase.
 - Preserve option order across `en`, `uk`, and `ru` so export can derive a stable `correctIndex`.
+- Use the official in-game `uk_ua` / `ru_ru` names for mobs, blocks, items, biomes and enchantments; Russian is its own translation, never a copy of Ukrainian.
+- Keep prompts short and direct (≤ `120` characters, no scenario preamble); the content lint enforces this.
 
 ## Wave-One Quotas
 

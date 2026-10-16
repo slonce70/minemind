@@ -3,7 +3,8 @@ export function createQuizFeedbackState(input: {
   isRevealed: boolean;
   selectedIndex: number | null;
 }) {
-  if (!input.isRevealed) {
+  // Revealed but the verdict hasn't arrived yet (live room / classroom guest): stay neutral.
+  if (!input.isRevealed || typeof input.correctIndex !== 'number') {
     return {
       correctIndex: input.correctIndex,
       selectedState: 'idle' as const,

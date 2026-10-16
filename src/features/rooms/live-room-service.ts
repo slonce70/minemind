@@ -287,6 +287,7 @@ export async function startLiveRoomRound(activeRoom: ActiveRoom, profile: GuestP
     difficulty:
       parsedPayload.round.difficulty ??
       room.settings.difficulty,
+    endsAt: parsedPayload.round.ends_at ?? undefined,
     mode: 'room',
     questions: parsedPayload.questions,
     roomCode: parsedPayload.roomCode,
@@ -329,6 +330,7 @@ export async function resumeLiveRoomRound(roomCode: string) {
       difficulty:
         parsedPayload.round.difficulty ??
         room.settings.difficulty,
+      endsAt: parsedPayload.round.ends_at ?? undefined,
       mode: 'room' as const,
       questions: parsedPayload.questions,
       roomCode: parsedPayload.roomCode,
@@ -338,11 +340,26 @@ export async function resumeLiveRoomRound(roomCode: string) {
   };
 }
 
+/** Starts the server-side timer for a question; the server ignores repeated opens. */
+export async function openLiveRoomQuestion(round: ActiveRoomRound, questionId: string) {
+  if (!round.roundId) {
+    return;
+  }
+
+  await invokeSupabaseFunction<{ opened: boolean }, { phase: 'open'; questionId: string; roundId: string }>(
+    'submit-answer',
+    {
+      phase: 'open',
+      questionId,
+      roundId: round.roundId,
+    }
+  );
+}
+
 export async function submitLiveRoomAnswer(
   round: ActiveRoomRound,
   questionId: string,
-  selectedOption: number,
-  timeLeftMs: number
+  selectedOption: number
 ) {
   if (!round.roundId) {
     return null;
@@ -351,6 +368,7 @@ export async function submitLiveRoomAnswer(
   return invokeSupabaseFunction<
     {
       accepted: boolean;
+      correctOption: number;
       explanation: string;
       isCorrect: boolean;
       scoreDelta: number;
@@ -359,13 +377,11 @@ export async function submitLiveRoomAnswer(
       questionId: string;
       roundId: string;
       selectedOption: number;
-      timeLeftMs: number;
     }
   >('submit-answer', {
     questionId,
     roundId: round.roundId,
     selectedOption,
-    timeLeftMs,
   });
 }
 

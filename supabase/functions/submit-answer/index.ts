@@ -2,18 +2,24 @@ import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
 
 import { requireAuthenticatedUser } from '../_shared/auth.ts';
 import { serviceClient } from '../_shared/client.ts';
+import { scoreAnswer } from '../_shared/game-rules.ts';
 import { handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
 import { assertQuestionBelongsToRound } from '../_shared/round-questions.ts';
-import { clampTimeLeftMs } from '../_shared/round-timing.ts';
+import {
+  computeServerTimeLeftMs,
+  isRoundExpired,
+  resolveDifficulty,
+  toDisplayOption,
+  toOriginalOption,
+} from '../_shared/round-integrity.ts';
 import { assertRoomMembership } from '../_shared/rooms.ts';
 
-type ContentDifficulty = 'easy' | 'medium' | 'hard';
-
 type SubmitAnswerPayload = {
+  // 'open' starts the server-side timer for the question; 'answer' (default) locks in the choice.
+  phase?: 'answer' | 'open';
   questionId: string;
   roundId: string;
-  selectedOption: number;
-  timeLeftMs?: number;
+  selectedOption?: number;
 };
 
 serve(async (request) => {
@@ -25,20 +31,10 @@ serve(async (request) => {
   try {
     const user = await requireAuthenticatedUser(request);
     const body = await requireJsonBody<SubmitAnswerPayload>(request);
-
-    // Reject invalid options outright instead of silently clamping (99 -> 3).
-    if (
-      typeof body.selectedOption !== 'number' ||
-      !Number.isInteger(body.selectedOption) ||
-      body.selectedOption < -1 ||
-      body.selectedOption > 3
-    ) {
-      throw new Error('Invalid selected option.');
-    }
-
+    const now = new Date();
     const { data: round, error: roundError } = await serviceClient
       .from('round_sessions')
-      .select('id, room_id, question_ids, ends_at, difficulty')
+      .select('id, room_id, question_ids, difficulty, ends_at, finalized_at')
       .eq('id', body.roundId)
       .single();
 
@@ -55,40 +51,87 @@ serve(async (request) => {
       roundQuestionIds: round.question_ids,
     });
 
-    // Reject answers once the round deadline has passed so a stalled client
-    // cannot backfill answers after the round has effectively ended.
-    if (round.ends_at && new Date(round.ends_at).getTime() < Date.now()) {
-      throw new Error('Round has already ended.');
+    if (round.finalized_at || isRoundExpired(round.ends_at, now)) {
+      throw new Error('Round time is over.');
     }
 
-    const difficulty = (round.difficulty as ContentDifficulty | null) ?? 'medium';
-    const sanitizedOption = body.selectedOption;
-    const sanitizedTimeLeft = clampTimeLeftMs(body.timeLeftMs, difficulty);
-
-    // Answers are immutable: one submission per (round, player, question). This
-    // defeats the "submit, read correctness, resubmit until right" cheat while
-    // still allowing immediate per-question feedback below.
-    const { error: insertError } = await serviceClient.from('answer_submissions').insert({
+    const submissionKey = {
       player_id: user.id,
       question_id: body.questionId,
       round_id: body.roundId,
-      selected_option: sanitizedOption,
-      submitted_at: new Date().toISOString(),
-      time_left_ms: sanitizedTimeLeft,
-    });
+    };
 
-    if (insertError) {
-      // 23505 = unique_violation on (round_id, player_id, question_id).
-      if ((insertError as { code?: string }).code === '23505') {
-        throw new Error('This question was already answered.');
+    if (body.phase === 'open') {
+      // First open wins: re-opening (e.g. after an app restart) never resets the timer.
+      const { error: openError } = await serviceClient
+        .from('answer_submissions')
+        .upsert(
+          { ...submissionKey, opened_at: now.toISOString(), selected_option: null },
+          { ignoreDuplicates: true, onConflict: 'round_id,player_id,question_id' }
+        );
+
+      if (openError) {
+        throw openError;
       }
-      throw insertError;
+
+      return jsonResponse({ opened: true });
+    }
+
+    const { data: existing, error: existingError } = await serviceClient
+      .from('answer_submissions')
+      .select('id, opened_at, selected_option')
+      .match(submissionKey)
+      .maybeSingle();
+
+    if (existingError) {
+      throw existingError;
+    }
+
+    if (existing && existing.selected_option !== null) {
+      throw new Error('Answer already submitted.');
+    }
+
+    const difficulty = resolveDifficulty(round.difficulty);
+    const timeLeftMs = computeServerTimeLeftMs({ difficulty, now, openedAt: existing?.opened_at });
+    // Answers after the timer count as a miss; options are stored in original (database) order.
+    const selectedOption =
+      timeLeftMs === null ? -1 : toOriginalOption(body.selectedOption ?? -1, round.id, body.questionId);
+    const answerFields = {
+      selected_option: selectedOption,
+      submitted_at: now.toISOString(),
+      time_left_ms: timeLeftMs ?? 0,
+    };
+
+    if (existing) {
+      // `selected_option is null` makes the update a compare-and-set against a parallel answer.
+      const { data: updated, error: updateError } = await serviceClient
+        .from('answer_submissions')
+        .update(answerFields)
+        .eq('id', existing.id)
+        .is('selected_option', null)
+        .select('id');
+
+      if (updateError) {
+        throw updateError;
+      }
+
+      if (!updated || updated.length === 0) {
+        throw new Error('Answer already submitted.');
+      }
+    } else {
+      const { error: insertError } = await serviceClient
+        .from('answer_submissions')
+        .insert({ ...submissionKey, ...answerFields });
+
+      if (insertError) {
+        // Unique (round, player, question): a parallel request already answered.
+        throw insertError.code === '23505' ? new Error('Answer already submitted.') : insertError;
+      }
     }
 
     const { data: question, error: questionError } = await serviceClient
       .from('questions')
       .select('correct_option, explanation')
-      .in('id', round.question_ids)
       .eq('id', body.questionId)
       .single();
 
@@ -96,13 +139,15 @@ serve(async (request) => {
       throw questionError ?? new Error('Question not found.');
     }
 
-    const isCorrect = sanitizedOption === question.correct_option;
+    const isCorrect = selectedOption === question.correct_option;
 
     return jsonResponse({
       accepted: true,
+      correctOption: toDisplayOption(question.correct_option, round.id, body.questionId),
       explanation: question.explanation,
       isCorrect,
-      scoreDelta: isCorrect ? 100 + Math.floor(sanitizedTimeLeft / 1000) * 6 : 0,
+      scoreDelta: scoreAnswer({ difficulty, isCorrect, timeLeftMs: timeLeftMs ?? 0 }),
+      timedOut: timeLeftMs === null,
     });
   } catch (error) {
     return jsonResponse(

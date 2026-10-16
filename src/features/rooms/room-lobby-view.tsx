@@ -21,7 +21,8 @@ type RoomLobbyViewProps = {
   isBusy: boolean;
   isOfflineMode: boolean;
   joinCode: string;
-  onAddDemoPlayers: () => void;
+  /** Only provided in development builds. */
+  onAddDemoPlayers?: () => void;
   onChangeJoinCode: (value: string) => void;
   onCreateRoom: () => void;
   onJoinRoom: () => void;
@@ -132,7 +133,7 @@ export function RoomLobbyView({
               </Text>
             ) : null}
             <View style={styles.commandActionRail}>
-              {isOfflineMode ? <PrimaryButton label={strings.addDemoPlayers} onPress={onAddDemoPlayers} /> : null}
+              {isOfflineMode && onAddDemoPlayers ? <PrimaryButton label={strings.addDemoPlayers} onPress={onAddDemoPlayers} /> : null}
               <SecondaryButton
                 label={isBusy ? strings.loading : strings.toggleReady}
                 onPress={onToggleReady}
