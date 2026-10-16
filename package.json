@@ -13,6 +13,7 @@
     "serve:web-export": "node scripts/serve-web-export.mjs",
     "smoke:web-export": "node scripts/smoke-web-export.mjs",
     "check:web-budget": "node scripts/check-web-export-budget.mjs",
+    "export:content": "tsx scripts/export-master-question-packs.ts --out content/minecraft/minecraft-question-bank.v1.json && tsx scripts/export-supabase-seed.ts",
     "test": "tsx --test tests/**/*.test.ts",
     "typecheck": "tsc --noEmit",
     "typecheck:tests": "tsc --noEmit -p tsconfig.tests.json",

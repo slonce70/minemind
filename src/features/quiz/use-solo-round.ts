@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 
 import {
   buildClassroomRoundResults,
@@ -11,6 +11,7 @@ import { getSharedLocalHostTransport } from '../classroom/local-host-transport';
 import { createRoomStandings } from '../rooms/demo-room-service';
 import {
   finalizeLiveRoomRound,
+  openLiveRoomQuestion,
   resumeLiveRoomRound,
   submitLiveRoomAnswer,
 } from '../rooms/live-room-service';
@@ -691,6 +692,17 @@ export function useSoloRound(params: {
     await finishRound();
   }, [currentIndex, finishRound, questionTimeLimit, questions.length]);
 
+  // Live rooms: tell the server when the question appears so it can time the answer itself.
+  const openedQuestionRef = useRef<Promise<unknown>>(Promise.resolve());
+
+  useEffect(() => {
+    if (currentRoomRound?.source !== 'supabase' || !question) {
+      return;
+    }
+
+    openedQuestionRef.current = openLiveRoomQuestion(currentRoomRound, question.id).catch(() => undefined);
+  }, [currentRoomRound, question]);
+
   const answerQuestion = useCallback((optionIndex: number, recordedTimeLeft: number) => {
     if (!question || isRevealed) {
       return;
@@ -708,7 +720,8 @@ export function useSoloRound(params: {
 
     if (currentRoomRound?.source === 'supabase') {
       setIsSubmittingAnswer(true);
-      void submitLiveRoomAnswer(currentRoomRound, question.id, optionIndex, Math.max(0, recordedTimeLeft * 1000))
+      void openedQuestionRef.current
+        .then(() => submitLiveRoomAnswer(currentRoomRound, question.id, optionIndex))
         .then((submission) => {
           if (!submission) {
             return;
@@ -718,7 +731,7 @@ export function useSoloRound(params: {
             ...current,
             [question.id]: {
               ...current[question.id],
-              correctIndex: submission.isCorrect ? optionIndex : undefined,
+              correctIndex: submission.correctOption,
               explanation: submission.explanation,
               isCorrect: submission.isCorrect,
             },
@@ -772,6 +785,19 @@ export function useSoloRound(params: {
   const retryFinalize = useCallback(() => {
     void finishRound();
   }, [finishRound]);
+
+  // Waiting for other players: once the server deadline passes, the round closes without them.
+  const roundEndsAt = currentRoomRound?.source === 'supabase' ? currentRoomRound.endsAt : undefined;
+
+  useEffect(() => {
+    if (!resultsPending || !roundEndsAt) {
+      return undefined;
+    }
+
+    const retryTimer = setTimeout(retryFinalize, Math.max(0, Date.parse(roundEndsAt) - Date.now()) + 1500);
+
+    return () => clearTimeout(retryTimer);
+  }, [resultsPending, retryFinalize, roundEndsAt]);
 
   return {
     answerMap,

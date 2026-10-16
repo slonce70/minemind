@@ -3,7 +3,7 @@ import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
 import { requireAuthenticatedUser } from '../_shared/auth.ts';
 import { serviceClient } from '../_shared/client.ts';
 import { handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
-import { sanitizeQuestionsForClient } from '../_shared/questions.ts';
+import { loadQuestionsInOrder, sanitizeQuestionsForClient } from '../_shared/questions.ts';
 import { assertRoomMembership, getRoomByCode, listRoomParticipants } from '../_shared/rooms.ts';
 
 type GetRoomRoundPayload = {
@@ -41,21 +41,11 @@ serve(async (request) => {
       throw roundError ?? new Error('Round not found.');
     }
 
-    const { data: questions, error: questionsError } = await serviceClient
-      .from('questions')
-      .select(
-        'id,prompt,option_a,option_b,option_c,option_d,correct_option,explanation,sort_order'
-      )
-      .in('id', round.question_ids)
-      .order('sort_order', { ascending: true });
-
-    if (questionsError || !questions) {
-      throw questionsError ?? new Error('Unable to load questions for the round.');
-    }
+    const questions = await loadQuestionsInOrder(round.question_ids);
 
     return jsonResponse({
       participants: await listRoomParticipants(room.id),
-      questions: sanitizeQuestionsForClient(questions),
+      questions: sanitizeQuestionsForClient(questions, round.id),
       room,
       roomCode: room.room_code,
       round,

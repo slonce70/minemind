@@ -25,6 +25,8 @@ export type ActiveRoom = {
 export type ActiveRoomRound = {
   contentPackVersion?: string;
   difficulty?: ContentDifficulty;
+  /** Server deadline for live rooms; after it unanswered questions score 0. */
+  endsAt?: string;
   mode: 'room' | 'classroom';
   questions: QuizQuestion[];
   roomCode: string;

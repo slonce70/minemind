@@ -5,6 +5,12 @@ import { serviceClient } from '../_shared/client.ts';
 import { handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
 import { filterSubmissionsForRoundQuestions } from '../_shared/round-questions.ts';
 import { assertRoomMembership, listRoomParticipants } from '../_shared/rooms.ts';
+import {
+  buildRoundRanking,
+  countAnsweredSubmissions,
+  isRoundExpired,
+  resolveDifficulty,
+} from '../_shared/round-integrity.ts';
 
 type FinalizeRoundPayload = {
   roundId: string;
@@ -89,7 +95,7 @@ serve(async (request) => {
     const body = await requireJsonBody<FinalizeRoundPayload>(request);
     const { data: round, error: roundError } = await serviceClient
       .from('round_sessions')
-      .select('id, room_id, question_ids, ends_at')
+      .select('id, room_id, question_ids, difficulty, ends_at')
       .eq('id', body.roundId)
       .single();
 
@@ -141,7 +147,6 @@ serve(async (request) => {
       throw questionsError ?? new Error('Unable to load questions for round.');
     }
 
-    const questionMap = new Map(questions.map((question) => [question.id, question.correct_option]));
     const { data: submissions, error: submissionsError } = await serviceClient
       .from('answer_submissions')
       .select('player_id, question_id, selected_option, time_left_ms')
@@ -156,69 +161,27 @@ serve(async (request) => {
       round.question_ids
     );
     const participants = await listRoomParticipants(round.room_id);
-    const scoreboard = new Map<
-      string,
-      {
-        bestStreak: number;
-        correctCount: number;
-        currentStreak: number;
-        score: number;
-      }
-    >();
-
-    for (const submission of validSubmissions) {
-      const existing = scoreboard.get(submission.player_id) ?? {
-        bestStreak: 0,
-        correctCount: 0,
-        currentStreak: 0,
-        score: 0,
-      };
-      const isCorrect = questionMap.get(submission.question_id) === submission.selected_option;
-
-      if (isCorrect) {
-        existing.correctCount += 1;
-        existing.currentStreak += 1;
-        existing.bestStreak = Math.max(existing.bestStreak, existing.currentStreak);
-        existing.score += 100 + Math.floor((submission.time_left_ms ?? 0) / 1000) * 6;
-      } else {
-        existing.currentStreak = 0;
-      }
-
-      scoreboard.set(submission.player_id, existing);
-    }
-
-    for (const participant of participants) {
-      if (!scoreboard.has(participant.player_id)) {
-        scoreboard.set(participant.player_id, {
-          bestStreak: 0,
-          correctCount: 0,
-          currentStreak: 0,
-          score: 0,
-        });
-      }
-    }
-
-    const ranking = [...scoreboard.entries()]
-      .map(([playerId, values]) => ({
-        best_streak: values.bestStreak,
-        correct_count: values.correctCount,
-        player_id: playerId,
-        round_id: round.id,
-        score: values.score,
-      }))
-      .sort((left, right) => right.score - left.score)
-      .map((entry, index) => ({
-        ...entry,
-        rank: index + 1,
-      }));
+    const ranking = buildRoundRanking({
+      correctOptionByQuestionId: new Map(questions.map((question) => [question.id, question.correct_option])),
+      difficulty: resolveDifficulty(round.difficulty),
+      participantIds: [
+        ...new Set([
+          ...participants.map((participant) => participant.player_id),
+          ...validSubmissions.map((submission) => submission.player_id),
+        ]),
+      ],
+      questionIds: round.question_ids,
+      roundId: round.id,
+      submissions: validSubmissions,
+    });
     const expectedSubmissions = participants.length * round.question_ids.length;
+    // After the deadline nobody waits for stragglers: missing answers simply score 0.
+    const isWaitingForAnswers =
+      countAnsweredSubmissions(validSubmissions) < expectedSubmissions &&
+      !isRoundExpired(round.ends_at, new Date());
     const nicknameMap = await buildNicknameMap(ranking.map((entry) => entry.player_id));
-    const deadlinePassed = Boolean(round.ends_at) && new Date(round.ends_at).getTime() < Date.now();
 
-    // Stay pending only while the round is still live. Once the deadline passes
-    // we finalize with whatever answers arrived (missing ones score as 0) so a
-    // disconnected player can no longer freeze the room forever.
-    if (validSubmissions.length < expectedSubmissions && !deadlinePassed) {
+    if (isWaitingForAnswers) {
       await serviceClient
         .from('rooms')
         .update({ status: 'finalizing' })
