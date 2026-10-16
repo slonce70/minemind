@@ -1,32 +1,26 @@
 import { GameError } from './error-codes.ts';
+import { checkNickname } from './nickname-rules.ts';
 
-const blockedFragments = ['admin', 'owner', 'mod', 'fuck', 'shit', 'sex', 'сука', 'хуй'];
+export { normalizeNickname } from './nickname-rules.ts';
+
 export const roomStatusValues = ['lobby', 'active', 'waiting', 'finalizing', 'finished'] as const;
 export type RoomStatus = (typeof roomStatusValues)[number];
 
-export function normalizeNickname(rawValue: string) {
-  return rawValue.trim().replace(/\s+/g, ' ');
-}
+const nicknameErrors = {
+  'invalid-chars': 'Nickname contains invalid characters.',
+  'too-long': 'Nickname must be between 2 and 16 characters.',
+  'too-short': 'Nickname must be between 2 and 16 characters.',
+  unsafe: 'Nickname contains blocked words.',
+} as const;
 
 export function assertSafeNickname(rawValue: string) {
-  const candidate = normalizeNickname(rawValue);
+  const result = checkNickname(rawValue);
 
-  if (candidate.length < 2 || candidate.length > 16) {
-    throw new GameError('invalid_nickname', 'Nickname must be between 2 and 16 characters.');
+  if (!result.ok) {
+    throw new GameError('invalid_nickname', nicknameErrors[result.problem]);
   }
 
-  if (!/^[\p{L}\p{N}_ -]+$/u.test(candidate)) {
-    throw new GameError('invalid_nickname', 'Nickname contains invalid characters.');
-  }
-
-  const lowerCaseCandidate = candidate.toLowerCase();
-  const blocked = blockedFragments.some((fragment) => lowerCaseCandidate.includes(fragment));
-
-  if (blocked) {
-    throw new GameError('invalid_nickname', 'Nickname contains blocked words.');
-  }
-
-  return candidate;
+  return result.value;
 }
 
 export function assertRoomStatus(value: string): RoomStatus {
