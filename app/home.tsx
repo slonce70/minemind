@@ -6,7 +6,6 @@ import { Screen } from '../src/components/ui/screen';
 import { difficultyConfig } from '../src/features/content/difficulty-config';
 import { HomeView } from '../src/features/home/home-view';
 import { minecraftCategory } from '../src/features/quiz/mock-data';
-import { getMatchSourceTranslationKey } from '../src/features/results/match-record-source';
 import { formatPlayerCount } from '../src/lib/count-format';
 import { isSupabaseConfigured } from '../src/lib/supabase';
 import { useAppStore } from '../src/state/app-store';
@@ -19,7 +18,6 @@ export default function HomeRoute() {
   const lastMatchId = useAppStore((state) => state.lastMatchId);
   const activeRoom = useAppStore((state) => state.activeRoom);
   const activeRoomRound = useAppStore((state) => state.activeRoomRound);
-  const resetProfile = useAppStore((state) => state.resetProfile);
   const selectedDifficulty = useAppStore((state) => state.selectedDifficulty);
   const setSelectedDifficulty = useAppStore((state) => state.setSelectedDifficulty);
   const canResumeRoom = Boolean(activeRoomRound && (!isSupabaseConfigured || activeRoom?.roundId));
@@ -37,7 +35,7 @@ export default function HomeRoute() {
     <Screen scrollable>
       <Stack.Screen options={{ headerShown: false }} />
       <HomeView
-        difficultyLabel={t(difficultyConfig[selectedDifficulty].translationKey)}
+        avatarId={profile.avatarId}
         difficultyStrings={{
           easy: t(difficultyConfig.easy.translationKey),
           medium: t(difficultyConfig.medium.translationKey),
@@ -45,17 +43,13 @@ export default function HomeRoute() {
         }}
         hasActiveRoom={Boolean(activeRoom)}
         latestMatch={latestMatch}
-        latestMatchSourceLabel={latestMatch ? t(getMatchSourceTranslationKey(latestMatch)) : undefined}
-        localeLabel={t(`languageNames.${profile.locale}`)}
         modeLabel={isSupabaseConfigured ? t('home.onlineReady') : t('home.offlineMode')}
         nickname={profile.nickname}
         onOpenClassroom={() => router.push('/classroom')}
+        onOpenProfile={() => router.push('/profile')}
         onOpenResults={() => router.push('/results')}
+        onOpenSettings={() => router.push('/settings')}
         onPlaySolo={() => router.push('/solo')}
-        onResetProfile={() => {
-          resetProfile();
-          router.replace('/onboarding');
-        }}
         onRoomAction={() =>
           canResumeRoom
             ? router.push('/solo?mode=room')
@@ -83,23 +77,21 @@ export default function HomeRoute() {
           classroomCardTitle: t('home.classroomCardTitle'),
           difficultyHelper: t('home.difficultyHint'),
           difficultySelectorLabel: t('home.difficultyLabel'),
-          localeLabel: t('home.locale'),
-          modeLabel: t('home.mode'),
-          modeSelectorCopy: t('home.ready'),
           primaryCardCopy: t('home.categoryCopy', {
             questionCount: minecraftCategory.roundQuestionCount,
             roundLength: t('home.roundLengthValue'),
           }),
           primaryCardTitle: t('home.playSolo'),
+          profileA11y: t('profile.open'),
           resultCorrectLabel: t('results.correct'),
           resultScoreLabel: t('results.score'),
-          resultSourceLabel: t('results.source'),
           resultStreakLabel: t('results.bestStreak'),
           resultTitle: t('home.lastResult'),
           resultsAction: t('home.viewResults'),
           roomCardCopy: t('home.roomCardCopy'),
           roomCardTitle: t('home.roomCardTitle'),
-          switchProfile: t('home.switchProfile'),
+          settingsA11y: t('settings.open'),
+          timerA11y: t('home.timerA11y'),
           title: t('home.greeting', { name: profile.nickname }),
         }}
       />

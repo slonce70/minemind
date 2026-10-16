@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import { LoadingScreen } from '../src/components/ui/loading-screen';
 import { Screen } from '../src/components/ui/screen';
+import { ScreenHeader } from '../src/components/ui/screen-header';
 import { buildClassroomInviteToken } from '../src/features/classroom/classroom-invite';
 import { ClassroomLobbyView } from '../src/features/classroom/classroom-lobby-view';
 import { useClassroomLobby } from '../src/features/classroom/use-classroom-lobby';
@@ -64,6 +65,7 @@ export default function ClassroomRoute() {
   return (
     <Screen scrollable>
       <Stack.Screen options={{ headerShown: false }} />
+      <ScreenHeader backLabel={t('common.back')} title={t('classroom.title')} />
       <ClassroomLobbyView
         classroomSession={lobby.classroomSession}
         errorMessage={lobby.errorMessage}
@@ -97,6 +99,8 @@ export default function ClassroomRoute() {
           joinSessionHint: t('classroom.joinSessionHint'),
           joinSessionPlaceholder: t('classroom.joinSessionPlaceholder'),
           loading: t('common.loading'),
+          manualHostToggle: t('classroom.manualHostToggle'),
+          manualJoinToggle: t('classroom.manualJoinToggle'),
           notReady: t('classroom.notReady'),
           participantCount: t('classroom.participantCount', {
             countLabel: formatPlayerCount(
@@ -109,13 +113,14 @@ export default function ClassroomRoute() {
           readySummary: t('classroom.readySummary'),
           roleLabel: t('classroom.roleLabel'),
           roomCode: t('classroom.roomCode'),
+          scanHint: t('classroom.scanHint'),
+          scanTitle: t('classroom.scanTitle'),
           shareInvite: t('classroom.shareInvite'),
           sessionStatusFinished: t('classroom.sessionStatusFinished'),
           sessionStatusLobby: t('classroom.sessionStatusLobby'),
           sessionStatusPlaying: t('classroom.sessionStatusPlaying'),
           startMatch: t('classroom.startMatch'),
           subtitle: t('classroom.subtitle'),
-          title: t('classroom.title'),
           toggleReady: t('classroom.toggleReady'),
         }}
       />

@@ -1,36 +1,33 @@
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
-import { Card } from '../../components/ui/card';
 import { PrimaryButton } from '../../components/ui/button';
+import { Card } from '../../components/ui/card';
 import { Screen } from '../../components/ui/screen';
-import { avatarPresets, avatarLookup } from '../profile/avatar-presets';
-import type { AppLocale } from '../../lib/locale';
-import { colors, fonts, radii, spacing, typography } from '../../theme/tokens';
-
-type LocaleOption = {
-  label: string;
-  value: AppLocale;
-};
+import { colors, fonts, spacing, typography } from '../../theme/tokens';
+import { avatarLookup } from '../profile/avatar-presets';
+import { PlayerAvatar } from '../profile/player-avatar';
+import { AvatarPicker, NicknameField } from '../profile/profile-controls';
+import { Mascot } from '../ui/mascot';
 
 type OnboardingViewProps = {
   avatarLabels: Record<string, string>;
   errorMessage?: string | null;
   helperText: string;
   isSaving: boolean;
-  localeOptions: LocaleOption[];
   nickname: string;
   onChangeNickname: (value: string) => void;
+  onRollNickname: () => void;
   onSelectAvatar: (avatarId: string) => void;
-  onSelectLocale: (locale: AppLocale) => void;
   onSubmit: () => void;
   privacyNote: string;
   selectedAvatarId: string;
-  selectedLocale: AppLocale;
+  selectedLocaleLabel: string;
   strings: {
     avatarLabel: string;
     ctaLabel: string;
+    diceLabel: string;
+    disclaimer: string;
     eyebrow: string;
-    languageLabel: string;
     nicknameLabel: string;
     nicknamePlaceholder: string;
     previewEyebrow: string;
@@ -47,40 +44,41 @@ export function OnboardingView({
   errorMessage,
   helperText,
   isSaving,
-  localeOptions,
   nickname,
   onChangeNickname,
+  onRollNickname,
   onSelectAvatar,
-  onSelectLocale,
   onSubmit,
   privacyNote,
   selectedAvatarId,
-  selectedLocale,
+  selectedLocaleLabel,
   strings,
 }: OnboardingViewProps) {
-  const selectedAvatar = avatarLookup[selectedAvatarId];
-  const selectedAvatarLabel = avatarLabels[selectedAvatarId] ?? selectedAvatar.label;
-  const selectedLocaleLabel =
-    localeOptions.find((option) => option.value === selectedLocale)?.label ?? selectedLocale;
+  const selectedAvatarLabel = avatarLabels[selectedAvatarId] ?? avatarLookup[selectedAvatarId]?.label ?? '';
   const previewName = nickname.trim() || strings.previewFallbackName;
 
   return (
     <Screen scrollable>
       <View style={styles.heroBlock}>
-        <Text style={styles.eyebrow}>{strings.eyebrow}</Text>
-        <Text style={styles.title}>{strings.title}</Text>
-        <Text style={styles.subtitle}>{strings.subtitle}</Text>
+        <Mascot size={72} />
+        <View style={styles.heroText}>
+          <Text style={styles.eyebrow}>{strings.eyebrow}</Text>
+          <Text accessibilityRole="header" style={styles.title}>
+            {strings.title}
+          </Text>
+          <Text style={styles.subtitle}>{strings.subtitle}</Text>
+        </View>
       </View>
 
       <Card style={styles.profilePlate}>
         <Text style={styles.previewEyebrow}>{strings.previewEyebrow}</Text>
         <View style={styles.previewRow}>
-          <View style={[styles.previewBadge, { backgroundColor: selectedAvatar.color }]}>
-            <Text style={styles.previewInitial}>{selectedAvatarLabel[0]}</Text>
-          </View>
+          <PlayerAvatar avatarId={selectedAvatarId} size={72} />
           <View style={styles.previewText}>
             <Text style={styles.previewTitle}>{strings.previewTitle}</Text>
-            <Text style={styles.previewName}>{previewName}</Text>
+            <Text numberOfLines={1} style={styles.previewName}>
+              {previewName}
+            </Text>
             <Text style={styles.previewMeta}>
               {selectedAvatarLabel} • {strings.previewLanguageLabel}: {selectedLocaleLabel}
             </Text>
@@ -88,156 +86,54 @@ export function OnboardingView({
         </View>
       </Card>
 
-      <View style={styles.setupSteps}>
-        <Card style={styles.stepCard} tone="panel">
-          <Text style={styles.sectionTitle}>{strings.nicknameLabel}</Text>
-          <TextInput
-            autoCapitalize="none"
-            autoCorrect={false}
-            maxLength={16}
-            onChangeText={onChangeNickname}
-            placeholder={strings.nicknamePlaceholder}
-            placeholderTextColor={colors.textMuted}
-            style={styles.input}
-            value={nickname}
-          />
-          <Text style={styles.helperText}>{helperText}</Text>
-          {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
-        </Card>
+      <Card style={styles.stepCard}>
+        <NicknameField
+          diceLabel={strings.diceLabel}
+          error={errorMessage}
+          helper={helperText}
+          label={strings.nicknameLabel}
+          onChange={onChangeNickname}
+          onRoll={onRollNickname}
+          placeholder={strings.nicknamePlaceholder}
+          value={nickname}
+        />
+      </Card>
 
-        <Card style={styles.stepCard} tone="panel">
-          <Text style={styles.sectionTitle}>{strings.languageLabel}</Text>
-          <View style={styles.optionGrid}>
-            {localeOptions.map((option) => {
-              const isActive = selectedLocale === option.value;
+      <Card style={styles.stepCard}>
+        <Text style={styles.sectionTitle}>{strings.avatarLabel}</Text>
+        <AvatarPicker labels={avatarLabels} onSelect={onSelectAvatar} selectedId={selectedAvatarId} />
+      </Card>
 
-              return (
-                <Pressable
-                  key={option.value}
-                  onPress={() => onSelectLocale(option.value)}
-                  style={[styles.optionBlock, isActive && styles.optionBlockActive]}
-                >
-                  <Text style={[styles.optionBlockText, isActive && styles.optionBlockTextActive]}>
-                    {option.label}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
-        </Card>
-
-        <Card style={styles.stepCard} tone="panel">
-          <Text style={styles.sectionTitle}>{strings.avatarLabel}</Text>
-          <View style={styles.avatarGrid}>
-            {avatarPresets.map((avatar) => {
-              const isActive = selectedAvatarId === avatar.id;
-              const avatarLabel = avatarLabels[avatar.id] ?? avatar.label;
-
-              return (
-                <Pressable
-                  key={avatar.id}
-                  onPress={() => onSelectAvatar(avatar.id)}
-                  style={[styles.avatarCard, isActive && styles.avatarCardActive]}
-                >
-                  <View style={[styles.avatarBadge, { backgroundColor: avatar.color }]}>
-                    <Text style={styles.avatarInitial}>{avatarLabel[0]}</Text>
-                  </View>
-                  <Text style={styles.avatarLabel}>{avatarLabel}</Text>
-                </Pressable>
-              );
-            })}
-          </View>
-        </Card>
-      </View>
-
-      <PrimaryButton
-        label={isSaving ? '...' : strings.ctaLabel}
-        onPress={onSubmit}
-      />
+      <PrimaryButton disabled={isSaving} label={strings.ctaLabel} onPress={onSubmit} />
       <Text style={styles.privacyNote}>{privacyNote}</Text>
+      <Text style={styles.privacyNote}>{strings.disclaimer}</Text>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  heroBlock: {
-    gap: spacing.sm,
-    marginBottom: spacing.sm,
-  },
   eyebrow: {
     color: colors.accent,
     fontFamily: fonts.display,
     fontSize: typography.overline,
-    letterSpacing: 1.6,
+    letterSpacing: 1,
     textTransform: 'uppercase',
   },
-  title: {
-    color: colors.textPrimary,
-    fontFamily: fonts.display,
-    fontSize: typography.display,
+  heroBlock: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: spacing.md,
   },
-  subtitle: {
-    color: colors.textSecondary,
-    fontFamily: fonts.regular,
-    fontSize: typography.body,
-    lineHeight: 24,
-  },
-  profilePlate: {
-    backgroundColor: colors.surfaceAccent,
-    borderColor: colors.borderFocus,
-    borderWidth: 2,
-    minWidth: 0,
-    padding: spacing.lg,
-  },
-  setupSteps: {
-    gap: spacing.sm,
-  },
-  stepCard: {
-    borderLeftWidth: 4,
-    paddingTop: spacing.lg,
+  heroText: {
+    flex: 1,
+    gap: spacing.xxs,
   },
   previewEyebrow: {
     color: colors.highlight,
     fontFamily: fonts.display,
     fontSize: typography.overline,
-    letterSpacing: 1.4,
+    letterSpacing: 1,
     textTransform: 'uppercase',
-  },
-  previewRow: {
-    alignItems: 'flex-start',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.md,
-  },
-  previewBadge: {
-    alignItems: 'center',
-    borderRadius: radii.full,
-    height: 72,
-    justifyContent: 'center',
-    width: 72,
-  },
-  previewInitial: {
-    color: colors.canvas,
-    fontFamily: fonts.display,
-    fontSize: typography.display,
-  },
-  previewText: {
-    flex: 1,
-    gap: spacing.xs,
-    minWidth: 0,
-  },
-  previewTitle: {
-    color: colors.textMuted,
-    flexShrink: 1,
-    fontFamily: fonts.display,
-    fontSize: typography.caption,
-    textTransform: 'uppercase',
-  },
-  previewName: {
-    color: colors.textPrimary,
-    flexShrink: 1,
-    fontFamily: fonts.display,
-    fontSize: typography.h2,
   },
   previewMeta: {
     color: colors.textSecondary,
@@ -246,102 +142,25 @@ const styles = StyleSheet.create({
     fontSize: typography.caption,
     lineHeight: 20,
   },
-  sectionTitle: {
+  previewName: {
     color: colors.textPrimary,
-    fontFamily: fonts.bold,
-    fontSize: typography.h3,
-    marginBottom: spacing.sm,
-  },
-  input: {
-    backgroundColor: colors.surfaceRaised,
-    borderColor: colors.borderStrong,
-    borderRadius: radii.lg,
-    borderWidth: 1,
-    color: colors.textPrimary,
-    fontFamily: fonts.regular,
-    fontSize: typography.body,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.md,
-  },
-  helperText: {
-    color: colors.textMuted,
-    fontFamily: fonts.regular,
-    fontSize: typography.caption,
-    marginTop: spacing.sm,
-  },
-  errorText: {
-    color: colors.danger,
-    fontFamily: fonts.regular,
-    fontSize: typography.caption,
-    marginTop: spacing.sm,
-  },
-  optionGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
-  },
-  optionBlock: {
-    backgroundColor: colors.surfaceRaised,
-    borderColor: colors.borderStrong,
-    borderRadius: radii.xl,
-    borderWidth: 2,
-    flexGrow: 1,
     flexShrink: 1,
-    minWidth: 0,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.md,
-  },
-  optionBlockActive: {
-    backgroundColor: colors.surfaceAccent,
-    borderColor: colors.borderFocus,
-  },
-  optionBlockText: {
-    color: colors.textSecondary,
     fontFamily: fonts.extraBold,
-    fontSize: typography.caption,
-    flexShrink: 1,
-    maxWidth: '100%',
-    minWidth: 0,
-    textAlign: 'center',
+    fontSize: typography.h2,
   },
-  optionBlockTextActive: {
-    color: colors.textPrimary,
-  },
-  avatarGrid: {
+  previewRow: {
+    alignItems: 'center',
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.md,
   },
-  avatarCard: {
-    alignItems: 'center',
-    backgroundColor: colors.surfaceRaised,
-    borderColor: colors.border,
-    borderRadius: radii.xl,
-    borderWidth: 1,
-    minWidth: '46%',
-    padding: spacing.md,
+  previewText: {
+    flex: 1,
+    gap: spacing.xxs,
+    minWidth: 0,
   },
-  avatarCardActive: {
-    backgroundColor: colors.surfaceAccent,
-    borderColor: colors.borderFocus,
-    borderWidth: 2,
-    transform: [{ translateY: -2 }],
-  },
-  avatarBadge: {
-    alignItems: 'center',
-    borderRadius: radii.full,
-    height: 56,
-    justifyContent: 'center',
-    marginBottom: spacing.sm,
-    width: 56,
-  },
-  avatarInitial: {
-    color: colors.canvas,
-    fontFamily: fonts.display,
-    fontSize: typography.h2,
-  },
-  avatarLabel: {
-    color: colors.textPrimary,
+  previewTitle: {
+    color: colors.textMuted,
     fontFamily: fonts.bold,
     fontSize: typography.caption,
   },
@@ -350,7 +169,34 @@ const styles = StyleSheet.create({
     fontFamily: fonts.regular,
     fontSize: typography.caption,
     lineHeight: 20,
-    marginTop: spacing.xs,
     textAlign: 'center',
+  },
+  profilePlate: {
+    backgroundColor: colors.surfaceAccent,
+    borderColor: colors.borderFocus,
+    borderWidth: 2,
+    marginBottom: 0,
+    minWidth: 0,
+    padding: spacing.lg,
+  },
+  sectionTitle: {
+    color: colors.textPrimary,
+    fontFamily: fonts.extraBold,
+    fontSize: typography.body,
+  },
+  stepCard: {
+    gap: spacing.sm,
+    marginBottom: 0,
+  },
+  subtitle: {
+    color: colors.textSecondary,
+    fontFamily: fonts.regular,
+    fontSize: typography.body,
+    lineHeight: 22,
+  },
+  title: {
+    color: colors.textPrimary,
+    fontFamily: fonts.display,
+    fontSize: typography.h1,
   },
 });

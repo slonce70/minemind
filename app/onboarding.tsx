@@ -3,9 +3,12 @@ import { useMemo, useReducer } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { LoadingScreen } from '../src/components/ui/loading-screen';
+import { Screen } from '../src/components/ui/screen';
 import { avatarPresets } from '../src/features/profile/avatar-presets';
 import { OnboardingView } from '../src/features/onboarding/onboarding-view';
+import { TutorialRound } from '../src/features/onboarding/tutorial-round';
 import { validateNickname } from '../src/features/profile/nickname';
+import { generateNickname } from '../src/features/profile/nickname-generator';
 import { ensureGuestSession } from '../src/features/profile/profile-service';
 import type { AppLocale } from '../src/lib/locale';
 import { appLocales } from '../src/lib/locale';
@@ -15,15 +18,20 @@ type OnboardingFormState = {
   errorKey: string | null;
   isSaving: boolean;
   nickname: string;
+  /** The player typed their own nickname: stop replacing it with suggestions. */
+  nicknameTouched: boolean;
   selectedAvatarId: string;
   selectedLocale: AppLocale;
   serverError: string | null;
+  step: 'tutorial' | 'profile';
 };
 
 type OnboardingAction =
   | { type: 'avatar'; value: string }
   | { type: 'locale'; value: AppLocale }
   | { type: 'nickname'; value: string }
+  | { type: 'roll' }
+  | { type: 'tutorialDone' }
   | { type: 'saveFailed'; message: string }
   | { type: 'saving'; value: boolean }
   | { type: 'validationError'; reasonKey: string }
@@ -33,10 +41,12 @@ function createInitialOnboardingState(currentLocale: AppLocale): OnboardingFormS
   return {
     errorKey: null,
     isSaving: false,
-    nickname: '',
+    nickname: generateNickname(currentLocale),
+    nicknameTouched: false,
     selectedAvatarId: avatarPresets[0].id,
     selectedLocale: currentLocale,
     serverError: null,
+    step: 'tutorial',
   };
 }
 
@@ -48,9 +58,22 @@ function onboardingReducer(
     case 'avatar':
       return { ...state, selectedAvatarId: action.value };
     case 'locale':
-      return { ...state, selectedLocale: action.value };
+      return {
+        ...state,
+        nickname: state.nicknameTouched ? state.nickname : generateNickname(action.value),
+        selectedLocale: action.value,
+      };
     case 'nickname':
-      return { ...state, nickname: action.value };
+      return { ...state, errorKey: null, nickname: action.value, nicknameTouched: true };
+    case 'roll':
+      return {
+        ...state,
+        errorKey: null,
+        nickname: generateNickname(state.selectedLocale, Math.random, state.nickname),
+        nicknameTouched: false,
+      };
+    case 'tutorialDone':
+      return { ...state, step: 'profile' };
     case 'saveFailed':
       return { ...state, serverError: action.message };
     case 'saving':
@@ -75,7 +98,7 @@ export default function OnboardingRoute() {
     currentLocale,
     createInitialOnboardingState
   );
-  const { errorKey, isSaving, nickname, selectedAvatarId, selectedLocale, serverError } = formState;
+  const { errorKey, isSaving, nickname, selectedAvatarId, selectedLocale, serverError, step } = formState;
   const translationOptions = useMemo(() => ({ lng: selectedLocale }), [selectedLocale]);
 
   const localeOptions = useMemo(
@@ -130,28 +153,61 @@ export default function OnboardingRoute() {
     }
   };
 
+  if (step === 'tutorial') {
+    return (
+      <Screen scrollable>
+        <Stack.Screen options={{ headerShown: false }} />
+        <TutorialRound
+          locale={selectedLocale}
+          localeOptions={localeOptions}
+          onDone={() => dispatch({ type: 'tutorialDone' })}
+          onLocaleChange={(value) => dispatch({ type: 'locale', value })}
+          strings={{
+            correct: t('solo.toastCorrect', translationOptions),
+            eyebrow: t('onboarding.tutorialEyebrow', translationOptions),
+            factEyebrow: t('solo.factEyebrow', translationOptions),
+            hints: [
+              t('onboarding.tutorialHint1', translationOptions),
+              t('onboarding.tutorialHint2', translationOptions),
+              t('onboarding.tutorialHint3', translationOptions),
+            ],
+            languageLabel: t('onboarding.languageLabel', translationOptions),
+            next: t('onboarding.tutorialNext', translationOptions),
+            optionA11y: (letter, text) => t('solo.optionA11y', { ...translationOptions, letter, text }),
+            skip: t('onboarding.tutorialSkip', translationOptions),
+            step: (current, total) => t('onboarding.tutorialStep', { ...translationOptions, current, total }),
+            subtitle: t('onboarding.tutorialSubtitle', translationOptions),
+            title: t('onboarding.tutorialTitle', translationOptions),
+            toProfile: t('onboarding.tutorialToProfile', translationOptions),
+            wrong: t('solo.toastWrong', translationOptions),
+          }}
+        />
+      </Screen>
+    );
+  }
+
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <OnboardingView
+        avatarLabels={avatarLabels}
         errorMessage={errorKey ? t(errorKey, translationOptions) : serverError}
         helperText={t('onboarding.nicknameHint', translationOptions)}
         isSaving={isSaving}
-        localeOptions={localeOptions}
         nickname={nickname}
         onChangeNickname={(value) => dispatch({ type: 'nickname', value })}
+        onRollNickname={() => dispatch({ type: 'roll' })}
         onSelectAvatar={(value) => dispatch({ type: 'avatar', value })}
-        onSelectLocale={(value) => dispatch({ type: 'locale', value })}
         onSubmit={() => void handleContinue()}
         privacyNote={t('onboarding.privacyNote', translationOptions)}
-        avatarLabels={avatarLabels}
         selectedAvatarId={selectedAvatarId}
-        selectedLocale={selectedLocale}
+        selectedLocaleLabel={t(`languageNames.${selectedLocale}`, translationOptions)}
         strings={{
           avatarLabel: t('onboarding.avatarLabel', translationOptions),
           ctaLabel: t(isSaving ? 'common.loading' : 'onboarding.cta', translationOptions),
+          diceLabel: t('onboarding.diceLabel', translationOptions),
+          disclaimer: t('common.disclaimer', translationOptions),
           eyebrow: t('onboarding.eyebrow', translationOptions),
-          languageLabel: t('onboarding.languageLabel', translationOptions),
           nicknameLabel: t('onboarding.nicknameLabel', translationOptions),
           nicknamePlaceholder: t('onboarding.nicknamePlaceholder', translationOptions),
           previewEyebrow: t('onboarding.previewEyebrow', translationOptions),

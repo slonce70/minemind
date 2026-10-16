@@ -217,7 +217,7 @@ test('ukrainian UX copy stays fully localized in the most visible onboarding and
   assert.equal(uk.home.onlineReady, 'Готово до гри онлайн');
   assert.equal(uk.home.ready, 'Усе готово');
   assert.equal(uk.home.openLobby, 'Відкрити кімнату');
-  assert.equal(uk.onboarding.subtitle, 'Обери безпечний нік, аватар і мову. Потім одразу стрибай у свій перший матч.');
+  assert.equal(uk.onboarding.subtitle, 'Обери нік і аватар — і вперед до першого матчу.');
   assert.equal(uk.results.badges.standardClear, 'Раунд завершено');
   assert.equal(uk.results.bestStreak, 'Найдовша серія');
   assert.equal(uk.results.subtitle, 'Підсумок матчу');
@@ -229,7 +229,7 @@ test('ukrainian UX copy stays fully localized in the most visible onboarding and
   assert.equal(uk.rooms.toggleReady, 'Змінити статус готовності');
   assert.equal(
     uk.classroom.joinSessionHint,
-    'Встав код-запрошення хоста або введи адресу вручну, а код класу додай нижче за потреби.',
+    'Встав посилання-запрошення від ведучого. Код класу додай, якщо його немає в запрошенні.',
   );
   assert.equal(uk.classroom.joinSessionPlaceholder, 'Введи код класу');
   assert.equal(uk.classroom.inviteTokenLabel, 'Запрошення або адреса');
@@ -257,7 +257,7 @@ test('english and russian visible copy stays aligned with actual gameplay states
   assert.equal(ru.home.roundLengthValue, '2-4 мин');
   assert.equal(ru.home.onlineReady, 'Готово к игре онлайн');
   assert.equal(ru.home.ready, 'Все готово');
-  assert.equal(ru.onboarding.subtitle, 'Выбери безопасный ник, аватар и язык. После этого сразу прыгай в свой первый матч.');
+  assert.equal(ru.onboarding.subtitle, 'Выбери ник и аватар — и вперёд к первому матчу.');
   assert.equal(ru.results.badges.standardClear, 'Раунд завершен');
   assert.equal(ru.results.subtitle, 'Итог матча');
   assert.equal(ru.results.title, 'Твой результат');
@@ -268,7 +268,7 @@ test('english and russian visible copy stays aligned with actual gameplay states
   assert.equal(ru.rooms.toggleReady, 'Изменить готовность');
   assert.equal(
     ru.classroom.joinSessionHint,
-    'Вставь приглашение от хоста или введи адрес вручную, а код класса добавь ниже при необходимости.',
+    'Вставь ссылку-приглашение от ведущего. Код класса добавь, если его нет в приглашении.',
   );
   assert.equal(ru.classroom.joinSessionPlaceholder, 'Введи код класса');
   assert.equal(en.classroom.inviteTokenLabel, 'Invite token or host address');
@@ -319,8 +319,11 @@ test('onboarding avatar labels are driven by the selected locale instead of hard
 
   assert.match(routeSource, /avatarLabels=/);
   assert.match(routeSource, /t\(`avatars\.\$\{avatar\.id\}`,\s*translationOptions\)/);
+  const controlsSource = readFileSync(new URL('../src/features/profile/profile-controls.tsx', import.meta.url), 'utf8');
+
   assert.match(viewSource, /avatarLabels\[selectedAvatarId\]/);
-  assert.match(viewSource, /avatarLabels\[avatar\.id\]/);
+  assert.match(viewSource, /labels=\{avatarLabels\}/);
+  assert.match(controlsSource, /labels\[preset\.id\]/);
 });
 
 test('fantasy layer exposes themed backgrounds and icon markers', () => {

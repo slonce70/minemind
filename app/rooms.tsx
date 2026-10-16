@@ -6,6 +6,7 @@ import { LoadingScreen } from '../src/components/ui/loading-screen';
 import { RoomLobbyView } from '../src/features/rooms/room-lobby-view';
 import { useRoomLobby } from '../src/features/rooms/use-room-lobby';
 import { Screen } from '../src/components/ui/screen';
+import { ScreenHeader } from '../src/components/ui/screen-header';
 import { difficultyConfig } from '../src/features/content/difficulty-config';
 import { formatPlayerCount } from '../src/lib/count-format';
 import { isSupabaseConfigured } from '../src/lib/supabase';
@@ -43,6 +44,7 @@ export default function RoomsRoute() {
   return (
     <Screen scrollable>
       <Stack.Screen options={{ headerShown: false }} />
+      <ScreenHeader backLabel={t('common.back')} title={t('rooms.title')} />
       <RoomLobbyView
         activeRoom={lobby.activeRoom}
         canResumeRound={canResumeRound}
@@ -86,9 +88,9 @@ export default function RoomsRoute() {
           }),
           addDemoPlayers: t('rooms.addDemoPlayers'),
           createRoom: t('rooms.createRoom'),
+          createRoomCopy: t('rooms.createRoomCopy'),
           difficultyHint: t('rooms.difficultyHint'),
           difficultyLabel: t('rooms.difficultyLabel'),
-          heroEyebrow: t('rooms.eyebrow'),
           joinRoomAction: t('rooms.joinRoomAction'),
           joinRoomPlaceholder: t('rooms.joinRoomPlaceholder'),
           joinRoomTitle: t('rooms.joinRoomTitle'),
@@ -101,7 +103,7 @@ export default function RoomsRoute() {
           readySummary: t('rooms.readySummary'),
           startBattle: t('rooms.startBattle'),
           subtitle: t('rooms.subtitle'),
-          title: t('rooms.title'),
+          timerA11y: t('home.timerA11y'),
           toggleReady: t('rooms.toggleReady'),
         }}
       />

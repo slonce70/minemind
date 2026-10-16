@@ -4,6 +4,7 @@ import { PrimaryButton, SecondaryButton } from '../../components/ui/button';
 import { Card } from '../../components/ui/card';
 import { StatPill } from '../../components/ui/stat-pill';
 import { avatarLookup } from '../profile/avatar-presets';
+import { PlayerAvatar } from '../profile/player-avatar';
 import type { ContentDifficulty } from '../content/types';
 import { DifficultySelector } from '../home/difficulty-selector';
 import { BadgeChip } from '../ui/badge-chip';
@@ -38,9 +39,9 @@ type RoomLobbyViewProps = {
     activeRoomCopy: string;
     addDemoPlayers: string;
     createRoom: string;
+    createRoomCopy: string;
     difficultyHint: string;
     difficultyLabel: string;
-    heroEyebrow: string;
     joinRoomAction: string;
     joinRoomPlaceholder: string;
     joinRoomTitle: string;
@@ -53,7 +54,7 @@ type RoomLobbyViewProps = {
     readySummary: string;
     startBattle: string;
     subtitle: string;
-    title: string;
+    timerA11y: string;
     toggleReady: string;
   };
 };
@@ -88,8 +89,6 @@ export function RoomLobbyView({
       <Card highlight tone="scene">
         <WorldBackground style={styles.worldCard} variant="cave">
           <View style={styles.heroHeader}>
-            <Text style={styles.eyebrow}>{strings.heroEyebrow}</Text>
-            <Text style={styles.title}>{strings.title}</Text>
             <Text style={styles.subtitle}>{strings.subtitle}</Text>
             <BadgeChip label={difficultyStrings[displayedDifficulty]} tone="warning" />
           </View>
@@ -100,6 +99,7 @@ export function RoomLobbyView({
               onSelect={onSelectDifficulty}
               selectedDifficulty={displayedDifficulty}
               strings={difficultyStrings}
+              timerLabel={(seconds) => strings.timerA11y.replace('{{seconds}}', String(seconds))}
             />
           </View>
         </WorldBackground>
@@ -161,9 +161,7 @@ export function RoomLobbyView({
 
                 return (
                   <View key={participant.id} style={styles.participantRow}>
-                    <View style={[styles.participantBadge, { backgroundColor: avatar?.color ?? colors.highlight }]}>
-                      <Text style={styles.participantInitial}>{participant.name[0]}</Text>
-                    </View>
+                    <PlayerAvatar avatarId={avatar?.id} size={40} />
                     <View style={styles.participantMeta}>
                       <Text style={styles.participantName}>{participant.name}</Text>
                       <Text style={styles.participantState}>
@@ -180,7 +178,7 @@ export function RoomLobbyView({
         <>
           <Card style={styles.commandSurface} tone="scene">
             <Text style={styles.sectionTitle}>{strings.createRoom}</Text>
-            <Text style={styles.copy}>{strings.subtitle}</Text>
+            <Text style={styles.copy}>{strings.createRoomCopy}</Text>
             <View style={styles.commandActionRail}>
               <PrimaryButton
                 label={isBusy ? strings.loading : strings.createRoom}
@@ -231,18 +229,6 @@ const styles = StyleSheet.create({
   },
   commandActionRail: {
     gap: spacing.sm,
-  },
-  eyebrow: {
-    color: colors.highlight,
-    fontFamily: fonts.display,
-    fontSize: typography.overline,
-    letterSpacing: 1.4,
-    textTransform: 'uppercase',
-  },
-  title: {
-    color: colors.textPrimary,
-    fontFamily: fonts.display,
-    fontSize: typography.display,
   },
   subtitle: {
     color: colors.textSecondary,
@@ -307,18 +293,6 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     flexDirection: 'row',
     gap: spacing.sm,
-  },
-  participantBadge: {
-    alignItems: 'center',
-    borderRadius: 18,
-    height: 42,
-    justifyContent: 'center',
-    width: 42,
-  },
-  participantInitial: {
-    color: colors.canvas,
-    fontFamily: fonts.black,
-    fontSize: typography.caption,
   },
   participantMeta: {
     flex: 1,
