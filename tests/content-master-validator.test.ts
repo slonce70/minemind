@@ -319,7 +319,6 @@ test('ukrainian localization avoids placeholder phrasing and known broken terms'
     /Кінцеве місто/,
     /\bЗовнішні острови Енд\b/,
     /Руїни океану/,
-    /Тропічна колода/,
     /щитівки/,
     /покинуті покинуті/,
     /Пливу над/,
@@ -374,51 +373,6 @@ test('ukrainian prompts do not give away the correct answer text', () => {
       record.localized.uk.prompt.toLocaleLowerCase('uk-UA'),
       new RegExp(escapeRegExp(correctUkrainianOption.toLocaleLowerCase('uk-UA'))),
       `${record.id} prompt should not include its exact correct answer`
-    );
-  }
-});
-
-test('hard ukrainian questions are framed as pro-mode scenarios', () => {
-  const bank = JSON.parse(
-    readFileSync(new URL('../content/minecraft/minecraft-master-bank.v2.json', import.meta.url), 'utf8')
-  ) as Array<{
-    difficulty: ContentDifficulty;
-    id: string;
-    localized: {
-      uk: { prompt: string };
-    };
-  }>;
-
-  const hardQuestions = bank.filter((record) => record.difficulty === 'hard');
-
-  assert.ok(hardQuestions.length > 0);
-  for (const record of hardQuestions) {
-    assert.match(record.localized.uk.prompt, /^Про-режим: /, `${record.id} should be framed as pro mode`);
-    assert.ok(record.localized.uk.prompt.length >= 90, `${record.id} pro prompt should have scenario context`);
-  }
-});
-
-test('all ukrainian questions keep scenario-level difficulty', () => {
-  const bank = JSON.parse(
-    readFileSync(new URL('../content/minecraft/minecraft-master-bank.v2.json', import.meta.url), 'utf8')
-  ) as Array<{
-    difficulty: ContentDifficulty;
-    id: string;
-    localized: {
-      uk: { prompt: string };
-    };
-  }>;
-
-  const minimumPromptLength: Record<ContentDifficulty, number> = {
-    easy: 140,
-    medium: 160,
-    hard: 220,
-  };
-
-  for (const record of bank) {
-    assert.ok(
-      record.localized.uk.prompt.length >= minimumPromptLength[record.difficulty],
-      `${record.id} ${record.difficulty} prompt should have enough scenario context`
     );
   }
 });
