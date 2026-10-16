@@ -59,9 +59,9 @@ test('content validator flags a bank where the correct answer is almost always f
   assert.equal(findCorrectIndexSkew(loadMinecraftQuestionBank()), null);
 });
 
-test('question illustrations stay hidden until the answer is revealed', async () => {
+test('the fact card (which gives the answer away) appears only after answering', async () => {
   const { readFileSync } = await import('node:fs');
   const source = readFileSync(new URL('../app/solo.tsx', import.meta.url), 'utf8');
 
-  assert.match(source, /\{round\.isRevealed && round\.question\.illustration \? \(/);
+  assert.match(source, /\{round\.isRevealed \? \(\s*<Animated\.View[^>]*>\s*<Card style=\{styles\.factCard\}>/);
 });

@@ -6,12 +6,11 @@ import { fileURLToPath } from 'node:url';
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const distDir = path.join(rootDir, 'dist');
 const webBundleDir = path.join(distDir, '_expo', 'static', 'js', 'web');
-const assetIllustrationsDir = path.join(rootDir, 'assets', 'question-illustrations');
-const publicIllustrationsDir = path.join(rootDir, 'public', 'question-illustrations');
+const soundsDir = path.join(rootDir, 'assets', 'sounds');
 
 export const maxWebEntryBundleBytes = 4.5 * 1024 * 1024;
-export const maxWebExportBytes = 21 * 1024 * 1024;
-export const maxQuestionIllustrationsBytes = 8 * 1024 * 1024;
+export const maxWebExportBytes = 8 * 1024 * 1024;
+export const maxSoundsBytes = 1 * 1024 * 1024;
 
 async function directorySizeBytes(directoryPath) {
   let total = 0;
@@ -60,29 +59,17 @@ try {
   const webEntryBundle = await findWebEntryBundle();
   const webEntryBundleBytes = (await stat(webEntryBundle)).size;
   const webExportBytes = await directorySizeBytes(distDir);
-  const assetIllustrationsBytes = await directorySizeBytes(assetIllustrationsDir);
-  const publicIllustrationsBytes = await directorySizeBytes(publicIllustrationsDir);
+  const soundsBytes = await directorySizeBytes(soundsDir);
 
   assertWithinBudget('Web entry bundle', webEntryBundleBytes, maxWebEntryBundleBytes);
   assertWithinBudget('Web export', webExportBytes, maxWebExportBytes);
-  assertWithinBudget('Asset question illustrations', assetIllustrationsBytes, maxQuestionIllustrationsBytes);
-  assertWithinBudget('Public question illustrations', publicIllustrationsBytes, maxQuestionIllustrationsBytes);
-
-  if (assetIllustrationsBytes !== publicIllustrationsBytes) {
-    throw new Error(
-      `Question illustration mirrors differ: assets ${formatMiB(assetIllustrationsBytes)}, public ${formatMiB(
-        publicIllustrationsBytes
-      )}.`
-    );
-  }
+  assertWithinBudget('Sounds and music', soundsBytes, maxSoundsBytes);
 
   console.log(
     [
       `Web entry bundle: ${formatMiB(webEntryBundleBytes)} / ${formatMiB(maxWebEntryBundleBytes)}`,
       `Web export: ${formatMiB(webExportBytes)} / ${formatMiB(maxWebExportBytes)}`,
-      `Question illustrations: ${formatMiB(assetIllustrationsBytes)} / ${formatMiB(
-        maxQuestionIllustrationsBytes
-      )}`,
+      `Sounds and music: ${formatMiB(soundsBytes)} / ${formatMiB(maxSoundsBytes)}`,
     ].join('\n')
   );
 } catch (error) {

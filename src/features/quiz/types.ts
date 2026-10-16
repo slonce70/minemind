@@ -1,5 +1,5 @@
 import type { AppLocale } from '../../lib/locale';
-import type { ContentDifficulty } from '../content/types';
+import type { ContentDifficulty, ContentTopicId } from '../content/types';
 
 export type LocalizedString = Record<AppLocale, string>;
 
@@ -11,19 +11,14 @@ export type LocalizedQuestionDefinition = {
   prompt: LocalizedString;
 };
 
-export type QuizQuestionIllustration = {
-  alt: string;
-  id: string;
-  imageUri: string;
-};
-
 export type QuizQuestion = {
   correctIndex?: number;
   explanation?: string;
   id: string;
-  illustration?: QuizQuestionIllustration;
   options: string[];
   prompt: string;
+  /** Known for questions from the local bank; drives the topic icon on the question card. */
+  topicId?: ContentTopicId;
 };
 
 export type QuizAnswerMap = Record<
@@ -40,8 +35,11 @@ export type QuizAnswerMap = Record<
 export type QuizResultSummary = {
   bestStreak: number;
   breakdown: {
+    /** Missing in records saved before the full review existed. */
+    correctIndex?: number;
     explanation: string;
     isCorrect: boolean;
+    options?: string[];
     prompt: string;
     questionId: string;
     selectedIndex: number;
