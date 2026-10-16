@@ -1,5 +1,5 @@
 import { Redirect, Stack, router, useLocalSearchParams } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { useTranslation } from 'react-i18next';
@@ -14,12 +14,39 @@ import { feedback } from '../src/features/feel/feedback';
 import { stopReadAloud, toggleReadAloud } from '../src/features/feel/read-aloud';
 import { AnswerOption, ProgressPips, TimerBar, optionLetters, type OptionState } from '../src/features/quiz/question-parts';
 import { RoomTimelinePanel } from '../src/features/quiz/room-timeline-panel';
+import { extraTimeSeconds } from '../src/features/quiz/round/round-machine';
+import { parseChallenge, type SoloRoundSpec } from '../src/features/quiz/solo-round-builder';
 import type { QuizAnswerMap, QuizQuestion } from '../src/features/quiz/types';
 import { useSoloRound } from '../src/features/quiz/use-solo-round';
 import { Mascot } from '../src/features/ui/mascot';
 import { PixelIcon } from '../src/features/ui/pixel-icon';
 import { useAppStore } from '../src/state/app-store';
 import { appTheme, colors, fonts, radii, spacing, typography } from '../src/theme/tokens';
+import { contentTopics, type ContentTopicId } from '../src/features/content/types';
+import type { ContentDifficulty } from '../src/features/content/types';
+
+type SoloParams = Record<string, string | undefined>;
+
+/** Which solo round the link asks for; classic at the chosen difficulty by default. */
+function soloSpecFromParams(params: SoloParams, difficulty: ContentDifficulty, mistakes: string[]): SoloRoundSpec {
+  switch (params.variant) {
+    case 'topic':
+      return contentTopics.includes(params.topic as ContentTopicId)
+        ? { difficulty, topicId: params.topic as ContentTopicId, variant: 'topic' }
+        : { difficulty, variant: 'classic' };
+    case 'adaptive':
+      return { variant: 'adaptive' };
+    case 'mistakes':
+      return { questionIds: mistakes, variant: 'mistakes' };
+    case 'challenge': {
+      const challenge = parseChallenge(params);
+
+      return challenge ? { challenge, variant: 'challenge' } : { difficulty, variant: 'classic' };
+    }
+    default:
+      return { difficulty, variant: 'classic' };
+  }
+}
 
 type Verdict = 'correct' | 'wrong' | 'pending';
 
@@ -45,8 +72,16 @@ function verdictFor(question: QuizQuestion | undefined, answers: QuizAnswerMap):
 
 export default function SoloRoute() {
   const { t } = useTranslation();
-  const { mode } = useLocalSearchParams<{ mode?: string }>();
+  const params = useLocalSearchParams() as SoloParams;
+  const { mode } = params;
   const hasHydrated = useAppStore((state) => state.hasHydrated);
+  const selectedDifficulty = useAppStore((state) => state.selectedDifficulty);
+  // Fixed when the screen opens: finishing the round updates mistakes and must not rebuild it.
+  const [mistakesAtStart] = useState(() => useAppStore.getState().progress.mistakes);
+  const spec = useMemo(
+    () => soloSpecFromParams(params, selectedDifficulty, mistakesAtStart),
+    [params.variant, params.topic, params.seed, hasHydrated]
+  );
   const locale = useAppStore((state) => state.locale);
   const { width } = useWindowDimensions();
   const isWide = width >= appTheme.layout.wideBreakpoint;
@@ -58,6 +93,7 @@ export default function SoloRoute() {
       loadError: t('solo.loadError'),
     },
     mode,
+    spec,
   });
   const question = round.question;
   const verdict = round.isRevealed ? verdictFor(question, round.answerMap) : 'pending';
@@ -156,16 +192,26 @@ export default function SoloRoute() {
   const pipResults = round.questions.map((item) =>
     round.answerMap[item.id] ? verdictFor(item, round.answerMap) : 'pending'
   );
+  const variant = round.variant;
   const modeLabel = round.isRoomMode
     ? t('solo.roomModeLabel')
     : round.isClassroomMode
       ? t('solo.classroomModeLabel')
-      : t('solo.modeLabel');
+      : variant?.soloMode === 'challenge' && variant.challenge
+        ? t('modes.challengeFrom', { name: variant.challenge.from })
+        : variant?.soloMode === 'topic' && variant.topicId
+          ? t(minecraftTopicConfig[variant.topicId].translationKey)
+          : variant?.soloMode === 'adaptive'
+            ? t('modes.adaptive')
+            : variant?.soloMode === 'mistakes'
+              ? t('modes.mistakes')
+              : t('solo.modeLabel');
+  const canUseHints = !round.isRoomMode && !round.isClassroomMode && hasOpenQuestion;
   const isMissed = round.isRevealed && answer?.selectedIndex === -1;
 
   const optionState = (optionIndex: number): OptionState => {
     if (!round.isRevealed) {
-      return 'idle';
+      return round.hiddenOptions.includes(optionIndex) ? 'dimmed' : 'idle';
     }
 
     if (verdict !== 'pending' && optionIndex === correctIndex) {
@@ -235,6 +281,48 @@ export default function SoloRoute() {
         timeLimit={round.timeLimit}
       />
 
+      {canUseHints ? (
+        <View style={styles.hintRow}>
+          <HintButton
+            accessibilityLabel={t('modes.fiftyA11y', { count: round.lifelines.fifty })}
+            disabled={round.lifelines.fifty <= 0 || round.lifelinesUsed.includes('fifty') || question.options.length < 4}
+            icon="half"
+            label={t('modes.fiftyLabel')}
+            left={round.lifelines.fifty}
+            onPress={() => round.spendLifeline('fifty')}
+          />
+          <HintButton
+            accessibilityLabel={t('modes.timeA11y', { count: round.lifelines.time, seconds: extraTimeSeconds })}
+            disabled={round.lifelines.time <= 0 || round.lifelinesUsed.includes('time')}
+            icon="time-plus"
+            label={t('modes.timeLabel', { seconds: extraTimeSeconds })}
+            left={round.lifelines.time}
+            onPress={() => round.spendLifeline('time')}
+          />
+        </View>
+      ) : null}
+
+      {canUseHints ? (
+        <View style={styles.hintRow}>
+          <HintButton
+            accessibilityLabel={t('modes.fiftyA11y', { count: round.lifelines.fifty })}
+            disabled={round.lifelines.fifty <= 0 || round.lifelinesUsed.includes('fifty') || question.options.length < 4}
+            icon="half"
+            label={t('modes.fiftyLabel')}
+            left={round.lifelines.fifty}
+            onPress={() => round.spendLifeline('fifty')}
+          />
+          <HintButton
+            accessibilityLabel={t('modes.timeA11y', { count: round.lifelines.time, seconds: extraTimeSeconds })}
+            disabled={round.lifelines.time <= 0 || round.lifelinesUsed.includes('time')}
+            icon="time-plus"
+            label={t('modes.timeLabel', { seconds: extraTimeSeconds })}
+            left={round.lifelines.time}
+            onPress={() => round.spendLifeline('time')}
+          />
+        </View>
+      ) : null}
+
       {round.loadError ? <Text style={styles.errorText}>{round.loadError}</Text> : null}
 
       <Animated.View entering={FadeInDown.duration(320)} key={question.id}>
@@ -276,7 +364,7 @@ export default function SoloRoute() {
           >
             <AnswerOption
               accessibilityLabel={optionA11y(optionIndex, option)}
-              disabled={round.isRevealed}
+              disabled={round.isRevealed || round.hiddenOptions.includes(optionIndex)}
               index={optionIndex}
               label={option}
               onPress={() => {
@@ -341,7 +429,66 @@ export default function SoloRoute() {
   );
 }
 
+function HintButton(props: {
+  accessibilityLabel: string;
+  disabled: boolean;
+  icon: 'half' | 'time-plus';
+  label: string;
+  left: number;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      accessibilityLabel={props.accessibilityLabel}
+      accessibilityRole="button"
+      accessibilityState={{ disabled: props.disabled }}
+      disabled={props.disabled}
+      onPress={() => {
+        feedback.tap();
+        props.onPress();
+      }}
+      style={[styles.hintButton, props.disabled && styles.hintButtonOff]}
+    >
+      <PixelIcon color={props.disabled ? colors.textMuted : colors.highlight} name={props.icon} size={18} />
+      <Text style={[styles.hintLabel, props.disabled && styles.hintLabelOff]}>{props.label}</Text>
+      <Text style={styles.hintLeft}>×{props.left}</Text>
+    </Pressable>
+  );
+}
+
 const styles = StyleSheet.create({
+  hintButton: {
+    alignItems: 'center',
+    backgroundColor: colors.surfaceRaised,
+    borderColor: colors.borderStrong,
+    borderRadius: radii.md,
+    borderWidth: 2,
+    flexDirection: 'row',
+    gap: spacing.xs,
+    minHeight: 44,
+    paddingHorizontal: spacing.md,
+  },
+  hintButtonOff: {
+    opacity: 0.55,
+  },
+  hintLabel: {
+    color: colors.textPrimary,
+    fontFamily: fonts.extraBold,
+    fontSize: typography.caption,
+  },
+  hintLabelOff: {
+    color: colors.textMuted,
+  },
+  hintLeft: {
+    color: colors.textMuted,
+    fontFamily: fonts.bold,
+    fontSize: typography.micro,
+  },
+  hintRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+  },
   errorText: {
     color: colors.danger,
     fontFamily: fonts.bold,

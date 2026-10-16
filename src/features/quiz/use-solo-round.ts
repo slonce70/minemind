@@ -8,6 +8,8 @@ import type { ModeContext } from './round/mode-types';
 import { useRoomMode } from './round/room-mode';
 import { initialRoundState, roundReducer } from './round/round-machine';
 import { useSoloMode } from './round/solo-mode';
+import type { SoloRoundSpec } from './solo-round-builder';
+import type { LifelineId } from './types';
 
 /**
  * One round on screen: the shared question flow (round-machine) driven by the adapter of the
@@ -20,6 +22,8 @@ export function useSoloRound(params: {
     loadError: string;
   };
   mode?: string;
+  /** Solo only: which kind of round to build (classic when missing). */
+  spec?: SoloRoundSpec;
 }) {
   const activeRoom = useAppStore((state) => state.activeRoom);
   const activeRoomRound = useAppStore((state) => state.activeRoomRound);
@@ -54,7 +58,7 @@ export function useSoloRound(params: {
     round,
     timeLimit,
   };
-  const solo = useSoloMode({ ...context, enabled: !isRoomMode && !isClassroomMode });
+  const solo = useSoloMode({ ...context, enabled: !isRoomMode && !isClassroomMode, spec: params.spec });
   const room = useRoomMode({ ...context, enabled: isRoomMode });
   const classroom = useClassroomMode({ ...context, enabled: isClassroomMode });
   const mode = isRoomMode ? room.controller : isClassroomMode ? classroom.controller : solo;
@@ -89,6 +93,8 @@ export function useSoloRound(params: {
     await finish();
   }, [finish, isTimelineDriven, round.currentIndex, round.questions.length]);
 
+  const spendLifeline = useCallback((lifeline: LifelineId) => dispatch({ lifeline, type: 'lifeline' }), []);
+
   const handleAnswer = useCallback(
     (optionIndex: number, recordedTimeLeft = round.timeLeft) => {
       dispatch({ optionIndex, timeLeft: recordedTimeLeft, type: 'answer' });
@@ -102,9 +108,12 @@ export function useSoloRound(params: {
     currentIndex: round.currentIndex,
     currentRoom: room.currentRoom,
     currentRoomRound: room.currentRoomRound,
-    difficulty: roundDifficulty,
+    difficulty: isRoomMode || isClassroomMode ? roundDifficulty : (solo.roundDifficulty ?? roundDifficulty),
     goNext,
     handleAnswer,
+    hiddenOptions: round.hiddenOptions,
+    lifelines: round.lifelines,
+    lifelinesUsed: question ? (round.lifelinesUsed[question.id] ?? []) : [],
     isAwaitingResults: mode.isAwaitingResults,
     isClassroomMode,
     isLoading: mode.isLoading,
@@ -121,6 +130,8 @@ export function useSoloRound(params: {
     retryFinalize: mode.retryFinalize,
     selectedIndex: round.selectedIndex,
     timeLeft: round.timeLeft,
-    timeLimit,
+    timeLimit: round.timeLimit || timeLimit,
+    spendLifeline,
+    variant: isRoomMode || isClassroomMode ? undefined : solo.variant,
   };
 }

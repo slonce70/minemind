@@ -19,6 +19,7 @@ export default function HomeRoute() {
   const activeRoom = useAppStore((state) => state.activeRoom);
   const activeRoomRound = useAppStore((state) => state.activeRoomRound);
   const selectedDifficulty = useAppStore((state) => state.selectedDifficulty);
+  const progress = useAppStore((state) => state.progress);
   const setSelectedDifficulty = useAppStore((state) => state.setSelectedDifficulty);
   const canResumeRoom = Boolean(activeRoomRound && (!isSupabaseConfigured || activeRoom?.roundId));
   const latestMatch = recentMatches.find((entry) => entry.id === lastMatchId) ?? recentMatches[0];
@@ -46,6 +47,10 @@ export default function HomeRoute() {
         modeLabel={isSupabaseConfigured ? t('home.onlineReady') : t('home.offlineMode')}
         nickname={profile.nickname}
         onOpenClassroom={() => router.push('/classroom')}
+        onOpenCollection={() => router.push('/collection')}
+        onPlayVariant={(variant) =>
+          variant === 'topics' ? router.push('/topics') : router.push(`/solo?variant=${variant}`)
+        }
         onOpenProfile={() => router.push('/profile')}
         onOpenResults={() => router.push('/results')}
         onOpenSettings={() => router.push('/settings')}
@@ -56,6 +61,7 @@ export default function HomeRoute() {
             : router.push('/rooms')
         }
         onSelectDifficulty={setSelectedDifficulty}
+        progress={progress}
         roomActionLabel={
           activeRoom
             ? canResumeRoom

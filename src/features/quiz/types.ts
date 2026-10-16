@@ -1,5 +1,5 @@
 import type { AppLocale } from '../../lib/locale';
-import type { ContentDifficulty, ContentTopicId } from '../content/types';
+import type { ContentDifficulty, ContentTopicId, QuestionKind, QuestionMedia } from '../content/types';
 
 export type LocalizedString = Record<AppLocale, string>;
 
@@ -15,11 +15,16 @@ export type QuizQuestion = {
   correctIndex?: number;
   explanation?: string;
   id: string;
+  kind?: QuestionKind;
+  media?: QuestionMedia;
+  optionIcons?: string[];
   options: string[];
   prompt: string;
   /** Known for questions from the local bank; drives the topic icon on the question card. */
   topicId?: ContentTopicId;
 };
+
+export type LifelineId = 'fifty' | 'time';
 
 export type QuizAnswerMap = Record<
   string,
@@ -27,6 +32,7 @@ export type QuizAnswerMap = Record<
     correctIndex?: number;
     explanation?: string;
     isCorrect?: boolean;
+    lifelines?: LifelineId[];
     selectedIndex: number;
     timeLeft: number;
   }

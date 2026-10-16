@@ -12,7 +12,9 @@ import { Mascot } from '../ui/mascot';
 import { PixelIcon } from '../ui/pixel-icon';
 import { WorldBackground } from '../ui/world-background';
 import { DifficultySelector } from './difficulty-selector';
+import { ModesCard, ProgressStrip } from './home-progress';
 import { getHomeRoomPanelModel } from './home-room-panel';
+import type { PlayerProgress } from '../progress/progression';
 
 type HomeViewProps = {
   avatarId: string;
@@ -22,12 +24,15 @@ type HomeViewProps = {
   modeLabel: string;
   nickname: string;
   onOpenClassroom: () => void;
+  onOpenCollection: () => void;
+  onPlayVariant: (variant: 'adaptive' | 'mistakes' | 'topics') => void;
   onOpenProfile: () => void;
   onOpenResults: () => void;
   onOpenSettings: () => void;
   onPlaySolo: () => void;
   onRoomAction: () => void;
   onSelectDifficulty: (difficulty: ContentDifficulty) => void;
+  progress: PlayerProgress;
   roomActionLabel: string;
   selectedDifficulty: ContentDifficulty;
   strings: {
@@ -62,12 +67,15 @@ export function HomeView({
   modeLabel,
   nickname,
   onOpenClassroom,
+  onOpenCollection,
   onOpenProfile,
   onOpenResults,
   onOpenSettings,
   onPlaySolo,
   onRoomAction,
+  onPlayVariant,
   onSelectDifficulty,
+  progress,
   roomActionLabel,
   selectedDifficulty,
   strings,
@@ -138,6 +146,15 @@ export function HomeView({
           </View>
         </WorldBackground>
       </Card>
+
+      <ProgressStrip onOpenCollection={onOpenCollection} progress={progress} />
+
+      <ModesCard
+        mistakesCount={progress.mistakes.length}
+        onAdaptive={() => onPlayVariant('adaptive')}
+        onMistakes={() => onPlayVariant('mistakes')}
+        onTopics={() => onPlayVariant('topics')}
+      />
 
       <View style={styles.routeBoard}>
         <View style={[styles.supportRoutes, isWide && styles.supportRoutesWide]}>
