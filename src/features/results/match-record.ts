@@ -25,6 +25,7 @@ export type MatchRecord = {
   participants: MatchRecordParticipant[];
   questionCount: number;
   roomCode?: string;
+  round?: QuizResultSummary['round'];
   score: number;
   speedBonus: number;
   syncStatus: MatchSyncStatus;

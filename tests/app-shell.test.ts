@@ -113,7 +113,7 @@ test('resetProfile keeps ukrainian as the default locale for the next onboarding
   const resetProfileIndex = source.indexOf("resetProfile: () =>\n        set({");
 
   assert.notEqual(resetProfileIndex, -1);
-  const resetProfileBlock = source.slice(resetProfileIndex, resetProfileIndex + 220);
+  const resetProfileBlock = source.slice(resetProfileIndex, source.indexOf('}),', resetProfileIndex));
   assert.match(resetProfileBlock, /locale:\s*defaultAppLocale/);
 });
 

@@ -2,6 +2,7 @@ import type { ContentDifficulty } from '../features/content/types';
 import { normalizeMatchRecord } from '../features/results/normalize-match-record';
 import type { MatchRecord } from '../features/results/match-record';
 import type { QuizResultSummary } from '../features/quiz/types';
+import { createEmptyProgress, sanitizeProgress } from '../features/progress/progression';
 
 type PersistedAppStateLike = {
   lastMatchId?: string;
@@ -69,6 +70,7 @@ export function migratePersistedAppState(
     ...state,
     lastMatchId: state.lastMatchId ?? recentMatches[0]?.id,
     lastResult: undefined,
+    progress: state.progress ? sanitizeProgress(state.progress) : createEmptyProgress(),
     recentMatches,
     selectedDifficulty: state.selectedDifficulty ?? 'medium',
   };

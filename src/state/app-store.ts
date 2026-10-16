@@ -15,6 +15,14 @@ import { createDefaultRoomMatchSettings } from '../features/rooms/room-match-set
 import type { ActiveRoom, ActiveRoomRound } from '../features/rooms/types';
 import type { ContentDifficulty } from '../features/content/types';
 import type { MatchRecord } from '../features/results/match-record';
+import {
+  applyMatch,
+  createEmptyProgress,
+  mergeProgress,
+  type MatchRewards,
+  type PlayerProgress,
+} from '../features/progress/progression';
+import { bankQuestionInfo } from '../features/progress/question-info';
 import { defaultAppLocale, type AppLocale } from '../lib/locale';
 import { migratePersistedAppState } from './app-store-migration';
 
@@ -52,9 +60,14 @@ type AppState = {
   hasHydrated: boolean;
   joinRoom: (roomCode: string) => void;
   lastMatchId?: string;
+  /** Rewards of the last paid match, shown once on the results screen. */
+  lastRewards?: MatchRewards;
   leaveRoom: () => void;
   locale: AppLocale;
+  /** Merges a copy of the progress from the cloud into this device's. */
+  mergeRemoteProgress: (remote: PlayerProgress) => void;
   profile?: GuestProfile;
+  progress: PlayerProgress;
   recentMatches: MatchRecord[];
   resetProfile: () => void;
   saveMatchRecord: (record: MatchRecord) => void;
@@ -110,9 +123,12 @@ export const useAppStore = create<AppState>()(
               : state.activeRoom,
         })),
       lastMatchId: undefined,
+      lastRewards: undefined,
       leaveRoom: () => set({ activeRoom: undefined, activeRoomRound: undefined }),
       locale: defaultAppLocale,
+      mergeRemoteProgress: (remote) => set((state) => ({ progress: mergeProgress(state.progress, remote) })),
       profile: undefined,
+      progress: createEmptyProgress(),
       recentMatches: [],
       selectedDifficulty: 'medium',
       settings: defaultAppSettings,
@@ -122,16 +138,30 @@ export const useAppStore = create<AppState>()(
           activeRoomRound: undefined,
           classroomSession: undefined,
           lastMatchId: undefined,
+          lastRewards: undefined,
           locale: defaultAppLocale,
           profile: undefined,
+          progress: createEmptyProgress(),
           recentMatches: [],
           selectedDifficulty: 'medium',
         }),
       saveMatchRecord: (record) =>
-        set((state) => ({
-          lastMatchId: record.id,
-          recentMatches: [record, ...state.recentMatches.filter((entry) => entry.id !== record.id)].slice(0, 20),
-        })),
+        set((state) => {
+          const now = new Date();
+          const paid = applyMatch({
+            now,
+            progress: state.progress,
+            questionInfo: bankQuestionInfo,
+            record,
+            utcOffsetMinutes: -now.getTimezoneOffset(),
+          });
+
+          return {
+            lastMatchId: record.id,
+            ...(paid ? { lastRewards: paid.rewards, progress: paid.progress } : {}),
+            recentMatches: [record, ...state.recentMatches.filter((entry) => entry.id !== record.id)].slice(0, 20),
+          };
+        }),
       setActiveRoom: (activeRoom) => set({ activeRoom }),
       setActiveRoomRound: (activeRoomRound) => set({ activeRoomRound }),
       setHasHydrated: (value) => set({ hasHydrated: value }),
@@ -179,13 +209,15 @@ export const useAppStore = create<AppState>()(
         classroomSession: state.classroomSession,
         lastMatchId: state.lastMatchId,
         locale: state.locale,
+        lastRewards: state.lastRewards,
         profile: state.profile,
+        progress: state.progress,
         recentMatches: state.recentMatches,
         selectedDifficulty: state.selectedDifficulty,
         settings: state.settings,
       }),
       storage: createJSONStorage(() => AsyncStorage),
-      version: 5,
+      version: 6,
     }
   )
 );

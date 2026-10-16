@@ -386,6 +386,90 @@ export const pixelIcons = {
     '....##....',
     '....##....',
   ],
+  book: [
+    '..........',
+    '.###..###.',
+    '#+++##+++#',
+    '#+#+##+#+#',
+    '#+++##+++#',
+    '#+#+##+#+#',
+    '#+++##+++#',
+    '#+++##+++#',
+    '.###..###.',
+    '....##....',
+  ],
+  card: [
+    '.########.',
+    '#++++++++#',
+    '#+######+#',
+    '#+#++++#+#',
+    '#+#++++#+#',
+    '#+######+#',
+    '#++++++++#',
+    '#+##++##+#',
+    '#++++++++#',
+    '.########.',
+  ],
+  cloud: [
+    '..........',
+    '...###....',
+    '..#+++#...',
+    '.#+++++##.',
+    '.#+++++++#',
+    '#++++++++#',
+    '#++++++++#',
+    '.########.',
+    '..........',
+    '..........',
+  ],
+  half: [
+    '.###..###.',
+    '#+++##+++#',
+    '#++#..#++#',
+    '#++#..#++#',
+    '.##....##.',
+    '.##....##.',
+    '#++#..#++#',
+    '#++#..#++#',
+    '#+++##+++#',
+    '.###..###.',
+  ],
+  link: [
+    '..........',
+    '....####..',
+    '...#+..+#.',
+    '...#....#.',
+    '..##+..##.',
+    '.##..+##..',
+    '.#....#...',
+    '.#+..+#...',
+    '..####....',
+    '..........',
+  ],
+  'time-plus': [
+    '..####....',
+    '.#++++#...',
+    '#+++#++#..',
+    '#+++#++#..',
+    '#++++##+#.',
+    '#+++++++#.',
+    '.#+++++#.#',
+    '..#####.##',
+    '.......###',
+    '........#.',
+  ],
+  tv: [
+    '..#....#..',
+    '...#..#...',
+    '##########',
+    '#++++++++#',
+    '#+######+#',
+    '#+######+#',
+    '#+######+#',
+    '#++++++++#',
+    '##########',
+    '..##..##..',
+  ],
 } as const satisfies Record<string, readonly string[]>;
 
 export type PixelIconName = keyof typeof pixelIcons;
@@ -399,26 +483,52 @@ const face: Record<MascotMood, [string, string, string, string]> = {
   wow: ['owwoooowwo', 'owboooowbo', 'poookkooop', 'poookkooop'],
 };
 
-function buildMascotSprite(mood: MascotMood): PixelSpriteData {
-  const [eyesTop, eyesBottom, mouthTop, mouthBottom] = face[mood];
+/** Four rows above Kubik's head: the sprout by default, a hat or crown on collection cards. */
+export const kubikTops = {
+  sprout: ['.......gg.......', '.....ggGg.gg....', '......gGgGGg....', '.......kGk......'],
+  crown: ['................', '...y...yy...y...', '...yy.yyyy.yy...', '...yyyyyyyyyy...'],
+  helmet: ['................', '.....kkkkkk.....', '....kHHHLHHk....', '...kHHHHHHHHk...'],
+  flame: ['......r..r......', '.....rrorrr.....', '....rroyyorr....', '.....royyor.....'],
+  snow: ['................', '.....wwwwww.....', '....wwwwwwww....', '...wwwwwwwwww...'],
+  antenna: ['.......pp.......', '.......pp.......', '........k.......', '........k.......'],
+  mushroom: ['......rrrr......', '....rrwrrwrr....', '...rrrrrrrrrr...', '.......kk.......'],
+  horns: ['................', '..ww........ww..', '..kww......wwk..', '...kk......kk...'],
+  leaves: ['.....g.gg.g.....', '....ggGgGgGg....', '.....gGgGgg.....', '.......kGk......'],
+  halo: ['....yyyyyyyy....', '...y........y...', '....yyyyyyyy....', '................'],
+  bare: ['................', '................', '................', '................'],
+} as const;
+
+export type KubikTop = keyof typeof kubikTops;
+
+/** Body colours: face (o), highlight (y) and shade (d). */
+export type KubikBody = { d: string; o: string; y: string };
+
+const kubikAmber: KubikBody = { d: '#C9772E', o: '#F2A541', y: '#FFD27A' };
+
+export function buildKubikSprite(input: {
+  body?: KubikBody;
+  mood?: MascotMood;
+  palette?: Record<string, string>;
+  top?: KubikTop;
+}): PixelSpriteData {
+  const [eyesTop, eyesBottom, mouthTop, mouthBottom] = face[input.mood ?? 'happy'];
 
   return {
     palette: {
       G: '#3F8F3A',
+      H: '#8A8F98',
+      L: '#FFF3A0',
       b: '#2A1A10',
-      d: '#C9772E',
       g: '#7BD35F',
       k: '#2A1A10',
-      o: '#F2A541',
       p: '#FF8A7A',
+      r: '#E2483D',
       w: '#FFFFFF',
-      y: '#FFD27A',
+      ...(input.body ?? kubikAmber),
+      ...input.palette,
     },
     rows: [
-      '.......gg.......',
-      '.....ggGg.gg....',
-      '......gGgGGg....',
-      '.......kGk......',
+      ...kubikTops[input.top ?? 'sprout'],
       '..kkkkkkkkkkkk..',
       '.kyyyyyyyyyyyyk.',
       `.ky${'o'.repeat(10)}dk.`,
@@ -436,7 +546,7 @@ function buildMascotSprite(mood: MascotMood): PixelSpriteData {
 }
 
 export const mascotSprites: Record<MascotMood, PixelSpriteData> = {
-  happy: buildMascotSprite('happy'),
-  sad: buildMascotSprite('sad'),
-  wow: buildMascotSprite('wow'),
+  happy: buildKubikSprite({ mood: 'happy' }),
+  sad: buildKubikSprite({ mood: 'sad' }),
+  wow: buildKubikSprite({ mood: 'wow' }),
 };
