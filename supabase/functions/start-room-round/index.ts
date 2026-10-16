@@ -4,14 +4,10 @@ import { requireAuthenticatedUser } from '../_shared/auth.ts';
 import { serviceClient } from '../_shared/client.ts';
 import { GameError } from '../_shared/error-codes.ts';
 import { errorResponse, handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
-import {
-  loadQuestionsInOrder,
-  pickRoundQuestionIds,
-  resolveQuestionLocale,
-  sanitizeQuestionsForClient,
-} from '../_shared/questions.ts';
+import { pickRoundQuestionIds, resolveQuestionLocale } from '../_shared/questions.ts';
 import { getRoomByCode, listRoomParticipants } from '../_shared/rooms.ts';
-import { computeRoundEndsAt, resolveDifficulty } from '../_shared/round-integrity.ts';
+import { computeTimelineEndsAt, resolveDifficulty } from '../_shared/round-integrity.ts';
+import { buildRoundView } from '../_shared/round-view.ts';
 
 type StartRoomRoundPayload = {
   locale?: 'en' | 'ru' | 'uk';
@@ -60,7 +56,7 @@ serve(async (request) => {
         content_pack_version: room.content_pack_version,
         difficulty: room.difficulty,
         question_count: room.question_count,
-        ends_at: computeRoundEndsAt({
+        ends_at: computeTimelineEndsAt({
           difficulty: resolveDifficulty(room.difficulty),
           questionCount: questionIds.length,
           startedAt,
@@ -91,11 +87,14 @@ serve(async (request) => {
 
     return jsonResponse({
       participants,
-      // The host reads in their language; every other player loads the round in theirs.
-      questions: sanitizeQuestionsForClient(
-        await loadQuestionsInOrder(questionIds, resolveQuestionLocale(body.locale)),
-        round.id
-      ),
+      // Questions are handed out as they open (get-room-round); at the start none is open yet.
+      ...(await buildRoundView({
+        locale: resolveQuestionLocale(body.locale),
+        now: startedAt,
+        participants,
+        playerId: user.id,
+        round,
+      })),
       room: {
         ...room,
         current_round_id: round.id,

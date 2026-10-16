@@ -2,11 +2,13 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
 
-import { scoreAnswer } from '../supabase/functions/_shared/game-rules.ts';
+import { computeRoundEndsAt, questionWindow, scoreAnswer } from '../supabase/functions/_shared/game-rules.ts';
 import {
   buildRoundRanking,
-  computeRoundEndsAt,
-  computeServerTimeLeftMs,
+  computeTimelineEndsAt,
+  computeTimelineTimeLeftMs,
+  countClosedQuestions,
+  countReleasedQuestions,
   isRoundExpired,
   pickSeededIds,
   toDisplayOption,
@@ -25,33 +27,39 @@ test('one scoring formula: 100 + 6 per second left, times the difficulty multipl
   assert.equal(scoreAnswer({ difficulty: 'hard', isCorrect: false, timeLeftMs: 10_000 }), 0);
 });
 
-test('server measures time left from when the question was opened', () => {
-  const openedAt = '2026-10-16T10:00:00.000Z';
-
-  assert.equal(
-    computeServerTimeLeftMs({ difficulty: 'hard', now: new Date('2026-10-16T10:00:05.000Z'), openedAt }),
-    10_000
-  );
-  // Inside the network grace window: answer counts, no bonus left.
-  assert.equal(
-    computeServerTimeLeftMs({ difficulty: 'hard', now: new Date('2026-10-16T10:00:16.000Z'), openedAt }),
-    0
-  );
-  assert.equal(
-    computeServerTimeLeftMs({ difficulty: 'hard', now: new Date('2026-10-16T10:00:30.000Z'), openedAt }),
-    null
-  );
-  assert.equal(computeServerTimeLeftMs({ difficulty: 'easy', now: new Date(), openedAt: null }), 0);
-});
-
-test('round deadline covers every question plus reading time, then expires', () => {
+test('live rooms share one timeline: countdown, then timer plus 10 s per question', () => {
   const startedAt = new Date('2026-10-16T10:00:00.000Z');
-  const endsAt = computeRoundEndsAt({ difficulty: 'hard', questionCount: 8, startedAt });
+  const second = questionWindow({ difficulty: 'hard', index: 1, startedAt });
 
-  assert.equal(endsAt.toISOString(), '2026-10-16T10:03:50.000Z');
-  assert.equal(isRoundExpired(endsAt.toISOString(), new Date('2026-10-16T10:03:49.000Z')), false);
+  // 5 s countdown, 15 s question, 10 s answer and standings.
+  assert.equal(second.opensAt.toISOString(), '2026-10-16T10:00:30.000Z');
+  assert.equal(second.closesAt.toISOString(), '2026-10-16T10:00:45.000Z');
+
+  const endsAt = computeTimelineEndsAt({ difficulty: 'hard', questionCount: 8, startedAt });
+  assert.equal(endsAt.toISOString(), '2026-10-16T10:03:18.000Z');
+  assert.equal(isRoundExpired(endsAt.toISOString(), new Date('2026-10-16T10:03:17.000Z')), false);
   assert.equal(isRoundExpired(endsAt.toISOString(), endsAt), true);
   assert.equal(isRoundExpired(null, new Date()), false);
+
+  // Classroom stays self-paced with its generous deadline.
+  assert.equal(computeRoundEndsAt({ difficulty: 'hard', questionCount: 8, startedAt }).toISOString(), '2026-10-16T10:03:50.000Z');
+});
+
+test('the server times answers on the timeline and only hands out open questions', () => {
+  const startedAt = new Date('2026-10-16T10:00:00.000Z');
+  const at = (time: string) => ({ difficulty: 'hard' as const, now: new Date(`2026-10-16T${time}Z`), questionCount: 8, startedAt });
+
+  assert.equal(computeTimelineTimeLeftMs({ ...at('10:00:20.000'), index: 1 }), 'not-open');
+  assert.equal(computeTimelineTimeLeftMs({ ...at('10:00:35.000'), index: 1 }), 10_000);
+  // Inside the network grace window: the answer counts, without a bonus.
+  assert.equal(computeTimelineTimeLeftMs({ ...at('10:00:47.000'), index: 1 }), 0);
+  assert.equal(computeTimelineTimeLeftMs({ ...at('10:00:49.000'), index: 1 }), null);
+
+  assert.equal(countReleasedQuestions(at('10:00:02.000')), 0);
+  assert.equal(countReleasedQuestions(at('10:00:03.000')), 1, 'released 2 s before it opens');
+  assert.equal(countReleasedQuestions(at('10:00:29.000')), 2);
+  assert.equal(countClosedQuestions(at('10:00:22.000')), 0);
+  assert.equal(countClosedQuestions(at('10:00:23.000')), 1, 'closed for good after the grace');
 });
 
 test('per-round option order maps displayed answers back to the stored option', () => {
@@ -106,11 +114,11 @@ test('ranking gives silent players zero and applies the difficulty multiplier', 
 test('submit-answer allows one answer and ignores client-reported time', () => {
   const source = readSource('../supabase/functions/submit-answer/index.ts');
 
-  assert.doesNotMatch(source, /\.upsert\([^)]*selected_option: selectedOption/s);
+  assert.doesNotMatch(source, /\.upsert\(/);
   assert.doesNotMatch(source, /timeLeftMs\?:/);
-  assert.match(source, /Answer already submitted/);
-  assert.match(source, /\.is\('selected_option', null\)/);
-  assert.match(source, /computeServerTimeLeftMs\(/);
+  assert.match(source, /insertError\.code === '23505'/);
+  assert.match(source, /computeTimelineTimeLeftMs\(/);
+  assert.match(source, /question_not_open/);
 });
 
 test('migration unifies pack difficulty, locks question tables and allows open-before-answer rows', () => {
@@ -155,7 +163,9 @@ test('one language-neutral question per fact, with a translation per locale', ()
   }
 
   const roundSource = readSource('../supabase/functions/get-room-round/index.ts');
-  assert.match(roundSource, /loadQuestionsInOrder\(round\.question_ids, resolveQuestionLocale\(body\.locale\)\)/);
+  const viewSource = readSource('../supabase/functions/_shared/round-view.ts');
+  assert.match(roundSource, /locale: resolveQuestionLocale\(body\.locale\)/);
+  assert.match(viewSource, /loadQuestionsInOrder\(releasedIds, input\.locale\)/);
 });
 
 test('start-solo-round uses the requested difficulty', () => {

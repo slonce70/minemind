@@ -1,14 +1,20 @@
 import {
   answerGraceMs,
-  computeRoundEndsAt,
+  computeTimelineEndsAt,
+  countClosedQuestions,
+  countReleasedQuestions,
   difficultyRules,
   type GameDifficulty,
   isGameDifficulty,
+  questionWindow,
   scoreAnswer,
   seededPermutation,
 } from './game-rules.ts';
 
-export { computeRoundEndsAt };
+export { computeTimelineEndsAt, countClosedQuestions, countReleasedQuestions };
+
+// Clocks of phones and server differ a little: accept answers slightly before the official open.
+const earlyAnswerToleranceMs = 1_000;
 
 export function resolveDifficulty(value: unknown): GameDifficulty {
   return isGameDifficulty(value) ? value : 'medium';
@@ -19,27 +25,29 @@ export function isRoundExpired(endsAt: string | null | undefined, now: Date) {
 }
 
 /**
- * Time left measured by the server from the moment the player opened the question.
- * Returns null when the answer arrived after the timer (plus network grace) ran out.
- * Without an `openedAt` the answer still counts, but earns no speed bonus.
+ * Time left for question `index` on the round timeline, measured by the server clock.
+ * 'not-open' before the question opens; null when the answer came after it closed (plus grace).
  */
-export function computeServerTimeLeftMs(input: {
+export function computeTimelineTimeLeftMs(input: {
   difficulty: GameDifficulty;
+  index: number;
   now: Date;
-  openedAt: string | null | undefined;
-}) {
-  if (!input.openedAt) {
-    return 0;
+  startedAt: Date;
+}): number | null | 'not-open' {
+  const { closesAt, opensAt } = questionWindow(input);
+  const now = input.now.getTime();
+
+  if (now < opensAt.getTime() - earlyAnswerToleranceMs) {
+    return 'not-open';
   }
 
-  const timerMs = difficultyRules[input.difficulty].timerSeconds * 1000;
-  const elapsedMs = input.now.getTime() - new Date(input.openedAt).getTime();
-
-  if (elapsedMs > timerMs + answerGraceMs) {
+  if (now > closesAt.getTime() + answerGraceMs) {
     return null;
   }
 
-  return Math.max(0, Math.min(timerMs, timerMs - elapsedMs));
+  const timerMs = difficultyRules[input.difficulty].timerSeconds * 1000;
+
+  return Math.max(0, Math.min(timerMs, closesAt.getTime() - now));
 }
 
 // Options are shown in a per-round order; the database keeps the original order.

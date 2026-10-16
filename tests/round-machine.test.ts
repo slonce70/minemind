@@ -76,3 +76,36 @@ test('round hook keeps side effects out of state updates', () => {
   assert.match(source, /setInterval\(\(\) => dispatch\(\{ type: 'tick' \}\), 1000\)/);
   assert.doesNotMatch(source, /setTimeLeft\(\(value\)/);
 });
+
+test('timeline phases: countdown, question, answer and standings, then over', async () => {
+  const { describeTimeline } = await import('../src/features/quiz/round/timeline');
+  const startedAt = new Date('2026-10-16T10:00:00.000Z');
+  const at = (time: string) =>
+    describeTimeline({ difficulty: 'hard', now: new Date(`2026-10-16T${time}Z`), questionCount: 2, startedAt });
+
+  assert.deepEqual(at('10:00:01.500'), { kind: 'lead-in', secondsLeft: 4 });
+  assert.deepEqual(at('10:00:05.000'), { index: 0, kind: 'question', secondsLeft: 15 });
+  assert.deepEqual(at('10:00:21.000'), { index: 0, kind: 'between', secondsLeft: 9 });
+  assert.deepEqual(at('10:00:30.000'), { index: 1, kind: 'question', secondsLeft: 15 });
+  assert.deepEqual(at('10:00:46.000'), { index: 1, kind: 'between', secondsLeft: 2 });
+  assert.deepEqual(at('10:00:48.000'), { kind: 'over' });
+});
+
+test('the server timeline moves the round and closes unanswered questions', () => {
+  const loaded = run([{ answers: undefined, awaitsVerdict: true, questions: [], timeLimit: 15, type: 'load' }]);
+  const firstOpen = roundReducer(loaded, { index: 0, isClosed: false, questions: questions.slice(0, 1), timeLeft: 12, type: 'timeline' });
+  assert.equal(firstOpen.timeLeft, 12);
+  assert.equal(firstOpen.isRevealed, false);
+
+  const closed = roundReducer(firstOpen, { index: 0, isClosed: true, questions: questions.slice(0, 1), timeLeft: 0, type: 'timeline' });
+  assert.deepEqual(closed.answerMap.q1, { selectedIndex: -1, timeLeft: 0 });
+  assert.deepEqual(closed.pendingAnswer, { optionIndex: -1, questionId: 'q1', timeLeft: 0 });
+
+  const second = roundReducer(
+    { ...closed, pendingAnswer: null },
+    { index: 1, isClosed: false, questions: questions.slice(0, 2), timeLeft: 15, type: 'timeline' }
+  );
+  assert.equal(second.currentIndex, 1);
+  assert.equal(second.isRevealed, false);
+  assert.equal(second.selectedIndex, null);
+});

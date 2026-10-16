@@ -59,7 +59,10 @@ export function useSoloRound(params: {
   const classroom = useClassroomMode({ ...context, enabled: isClassroomMode });
   const mode = isRoomMode ? room.controller : isClassroomMode ? classroom.controller : solo;
   const question = round.questions[round.currentIndex];
-  const hasOpenQuestion = Boolean(question) && !round.isRevealed;
+  // Live rooms run on the server timeline instead of the local countdown and "next" button.
+  const isTimelineDriven = Boolean(room.timeline);
+  const hasOpenQuestion = Boolean(question) && !round.isRevealed && !isTimelineDriven;
+  const questionTotal = room.timeline ? (room.currentRoomRound?.timeline?.questionCount ?? 0) : round.questions.length;
 
   // The countdown only dispatches ticks; the machine decides when time is up.
   useEffect(() => {
@@ -74,13 +77,17 @@ export function useSoloRound(params: {
 
   const { finish } = mode;
   const goNext = useCallback(async () => {
+    if (isTimelineDriven) {
+      return;
+    }
+
     if (round.currentIndex < round.questions.length - 1) {
       dispatch({ type: 'next' });
       return;
     }
 
     await finish();
-  }, [finish, round.currentIndex, round.questions.length]);
+  }, [finish, isTimelineDriven, round.currentIndex, round.questions.length]);
 
   const handleAnswer = useCallback(
     (optionIndex: number, recordedTimeLeft = round.timeLeft) => {
@@ -105,9 +112,11 @@ export function useSoloRound(params: {
     isRoomMode,
     isSubmittingAnswer: round.isSubmittingAnswer,
     loadError: mode.loadError,
-    progress: round.questions.length > 0 ? Math.round(((round.currentIndex + 1) / round.questions.length) * 100) : 0,
+    progress: questionTotal > 0 ? Math.round(((round.currentIndex + 1) / questionTotal) * 100) : 0,
     question,
+    questionTotal,
     questions: round.questions,
+    roomTimeline: room.timeline,
     resultsPending: mode.resultsPending,
     retryFinalize: mode.retryFinalize,
     selectedIndex: round.selectedIndex,

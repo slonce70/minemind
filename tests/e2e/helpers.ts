@@ -63,3 +63,28 @@ export async function createPlayer(
 
   return { call, client, id: data.user.id, token };
 }
+
+const timerSecondsByDifficulty = { easy: 20, hard: 15, medium: 18 } as const;
+
+/**
+ * Moves a live round's timeline so that question `index` opened a second ago (lead-in 5 s, then
+ * timer + 10 s per question), instead of waiting in real time. The deadline moves with it.
+ */
+export async function openQuestion(
+  admin: ReturnType<typeof adminClient>,
+  round: { difficulty: keyof typeof timerSecondsByDifficulty; id: string; question_ids: string[] },
+  index: number,
+  offsetMs = 1000
+) {
+  const timerMs = timerSecondsByDifficulty[round.difficulty] * 1000;
+  const startedAt = Date.now() - 5000 - index * (timerMs + 10_000) - offsetMs;
+  const endsAt = startedAt + 5000 + (round.question_ids.length - 1) * (timerMs + 10_000) + timerMs + 3000;
+  const { error } = await admin
+    .from('round_sessions')
+    .update({ ends_at: new Date(endsAt).toISOString(), started_at: new Date(startedAt).toISOString() })
+    .eq('id', round.id);
+
+  if (error) {
+    throw error;
+  }
+}

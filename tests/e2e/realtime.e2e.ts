@@ -4,9 +4,10 @@ import test from 'node:test';
 
 import type { RealtimeChannel } from '@supabase/supabase-js';
 
-import { createPlayer, localStack, type TestPlayer } from './helpers';
+import { adminClient, createPlayer, localStack, openQuestion, type TestPlayer } from './helpers';
 
 const stack = localStack();
+const admin = adminClient(stack);
 
 function waitFor<T>(label: string, register: (resolve: (value: T) => void) => void, timeoutMs = 10_000) {
   return new Promise<T>((resolve, reject) => {
@@ -97,11 +98,12 @@ test('room channel: members get pushes, outsiders are kept out', async (t) => {
         guestChannel.roomUpdates.some((room) => room.current_round_id === started.body.round.id)
       );
 
-      const question = started.body.questions[0];
-      await host.call('submit-answer', { phase: 'open', questionId: question.id, roundId: started.body.round.id });
-      await host.call('submit-answer', { questionId: question.id, roundId: started.body.round.id, selectedOption: 0 });
+      await openQuestion(admin, started.body.round, 0);
+      const questionId = started.body.round.question_ids[0] as string;
+      const answered = await host.call('submit-answer', { questionId, roundId: started.body.round.id, selectedOption: 0 });
+      assert.equal(answered.status, 200, JSON.stringify(answered.body));
       await until('answer progress broadcast', () =>
-        guestChannel.answers.some((event) => event.playerId === host.id && event.questionId === question.id)
+        guestChannel.answers.some((event) => event.playerId === host.id && event.questionId === questionId)
       );
       assert.ok(outsiderChannel.answers.length === 0);
     });

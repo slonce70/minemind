@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { adminClient, createPlayer, localStack } from './helpers';
+import { adminClient, createPlayer, localStack, openQuestion } from './helpers';
 
 const stack = localStack();
 const admin = adminClient(stack);
@@ -78,11 +78,9 @@ test('a reconnecting player gets their answers back', async () => {
   await guest.call('join-room', { roomCode });
   await guest.call('set-room-ready', { ready: true, roomCode });
   const started = await host.call('start-room-round', { locale: 'en', roomCode });
-  const [first, second] = started.body.questions as Array<{ id: string }>;
-
-  await guest.call('submit-answer', { phase: 'open', questionId: first.id, roundId: started.body.round.id });
+  await openQuestion(admin, started.body.round, 0);
+  const first = { id: started.body.round.question_ids[0] as string };
   const answer = await guest.call('submit-answer', { questionId: first.id, roundId: started.body.round.id, selectedOption: 2 });
-  await guest.call('submit-answer', { phase: 'open', questionId: second.id, roundId: started.body.round.id });
 
   const resumed = await guest.call('get-room-round', { locale: 'en', roomCode });
   assert.deepEqual(

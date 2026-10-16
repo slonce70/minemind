@@ -1,4 +1,5 @@
 import { Redirect, Stack, router } from 'expo-router';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { LoadingScreen } from '../src/components/ui/loading-screen';
@@ -19,6 +20,17 @@ export default function RoomsRoute() {
     onlineUnavailable: t('rooms.onlineUnavailable'),
   });
   const canResumeRound = Boolean(lobby.activeRoomRound && (!isSupabaseConfigured || lobby.activeRoom?.roundId));
+  // Live rooms share one timeline: when the host starts, everyone goes to the round at once.
+  const liveRoundId =
+    lobby.activeRoomRound?.source === 'supabase' && lobby.activeRoom?.status === 'active'
+      ? lobby.activeRoomRound.roundId
+      : undefined;
+
+  useEffect(() => {
+    if (liveRoundId) {
+      router.replace('/solo?mode=room');
+    }
+  }, [liveRoundId]);
 
   if (!hasHydrated) {
     return <LoadingScreen />;

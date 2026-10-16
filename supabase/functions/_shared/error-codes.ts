@@ -11,6 +11,7 @@ export const apiErrorStatus = {
   not_enough_players: 409,
   not_room_member: 403,
   players_not_ready: 409,
+  question_not_open: 409,
   question_not_in_round: 400,
   rate_limited: 429,
   room_closed: 409,

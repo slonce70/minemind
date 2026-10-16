@@ -37,7 +37,12 @@ export type RoundAction =
   | { type: 'answer-sent' }
   | { type: 'verdict'; questionId: string; verdict: AnswerVerdict }
   | { type: 'verdict-failed'; explanation: string; markWrong: boolean; questionId: string }
-  | { type: 'next' };
+  | { type: 'next' }
+  /**
+   * Live rooms: the server timeline moves the round instead of the tick countdown and the
+   * "next" button. `questions` grows as the server releases them.
+   */
+  | { type: 'timeline'; index: number; isClosed: boolean; questions: QuizQuestion[]; timeLeft: number };
 
 export const initialRoundState: RoundState = {
   answerMap: {},
@@ -123,6 +128,25 @@ export function roundReducer(state: RoundState, action: RoundAction): RoundState
         explanation: action.explanation,
         ...(action.markWrong ? { isCorrect: false } : {}),
       });
+    case 'timeline': {
+      let next: RoundState = { ...state, questions: action.questions, timeLeft: action.timeLeft };
+
+      if (action.index !== state.currentIndex) {
+        const question = action.questions[action.index];
+        const existing = question ? state.answerMap[question.id] : undefined;
+
+        next = {
+          ...next,
+          currentIndex: action.index,
+          isRevealed: Boolean(existing),
+          isSubmittingAnswer: false,
+          selectedIndex: existing?.selectedIndex ?? null,
+        };
+      }
+
+      // The question closed without an answer: it counts as missed (the server agrees).
+      return action.isClosed && !next.isRevealed ? { ...answer(next, -1, 0), timeLeft: 0 } : next;
+    }
     case 'next':
       if (state.currentIndex >= state.questions.length - 1) {
         return state;

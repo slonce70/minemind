@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { useCallback, useEffect, useReducer, useRef } from 'react';
+import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 
 import { isSupabaseConfigured } from '../../../lib/supabase';
 import { useAppStore } from '../../../state/app-store';
@@ -7,13 +7,18 @@ import { normalizeMatchRecord } from '../../results/normalize-match-record';
 import { createRoomStandings } from '../../rooms/demo-room-service';
 import {
   finalizeLiveRoomRound,
-  openLiveRoomQuestion,
   resumeLiveRoomRound,
   submitLiveRoomAnswer,
 } from '../../rooms/live-room-service';
+import {
+  countClosedQuestions,
+  countReleasedQuestions,
+} from '../../../../supabase/functions/_shared/game-rules';
+import { useRoomChannel } from '../../rooms/use-room-channel';
 import { buildQuizResult } from '../quiz-service';
 import type { ModeContext, ModeController } from './mode-types';
 import { initialRoundFlowState, roundFlowReducer } from './round-flow';
+import { describeTimeline, type TimelinePhase } from './timeline';
 
 /** Room battle: live (Supabase, server-scored) or the offline demo room. */
 export function useRoomMode({ difficulty, dispatch, enabled, locale, messages, round, timeLimit }: ModeContext) {
@@ -157,19 +162,7 @@ export function useRoomMode({ difficulty, dispatch, enabled, locale, messages, r
     };
   }, [currentRoomRound, hasHydrated, isRecoveringWaitingRoom, leaveRoom, messages.loadError, saveMatchRecord]);
 
-  // Live rooms: tell the server when the question appears so it can time the answer itself.
-  const question = round.questions[round.currentIndex];
-  const openedQuestionRef = useRef<Promise<unknown>>(Promise.resolve());
-
-  useEffect(() => {
-    if (!isLiveRound || !currentRoomRound || !question) {
-      return;
-    }
-
-    openedQuestionRef.current = openLiveRoomQuestion(currentRoomRound, question.id).catch(() => undefined);
-  }, [currentRoomRound, isLiveRound, question]);
-
-  // Send the answer and wait for the server's verdict.
+  // Send the answer and wait for the server's verdict (the server times it on the timeline).
   const pendingAnswer = enabled && isLiveRound ? round.pendingAnswer : null;
 
   useEffect(() => {
@@ -178,8 +171,7 @@ export function useRoomMode({ difficulty, dispatch, enabled, locale, messages, r
     }
 
     dispatch({ type: 'answer-sent' });
-    void openedQuestionRef.current
-      .then(() => submitLiveRoomAnswer(currentRoomRound, pendingAnswer.questionId, pendingAnswer.optionIndex, locale))
+    void submitLiveRoomAnswer(currentRoomRound, pendingAnswer.questionId, pendingAnswer.optionIndex, locale)
       .then((submission) => {
         if (submission) {
           dispatch({
@@ -274,6 +266,115 @@ export function useRoomMode({ difficulty, dispatch, enabled, locale, messages, r
     return () => clearTimeout(retryTimer);
   }, [flow.resultsPending, retryFinalize, roundEndsAt]);
 
+  // Live rooms follow the server timeline: questions open and close, and the standings show,
+  // for everyone at the same moment. The clock only dispatches; the machine applies it.
+  const timeline = isLiveRound ? currentRoomRound?.timeline : undefined;
+  const [phase, setPhase] = useState<TimelinePhase | null>(null);
+  const fetchStateRef = useRef({ closed: -1, inFlight: false, lastAttemptAt: 0, roundId: '' });
+  const finishedRoundRef = useRef<string | null>(null);
+  const liveRoomCode = currentRoom?.roomCode;
+
+  const refreshRound = useCallback(
+    async (closedTarget: number) => {
+      const fetchState = fetchStateRef.current;
+
+      if (!liveRoomCode || fetchState.inFlight || Date.now() - fetchState.lastAttemptAt < 1500) {
+        return;
+      }
+
+      fetchState.inFlight = true;
+      fetchState.lastAttemptAt = Date.now();
+
+      try {
+        const refreshed = await resumeLiveRoomRound(liveRoomCode, locale);
+
+        if (useAppStore.getState().activeRoomRound?.roundId === refreshed.round.roundId) {
+          fetchState.closed = closedTarget;
+          setActiveRoomRound(refreshed.round);
+        }
+      } catch {
+        // The next clock tick retries.
+      } finally {
+        fetchState.inFlight = false;
+      }
+    },
+    [liveRoomCode, locale, setActiveRoomRound]
+  );
+
+  useEffect(() => {
+    if (!enabled || !timeline || !currentRoomRound?.roundId) {
+      setPhase(null);
+      return undefined;
+    }
+
+    if (fetchStateRef.current.roundId !== currentRoomRound.roundId) {
+      // New round (or first mount after a reconnect): fetch right away to align the clock.
+      fetchStateRef.current = { closed: -1, inFlight: false, lastAttemptAt: 0, roundId: currentRoomRound.roundId };
+    }
+
+    const timing = {
+      difficulty: currentRoomRound.difficulty ?? 'medium',
+      questionCount: timeline.questionCount,
+      startedAt: new Date(timeline.startedAt),
+    };
+    let lastPhaseKey = '';
+
+    const update = () => {
+      const now = new Date(Date.now() + timeline.serverOffsetMs);
+      const next = describeTimeline({ ...timing, now });
+      const phaseKey = JSON.stringify(next);
+
+      if (phaseKey !== lastPhaseKey) {
+        lastPhaseKey = phaseKey;
+        setPhase(next);
+
+        if (next.kind === 'question' || next.kind === 'between') {
+          dispatch({
+            index: next.index,
+            isClosed: next.kind === 'between',
+            questions: currentRoomRound.questions,
+            timeLeft: next.kind === 'question' ? next.secondsLeft : 0,
+            type: 'timeline',
+          });
+        }
+      }
+
+      const closed = countClosedQuestions({ ...timing, now });
+
+      if (
+        currentRoomRound.questions.length < countReleasedQuestions({ ...timing, now }) ||
+        closed > fetchStateRef.current.closed
+      ) {
+        void refreshRound(closed);
+      }
+    };
+
+    update();
+    const clock = setInterval(update, 250);
+
+    return () => clearInterval(clock);
+  }, [currentRoomRound, dispatch, enabled, refreshRound, timeline]);
+
+  // The last question closed: hand in the round once.
+  const liveRoundId = currentRoomRound?.roundId;
+
+  useEffect(() => {
+    if (phase?.kind !== 'over' || !liveRoundId || finishedRoundRef.current === liveRoundId) {
+      return;
+    }
+
+    finishedRoundRef.current = liveRoundId;
+    void finish();
+  }, [finish, liveRoundId, phase]);
+
+  // Who answered the current question (realtime), and results as soon as the server has them.
+  const roomChannel = useRoomChannel(isLiveRound ? currentRoom : undefined, (event) => {
+    if (event.type === 'room-finished' && flow.resultsPending) {
+      retryFinalize();
+    }
+  });
+  const currentQuestion = round.questions[round.currentIndex];
+
   return {
     controller: {
       finish,
@@ -285,5 +386,14 @@ export function useRoomMode({ difficulty, dispatch, enabled, locale, messages, r
     } satisfies ModeController,
     currentRoom,
     currentRoomRound,
+    timeline: timeline
+      ? {
+          answeredCount: currentQuestion ? (roomChannel.answeredByQuestionId[currentQuestion.id]?.length ?? 0) : 0,
+          phase,
+          playerCount: currentRoom?.participants.length ?? 0,
+          standings: timeline.standings,
+          standingsQuestionCount: timeline.standingsQuestionCount,
+        }
+      : undefined,
   };
 }

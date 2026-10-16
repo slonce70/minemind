@@ -281,22 +281,45 @@ export async function startLiveRoomRound(activeRoom: ActiveRoom, profile: GuestP
     room: parsedPayload.room,
   });
 
-  const round: ActiveRoomRound = {
-    contentPackVersion:
-      parsedPayload.round.content_pack_version ??
-      room.settings.contentPackVersion,
-    difficulty:
-      parsedPayload.round.difficulty ??
-      room.settings.difficulty,
-    endsAt: parsedPayload.round.ends_at ?? undefined,
-    mode: 'room',
-    questions: parsedPayload.questions,
-    roomCode: parsedPayload.roomCode,
-    roundId: parsedPayload.round.id,
-    source: 'supabase',
-  };
+  return { room, round: mapLiveRound(parsedPayload, room) };
+}
 
-  return { room, round };
+function mapLiveRound(payload: ReturnType<typeof parseStartRoomRoundResponse>, room: ActiveRoom): ActiveRoomRound {
+  return {
+    answers: Object.fromEntries(
+      (payload.myAnswers ?? []).map((answer) => [
+        answer.questionId,
+        {
+          correctIndex: answer.correctOption,
+          explanation: answer.explanation,
+          isCorrect: answer.isCorrect,
+          selectedIndex: answer.selectedOption,
+          timeLeft: Math.floor(answer.timeLeftMs / 1000),
+        },
+      ])
+    ),
+    contentPackVersion: payload.round.content_pack_version ?? room.settings.contentPackVersion,
+    difficulty: payload.round.difficulty ?? room.settings.difficulty,
+    endsAt: payload.round.ends_at ?? undefined,
+    mode: 'room',
+    questions: payload.questions,
+    roomCode: payload.roomCode,
+    roundId: payload.round.id,
+    source: 'supabase',
+    timeline: {
+      questionCount: payload.questionCount ?? payload.round.question_ids.length,
+      serverOffsetMs: payload.serverNow ? Date.parse(payload.serverNow) - Date.now() : 0,
+      standings: (payload.standings ?? []).map((entry) => ({
+        correctCount: entry.correct_count,
+        name: entry.nickname,
+        playerId: entry.player_id,
+        rank: entry.rank,
+        score: entry.score,
+      })),
+      standingsQuestionCount: payload.standingsQuestionCount ?? 0,
+      startedAt: payload.round.started_at,
+    },
+  };
 }
 
 /** Loads the room's current round in `locale`; every player reads the same questions in their language. */
@@ -325,51 +348,7 @@ export async function resumeLiveRoomRound(roomCode: string, locale: AppLocale) {
     room: parsedPayload.room,
   });
 
-  return {
-    room,
-    round: {
-      answers: Object.fromEntries(
-        (parsedPayload.myAnswers ?? []).map((answer) => [
-          answer.questionId,
-          {
-            correctIndex: answer.correctOption,
-            explanation: answer.explanation,
-            isCorrect: answer.isCorrect,
-            selectedIndex: answer.selectedOption,
-            timeLeft: Math.floor(answer.timeLeftMs / 1000),
-          },
-        ])
-      ),
-      contentPackVersion:
-        parsedPayload.round.content_pack_version ??
-        room.settings.contentPackVersion,
-      difficulty:
-        parsedPayload.round.difficulty ??
-        room.settings.difficulty,
-      endsAt: parsedPayload.round.ends_at ?? undefined,
-      mode: 'room' as const,
-      questions: parsedPayload.questions,
-      roomCode: parsedPayload.roomCode,
-      roundId: parsedPayload.round.id,
-      source: 'supabase' as const,
-    },
-  };
-}
-
-/** Starts the server-side timer for a question; the server ignores repeated opens. */
-export async function openLiveRoomQuestion(round: ActiveRoomRound, questionId: string) {
-  if (!round.roundId) {
-    return;
-  }
-
-  await invokeSupabaseFunction<{ opened: boolean }, { phase: 'open'; questionId: string; roundId: string }>(
-    'submit-answer',
-    {
-      phase: 'open',
-      questionId,
-      roundId: round.roundId,
-    }
-  );
+  return { room, round: mapLiveRound(parsedPayload, room) };
 }
 
 export async function submitLiveRoomAnswer(
