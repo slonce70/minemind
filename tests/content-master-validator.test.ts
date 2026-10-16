@@ -2,8 +2,10 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
 
+import { lintQuestionBank } from '../src/features/content/content-lint';
+import { validateQuestionBank } from '../src/features/content/content-validator';
 import { validateMasterQuestionProgram } from '../src/features/content/master-content-validator';
-import type { ContentDifficulty, ContentTopicId } from '../src/features/content/types';
+import { contentTopics, type ContentDifficulty, type ContentTopicId } from '../src/features/content/types';
 
 test('question slot blueprint sums to 1080 records', () => {
   const slots = JSON.parse(
@@ -374,6 +376,29 @@ test('ukrainian prompts do not give away the correct answer text', () => {
       new RegExp(escapeRegExp(correctUkrainianOption.toLocaleLowerCase('uk-UA'))),
       `${record.id} prompt should not include its exact correct answer`
     );
+  }
+});
+
+test('runtime question bank passes the editorial content lint', () => {
+  const runtimeBank = validateQuestionBank(
+    JSON.parse(readFileSync(new URL('../content/minecraft/minecraft-question-bank.v1.json', import.meta.url), 'utf8'))
+  );
+
+  assert.deepEqual(lintQuestionBank(runtimeBank), []);
+});
+
+test('the shipped bank keeps 300+ active questions spread over every difficulty and topic', () => {
+  const activeRecords = validateQuestionBank(
+    JSON.parse(readFileSync(new URL('../content/minecraft/minecraft-question-bank.v1.json', import.meta.url), 'utf8'))
+  ).filter((record) => record.isActive);
+
+  assert.ok(activeRecords.length >= 300, `only ${activeRecords.length} active questions`);
+  for (const difficulty of ['easy', 'medium', 'hard'] as const) {
+    for (const topicId of contentTopics) {
+      const count = activeRecords.filter((record) => record.difficulty === difficulty && record.topicId === topicId).length;
+
+      assert.ok(count >= 10, `${topicId}/${difficulty} has only ${count} active questions`);
+    }
   }
 });
 
