@@ -17,7 +17,11 @@ MineMind is a mobile quiz app for iOS and Android, built with Expo and React Nat
 - classroom (LAN) matches where the host keeps the answers
 - validated local question bank: `360` active records in `uk`, `en`, `ru` (`120` per difficulty, `45` per topic), answer options shuffled every round
 - one scoring rule for every mode: `100 + 6 × seconds left`, times `×1 / ×1.25 / ×1.5` for `easy / medium / hard` (timers `20 / 18 / 15` s), defined in `supabase/functions/_shared/game-rules.ts`
-- Minecraft-inspired fantasy UI layer, difficulty badges, and reward framing
+- original pixel art direction: Tiny5 pixel headings and Nunito text (both OFL), hand-drawn pixel icons, the Kubik mascot and 14 avatars, all in code; app icon and splash rendered from the mascot (`scripts/generate-app-icons.ts`). Every asset and license is listed in `assets/LICENSES.md`
+- game feel: Reanimated animations (question entrance, answer pop and shake, timer bar, score count-up), synthesised sound effects and music loop (`scripts/generate-sounds.ts`), haptics; sound, music and vibration switches in Settings. Animations follow the system reduce-motion setting
+- onboarding with a three-question warm-up, then a word nickname (adjective + noun, dice for another) and avatar; nickname filter blocks reserved words only as whole words (`supabase/functions/_shared/nickname-rules.ts`, mirrored in SQL)
+- results review all questions with your answer and the right one; profile screen with stats from recent matches; settings screen
+- accessibility: roles and labels on every control, answers marked with a check or cross (never colour alone), text contrast held at WCAG AA by a test, question read-aloud (`expo-speech`), centred content column and two-column layouts on tablets
 - room match settings foundation with `contentPackVersion` + difficulty metadata
 - NEXUS-Full planning docs in `docs/`
 - Supabase schema and Edge Function scaffolding in `supabase/`
@@ -71,6 +75,10 @@ npm run test:e2e
 ```
 
 CI does the same in the `e2e` job.
+
+## Screenshots
+
+Before and after Phase 2 ("game feel"): `docs/screenshots/phase-2/`.
 
 ## Next Active Wave
 - connect hosted Supabase project credentials

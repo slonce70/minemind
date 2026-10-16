@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     borderColor: colors.borderStrong,
     borderRadius: radii.md,
     borderWidth: 2,
-    flexBasis: 90,
+    flexBasis: 72,
     flexGrow: 1,
     flexShrink: 1,
     gap: spacing.xxs,
