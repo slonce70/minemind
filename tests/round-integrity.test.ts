@@ -141,3 +141,11 @@ test('start-solo-round uses the requested difficulty', () => {
   assert.doesNotMatch(source, /getLocalizedQuestionPack\([^)]*'medium'\)/);
   assert.match(source, /resolveDifficulty\(body\.difficulty\)/);
 });
+
+test('a freshly created room accepts players', () => {
+  assert.match(readSource('../supabase/functions/create-room/index.ts'), /status: 'lobby'/);
+  assert.match(
+    readSource('../supabase/functions/join-room/index.ts'),
+    /room\.status !== 'lobby' && room\.status !== 'waiting'/
+  );
+});

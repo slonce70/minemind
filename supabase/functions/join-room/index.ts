@@ -28,10 +28,11 @@ serve(async (request) => {
       throw new Error('Room already has a battle in progress.');
     }
 
-    // Only a room waiting in the lobby accepts new players. Joining during
+    // Only a room in the lobby accepts new players: 'lobby' right after
+    // create-room, 'waiting' after a finished round. Joining during
     // 'finalizing' would inflate the expected submission count and freeze the
     // finalize, while 'finished' rooms are effectively closed.
-    if (room.status !== 'waiting') {
+    if (room.status !== 'lobby' && room.status !== 'waiting') {
       throw new Error('Room is not accepting new players.');
     }
 
