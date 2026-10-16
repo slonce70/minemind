@@ -4,7 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { LoadingScreen } from '../src/components/ui/loading-screen';
 import { Screen } from '../src/components/ui/screen';
 import { difficultyConfig } from '../src/features/content/difficulty-config';
+import { ChallengeBanner } from '../src/features/home/home-progress';
 import { HomeView } from '../src/features/home/home-view';
+import { challengeQuery } from '../src/features/quiz/solo-round-builder';
 import { minecraftCategory } from '../src/features/quiz/mock-data';
 import { formatPlayerCount } from '../src/lib/count-format';
 import { isSupabaseConfigured } from '../src/lib/supabase';
@@ -20,6 +22,8 @@ export default function HomeRoute() {
   const activeRoomRound = useAppStore((state) => state.activeRoomRound);
   const selectedDifficulty = useAppStore((state) => state.selectedDifficulty);
   const progress = useAppStore((state) => state.progress);
+  const pendingChallenge = useAppStore((state) => state.pendingChallenge);
+  const setPendingChallenge = useAppStore((state) => state.setPendingChallenge);
   const setSelectedDifficulty = useAppStore((state) => state.setSelectedDifficulty);
   const canResumeRoom = Boolean(activeRoomRound && (!isSupabaseConfigured || activeRoom?.roundId));
   const latestMatch = recentMatches.find((entry) => entry.id === lastMatchId) ?? recentMatches[0];
@@ -35,6 +39,16 @@ export default function HomeRoute() {
   return (
     <Screen scrollable>
       <Stack.Screen options={{ headerShown: false }} />
+      {pendingChallenge ? (
+        <ChallengeBanner
+          challenge={pendingChallenge}
+          onAccept={() => {
+            setPendingChallenge(undefined);
+            router.push({ params: { ...challengeQuery(pendingChallenge), variant: 'challenge' }, pathname: '/solo' });
+          }}
+          onLater={() => setPendingChallenge(undefined)}
+        />
+      ) : null}
       <HomeView
         avatarId={profile.avatarId}
         difficultyStrings={{

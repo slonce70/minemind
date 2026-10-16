@@ -1,11 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { PrimaryButton, SecondaryButton } from '../../components/ui/button';
 import { Card } from '../../components/ui/card';
 import { colors, fonts, radii, spacing, typography } from '../../theme/tokens';
 import { feedback } from '../feel/feedback';
 import { DailyQuestRow, LevelBar } from '../progress/progress-parts';
 import { currentDailyQuest, localDay, visibleStreak, type PlayerProgress } from '../progress/progression';
+import type { ChallengeSpec } from '../quiz/solo-round-builder';
 import { PixelIcon, type PixelIconName } from '../ui/pixel-icon';
 
 /** Level, day streak and today's quest; opens the collection. */
@@ -128,6 +130,9 @@ const styles = StyleSheet.create({
     minHeight: 64,
     padding: spacing.sm,
   },
+  flex: {
+    flex: 1,
+  },
   modeCopy: {
     color: colors.textMuted,
     fontFamily: fonts.regular,
@@ -173,3 +178,22 @@ const styles = StyleSheet.create({
     fontSize: typography.h3,
   },
 });
+
+/** A friend's challenge that arrived before the player made a profile. */
+export function ChallengeBanner(props: { challenge: ChallengeSpec; onAccept: () => void; onLater: () => void }) {
+  const { t } = useTranslation();
+
+  return (
+    <Card highlight style={styles.card} tone="panel">
+      <View style={styles.row}>
+        <PixelIcon color={colors.highlight} name="sword" size={22} />
+        <Text accessibilityRole="header" style={[styles.title, styles.flex]}>
+          {t('challenge.waiting', { name: props.challenge.from })}
+        </Text>
+      </View>
+      <Text style={styles.modeCopy}>{t('challenge.toBeat', { correct: props.challenge.correct, score: props.challenge.score })}</Text>
+      <PrimaryButton label={t('challenge.accept')} onPress={props.onAccept} testID="challenge-banner-accept" />
+      <SecondaryButton label={t('challenge.later')} onPress={props.onLater} />
+    </Card>
+  );
+}

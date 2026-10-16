@@ -302,27 +302,6 @@ export default function SoloRoute() {
         </View>
       ) : null}
 
-      {canUseHints ? (
-        <View style={styles.hintRow}>
-          <HintButton
-            accessibilityLabel={t('modes.fiftyA11y', { count: round.lifelines.fifty })}
-            disabled={round.lifelines.fifty <= 0 || round.lifelinesUsed.includes('fifty') || question.options.length < 4}
-            icon="half"
-            label={t('modes.fiftyLabel')}
-            left={round.lifelines.fifty}
-            onPress={() => round.spendLifeline('fifty')}
-          />
-          <HintButton
-            accessibilityLabel={t('modes.timeA11y', { count: round.lifelines.time, seconds: extraTimeSeconds })}
-            disabled={round.lifelines.time <= 0 || round.lifelinesUsed.includes('time')}
-            icon="time-plus"
-            label={t('modes.timeLabel', { seconds: extraTimeSeconds })}
-            left={round.lifelines.time}
-            onPress={() => round.spendLifeline('time')}
-          />
-        </View>
-      ) : null}
-
       {round.loadError ? <Text style={styles.errorText}>{round.loadError}</Text> : null}
 
       <Animated.View entering={FadeInDown.duration(320)} key={question.id}>

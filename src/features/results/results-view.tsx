@@ -16,12 +16,15 @@ import { BadgeChip } from '../ui/badge-chip';
 import { Mascot } from '../ui/mascot';
 import { PixelIcon } from '../ui/pixel-icon';
 import { WorldBackground } from '../ui/world-background';
+import { ChallengeShare, ChallengeVerdict } from './challenge-panel';
 import type { MatchRecord } from './match-record';
 import { getResultBadgeModel } from './result-badges';
 
 type ResultsViewProps = {
   difficultyLabel: string;
   matchRecord: MatchRecord;
+  /** The player's nickname, put into challenge links. */
+  nickname: string;
   onBackHome: () => void;
   onPlayAgain: () => void;
   /** Shown only when they belong to this match. */
@@ -57,6 +60,7 @@ type ResultsViewProps = {
 export function ResultsView({
   difficultyLabel,
   matchRecord,
+  nickname,
   onBackHome,
   onPlayAgain,
   rewards,
@@ -109,6 +113,8 @@ export function ResultsView({
           </View>
         </WorldBackground>
       </Card>
+
+      <ChallengeVerdict record={matchRecord} />
 
       {rewards?.matchId === matchRecord.id ? (
         <Card tone="panel">
@@ -183,6 +189,7 @@ export function ResultsView({
       </Card>
 
       <View style={styles.actionStack}>
+        <ChallengeShare nickname={nickname} record={matchRecord} />
         <PrimaryButton label={strings.playAgain} onPress={onPlayAgain} />
         <SecondaryButton label={strings.backHome} onPress={onBackHome} />
       </View>

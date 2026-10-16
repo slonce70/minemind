@@ -13,6 +13,7 @@ export default function ResultsRoute() {
   const recentMatches = useAppStore((state) => state.recentMatches);
   const lastMatchId = useAppStore((state) => state.lastMatchId);
   const lastRewards = useAppStore((state) => state.lastRewards);
+  const nickname = useAppStore((state) => state.profile?.nickname ?? '');
   const selectedDifficulty = useAppStore((state) => state.selectedDifficulty);
   const latestMatch = recentMatches.find((entry) => entry.id === lastMatchId) ?? recentMatches[0];
 
@@ -28,8 +29,13 @@ export default function ResultsRoute() {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <ResultsView
-        difficultyLabel={t(difficultyConfig[latestMatch.difficulty ?? selectedDifficulty].translationKey)}
+        difficultyLabel={
+          latestMatch.round?.soloMode === 'adaptive' || latestMatch.round?.soloMode === 'mistakes'
+            ? t(`modes.${latestMatch.round.soloMode}`)
+            : t(difficultyConfig[latestMatch.difficulty ?? selectedDifficulty].translationKey)
+        }
         matchRecord={latestMatch}
+        nickname={nickname}
         onBackHome={() => router.replace('/home')}
         onPlayAgain={() => {
           if (latestMatch.mode === 'room') {
@@ -42,7 +48,16 @@ export default function ResultsRoute() {
             return;
           }
 
-          router.replace('/solo');
+          const round = latestMatch.round;
+
+          // The same kind of round again; a friend's challenge continues as a normal round.
+          if (round?.soloMode === 'topic' && round.topicId) {
+            router.replace({ params: { topic: round.topicId, variant: 'topic' }, pathname: '/solo' });
+          } else if (round?.soloMode === 'adaptive' || round?.soloMode === 'mistakes') {
+            router.replace({ params: { variant: round.soloMode }, pathname: '/solo' });
+          } else {
+            router.replace('/solo');
+          }
         }}
         rewards={lastRewards}
         sourceLabel={t(getMatchSourceTranslationKey(latestMatch))}

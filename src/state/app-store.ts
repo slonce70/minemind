@@ -23,6 +23,7 @@ import {
   type PlayerProgress,
 } from '../features/progress/progression';
 import { bankQuestionInfo } from '../features/progress/question-info';
+import type { ChallengeSpec } from '../features/quiz/solo-round-builder';
 import { defaultAppLocale, type AppLocale } from '../lib/locale';
 import { migratePersistedAppState } from './app-store-migration';
 
@@ -66,12 +67,15 @@ type AppState = {
   locale: AppLocale;
   /** Merges a copy of the progress from the cloud into this device's. */
   mergeRemoteProgress: (remote: PlayerProgress) => void;
+  /** A friend's challenge opened before the player had a profile; offered on home. */
+  pendingChallenge?: ChallengeSpec;
   profile?: GuestProfile;
   progress: PlayerProgress;
   recentMatches: MatchRecord[];
   resetProfile: () => void;
   saveMatchRecord: (record: MatchRecord) => void;
   setClassroomSession: (session?: ClassroomSession) => void;
+  setPendingChallenge: (challenge?: ChallengeSpec) => void;
   setActiveRoom: (room?: ActiveRoom) => void;
   setActiveRoomRound: (round?: ActiveRoomRound) => void;
   setHasHydrated: (value: boolean) => void;
@@ -195,6 +199,7 @@ export const useAppStore = create<AppState>()(
           activeRoom: state.activeRoom ? toggleLocalReady(state.activeRoom) : state.activeRoom,
         })),
       setClassroomSession: (classroomSession) => set({ classroomSession }),
+      setPendingChallenge: (pendingChallenge) => set({ pendingChallenge }),
       updateSettings: (patch) => set((state) => ({ settings: { ...state.settings, ...patch } })),
     }),
     {
@@ -210,6 +215,7 @@ export const useAppStore = create<AppState>()(
         lastMatchId: state.lastMatchId,
         locale: state.locale,
         lastRewards: state.lastRewards,
+        pendingChallenge: state.pendingChallenge,
         profile: state.profile,
         progress: state.progress,
         recentMatches: state.recentMatches,

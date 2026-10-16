@@ -209,9 +209,13 @@ export function parseChallenge(params: Record<string, string | string[] | undefi
   return { correct, difficulty, from: (value('from') ?? '').slice(0, 24), score, seed, topicId };
 }
 
-/** Builds the link that opens the challenge screen: the web app when its address is known. */
+/**
+ * The link that opens the challenge screen. `base` is the web app's address (anyone can open it)
+ * or the app scheme `minemind://`.
+ */
 export function buildChallengeUrl(base: string, challenge: ChallengeSpec) {
   const query = new URLSearchParams(challengeQuery(challenge)).toString();
+  const root = base.endsWith('://') ? base : `${base.replace(/\/+$/, '')}/`;
 
-  return `${base.replace(/\/$/, '')}/challenge?${query}`;
+  return `${root}challenge?${query}`;
 }
