@@ -17,6 +17,7 @@ import {
   submitLiveRoomAnswer,
 } from '../rooms/live-room-service';
 import { useAppStore } from '../../state/app-store';
+import type { AppLocale } from '../../lib/locale';
 import { isSupabaseConfigured } from '../../lib/supabase';
 import { difficultyConfig } from '../content/difficulty-config';
 import { normalizeMatchRecord } from '../results/normalize-match-record';
@@ -277,7 +278,7 @@ export function useSoloRound(params: {
         }
 
         try {
-          const resumed = await resumeLiveRoomRound(currentRoom.roomCode);
+          const resumed = await resumeLiveRoomRound(currentRoom.roomCode, params.locale as AppLocale);
 
           if (isMounted) {
             setActiveRoom(resumed.room);
@@ -788,7 +789,7 @@ export function useSoloRound(params: {
     if (currentRoomRound?.source === 'supabase') {
       setIsSubmittingAnswer(true);
       void openedQuestionRef.current
-        .then(() => submitLiveRoomAnswer(currentRoomRound, question.id, optionIndex))
+        .then(() => submitLiveRoomAnswer(currentRoomRound, question.id, optionIndex, params.locale as AppLocale))
         .then((submission) => {
           if (!submission) {
             return;

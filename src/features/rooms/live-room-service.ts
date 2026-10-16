@@ -5,6 +5,7 @@ import {
   parseStartRoomRoundResponse,
 } from '../../lib/api-contracts';
 import { toPlayerSafeErrorMessage } from '../shared/app-copy';
+import type { AppLocale } from '../../lib/locale';
 import { getAuthenticatedUser, invokeSupabaseFunction } from '../../lib/supabase';
 import { createDefaultRoomMatchSettings, type RoomMatchSettings } from './room-match-settings';
 import type { QuizResultSummary, QuizQuestion } from '../quiz/types';
@@ -298,16 +299,19 @@ export async function startLiveRoomRound(activeRoom: ActiveRoom, profile: GuestP
   return { room, round };
 }
 
-export async function resumeLiveRoomRound(roomCode: string) {
+/** Loads the room's current round in `locale`; every player reads the same questions in their language. */
+export async function resumeLiveRoomRound(roomCode: string, locale: AppLocale) {
   let payload: StartRoomRoundResponse;
 
   try {
     payload = await invokeSupabaseFunction<
       StartRoomRoundResponse,
       {
+        locale: AppLocale;
         roomCode: string;
       }
     >('get-room-round', {
+      locale,
       roomCode,
     });
   } catch (error) {
@@ -359,7 +363,8 @@ export async function openLiveRoomQuestion(round: ActiveRoomRound, questionId: s
 export async function submitLiveRoomAnswer(
   round: ActiveRoomRound,
   questionId: string,
-  selectedOption: number
+  selectedOption: number,
+  locale: AppLocale
 ) {
   if (!round.roundId) {
     return null;
@@ -374,11 +379,13 @@ export async function submitLiveRoomAnswer(
       scoreDelta: number;
     },
     {
+      locale: AppLocale;
       questionId: string;
       roundId: string;
       selectedOption: number;
     }
   >('submit-answer', {
+    locale,
     questionId,
     roundId: round.roundId,
     selectedOption,

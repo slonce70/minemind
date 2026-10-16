@@ -4,7 +4,12 @@ import { requireAuthenticatedUser } from '../_shared/auth.ts';
 import { serviceClient } from '../_shared/client.ts';
 import { GameError } from '../_shared/error-codes.ts';
 import { errorResponse, handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
-import { getLocalizedQuestionPack, sanitizeQuestionsForClient } from '../_shared/questions.ts';
+import {
+  loadQuestionsInOrder,
+  pickRoundQuestionIds,
+  resolveQuestionLocale,
+  sanitizeQuestionsForClient,
+} from '../_shared/questions.ts';
 import { getRoomByCode, listRoomParticipants } from '../_shared/rooms.ts';
 import { computeRoundEndsAt, resolveDifficulty } from '../_shared/round-integrity.ts';
 
@@ -46,12 +51,7 @@ serve(async (request) => {
       throw new GameError('players_not_ready', 'All players need to be ready before the battle starts.');
     }
 
-    const { questions } = await getLocalizedQuestionPack(
-      body.locale ?? 'en',
-      room.difficulty,
-      room.question_count
-    );
-    const questionIds = questions.map((question) => question.id);
+    const questionIds = await pickRoundQuestionIds(resolveDifficulty(room.difficulty), room.question_count);
     const startedAt = new Date();
 
     const { data: round, error: roundError } = await serviceClient
@@ -91,7 +91,11 @@ serve(async (request) => {
 
     return jsonResponse({
       participants,
-      questions: sanitizeQuestionsForClient(questions, round.id),
+      // The host reads in their language; every other player loads the round in theirs.
+      questions: sanitizeQuestionsForClient(
+        await loadQuestionsInOrder(questionIds, resolveQuestionLocale(body.locale)),
+        round.id
+      ),
       room: {
         ...room,
         current_round_id: round.id,

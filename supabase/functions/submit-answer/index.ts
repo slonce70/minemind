@@ -5,6 +5,7 @@ import { serviceClient } from '../_shared/client.ts';
 import { GameError } from '../_shared/error-codes.ts';
 import { scoreAnswer } from '../_shared/game-rules.ts';
 import { errorResponse, handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
+import { loadQuestionsInOrder, resolveQuestionLocale } from '../_shared/questions.ts';
 import { broadcastToRoom } from '../_shared/realtime.ts';
 import { assertQuestionBelongsToRound } from '../_shared/round-questions.ts';
 import {
@@ -17,6 +18,8 @@ import {
 import { assertRoomMembership } from '../_shared/rooms.ts';
 
 type SubmitAnswerPayload = {
+  /** Language of the explanation returned with the verdict. */
+  locale?: 'en' | 'ru' | 'uk';
   // 'open' starts the server-side timer for the question; 'answer' (default) locks in the choice.
   phase?: 'answer' | 'open';
   questionId: string;
@@ -131,14 +134,10 @@ serve(async (request) => {
       }
     }
 
-    const { data: question, error: questionError } = await serviceClient
-      .from('questions')
-      .select('correct_option, explanation')
-      .eq('id', body.questionId)
-      .single();
+    const [question] = await loadQuestionsInOrder([body.questionId], resolveQuestionLocale(body.locale));
 
-    if (questionError || !question) {
-      throw questionError ?? new Error('Question not found.');
+    if (!question) {
+      throw new Error('Question not found.');
     }
 
     const isCorrect = selectedOption === question.correct_option;

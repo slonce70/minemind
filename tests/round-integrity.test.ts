@@ -132,14 +132,37 @@ test('supabase seed is generated from the current content bank', () => {
 
   assert.equal(seed, buildSeedSql(bank), 'run `npm run export:content` to refresh supabase/seed.sql');
   assert.doesNotMatch(seed, /'starter'/);
-  assert.match(seed, /'minecraft-ru-hard'/);
+});
+
+test('one language-neutral question per fact, with a translation per locale', () => {
+  const bank = validateQuestionBank(JSON.parse(readFileSync(questionBankPath, 'utf8')));
+  const seed = buildSeedSql(bank);
+  const migration = readSource('../supabase/migrations/20261017110000_question_translations.sql');
+
+  assert.match(migration, /primary key \(question_id, locale\)/);
+  assert.match(migration, /revoke all on public\.question_translations from anon, authenticated/);
+  assert.match(seed, /select id, null, '8-12', 'hard', 'MineMind hard', 'minecraft-hard', true/);
+  assert.match(seed, /update public\.question_packs\nset is_active = false\nwhere locale is not null/);
+  assert.doesNotMatch(seed, /delete from/i);
+
+  // Every record gets a uk, en and ru translation row keyed by its content id.
+  for (const locale of ['uk', 'en', 'ru']) {
+    assert.equal(
+      seed.match(new RegExp(`\\('[a-z0-9-]+', '${locale}', `, 'g'))?.length,
+      bank.length,
+      locale
+    );
+  }
+
+  const roundSource = readSource('../supabase/functions/get-room-round/index.ts');
+  assert.match(roundSource, /loadQuestionsInOrder\(round\.question_ids, resolveQuestionLocale\(body\.locale\)\)/);
 });
 
 test('start-solo-round uses the requested difficulty', () => {
   const source = readSource('../supabase/functions/start-solo-round/index.ts');
 
-  assert.doesNotMatch(source, /getLocalizedQuestionPack\([^)]*'medium'\)/);
   assert.match(source, /resolveDifficulty\(body\.difficulty\)/);
+  assert.match(source, /pickRoundQuestionIds\(difficulty, 8, seed\)/);
 });
 
 test('a freshly created room accepts players', () => {

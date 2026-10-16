@@ -2,7 +2,12 @@ import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
 
 import { requireAuthenticatedUser } from '../_shared/auth.ts';
 import { errorResponse, handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
-import { getLocalizedQuestionPack, questionsWithAnswersForClient } from '../_shared/questions.ts';
+import {
+  loadQuestionsInOrder,
+  pickRoundQuestionIds,
+  questionsWithAnswersForClient,
+  resolveQuestionLocale,
+} from '../_shared/questions.ts';
 import { resolveDifficulty } from '../_shared/round-integrity.ts';
 
 type StartSoloRoundPayload = {
@@ -21,7 +26,10 @@ serve(async (request) => {
     const body = await requireJsonBody<StartSoloRoundPayload>(request);
     const difficulty = resolveDifficulty(body.difficulty);
     const seed = crypto.randomUUID();
-    const { questions } = await getLocalizedQuestionPack(body.locale ?? 'en', difficulty, 8, seed);
+    const questions = await loadQuestionsInOrder(
+      await pickRoundQuestionIds(difficulty, 8, seed),
+      resolveQuestionLocale(body.locale)
+    );
 
     return jsonResponse({
       contentPackVersion: 'minecraft-v1',

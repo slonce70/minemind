@@ -4,10 +4,12 @@ import { requireAuthenticatedUser } from '../_shared/auth.ts';
 import { serviceClient } from '../_shared/client.ts';
 import { GameError } from '../_shared/error-codes.ts';
 import { errorResponse, handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
-import { loadQuestionsInOrder, sanitizeQuestionsForClient } from '../_shared/questions.ts';
+import { loadQuestionsInOrder, resolveQuestionLocale, sanitizeQuestionsForClient } from '../_shared/questions.ts';
 import { assertRoomMembership, getRoomByCode, listRoomParticipants } from '../_shared/rooms.ts';
 
 type GetRoomRoundPayload = {
+  /** Each player loads the round in their own language. */
+  locale?: 'en' | 'ru' | 'uk';
   roomCode: string;
 };
 
@@ -42,7 +44,7 @@ serve(async (request) => {
       throw roundError ?? new GameError('round_not_found', 'Round not found.');
     }
 
-    const questions = await loadQuestionsInOrder(round.question_ids);
+    const questions = await loadQuestionsInOrder(round.question_ids, resolveQuestionLocale(body.locale));
 
     return jsonResponse({
       participants: await listRoomParticipants(room.id),

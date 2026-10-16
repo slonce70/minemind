@@ -70,7 +70,7 @@ export function useRoomLobby(messages: { genericError: string; onlineUnavailable
       const activeRoomRound = useAppStore.getState().activeRoomRound;
 
       if ((room.status === 'active' || room.status === 'finalizing') && room.roundId && !activeRoomRound) {
-        const resumed = await resumeLiveRoomRound(room.roomCode);
+        const resumed = await resumeLiveRoomRound(room.roomCode, useAppStore.getState().locale);
 
         if (useAppStore.getState().activeRoom?.roomCode !== activeRoomCode) {
           return;
@@ -213,7 +213,7 @@ export function useRoomLobby(messages: { genericError: string; onlineUnavailable
         await ensureGuestSession(profile);
         const { room, round } =
           activeRoom.status === 'active' && activeRoom.roundId
-            ? await resumeLiveRoomRound(activeRoom.roomCode)
+            ? await resumeLiveRoomRound(activeRoom.roomCode, useAppStore.getState().locale)
             : await startLiveRoomRound(activeRoom, profile);
         setActiveRoom(room);
         setActiveRoomRound(round);
