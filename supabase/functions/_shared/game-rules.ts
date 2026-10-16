@@ -16,6 +16,21 @@ export const speedBonusPerSecond = 6;
 // Extra time the server allows for network latency before a question counts as missed.
 export const answerGraceMs = 3000;
 
+// Time a player gets between questions to read the explanation and tap "next".
+export const betweenQuestionsAllowanceMs = 10_000;
+// Slack for loading the round on slower phones before the first question.
+export const roundStartAllowanceMs = 30_000;
+
+export function computeRoundEndsAt(input: {
+  difficulty: GameDifficulty;
+  questionCount: number;
+  startedAt: Date;
+}) {
+  const perQuestionMs = difficultyRules[input.difficulty].timerSeconds * 1000 + betweenQuestionsAllowanceMs;
+
+  return new Date(input.startedAt.getTime() + roundStartAllowanceMs + perQuestionMs * input.questionCount);
+}
+
 export function isGameDifficulty(value: unknown): value is GameDifficulty {
   return gameDifficulties.includes(value as GameDifficulty);
 }

@@ -37,6 +37,24 @@ export type ClassroomTransportEvent =
   | { type: 'participant-joined'; participant: RoomParticipant; roomCode: string }
   | { type: 'participant-ready'; participantId: string; ready: boolean; roomCode: string }
   | { type: 'round-submitted'; participantId: string; answers: QuizAnswerMap; roomCode: string }
+  // Guest -> host after each answer; the host replies with answer-revealed to that guest only.
+  | {
+      type: 'answer-submitted';
+      participantId: string;
+      questionId: string;
+      roomCode: string;
+      selectedIndex: number;
+      timeLeft: number;
+    }
+  | {
+      type: 'answer-revealed';
+      correctIndex: number;
+      explanation?: string;
+      isCorrect: boolean;
+      participantId: string;
+      questionId: string;
+      roomCode: string;
+    }
   | { type: 'round-started'; roomCode: string; round: ActiveRoomRound }
   | { type: 'round-finished'; records: ClassroomRoundRecordEnvelope[]; roomCode: string };
 

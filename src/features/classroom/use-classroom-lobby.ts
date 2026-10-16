@@ -3,7 +3,11 @@ import { Share } from 'react-native';
 import { useEffect, useMemo, useState } from 'react';
 
 import { useAppStore } from '../../state/app-store';
-import { applyClassroomTransportEvent, buildClassroomRoundManifest } from './classroom-session-sync';
+import {
+  applyClassroomTransportEvent,
+  buildClassroomRoundManifest,
+  toGuestClassroomRound,
+} from './classroom-session-sync';
 import { buildClassroomInviteToken, parseClassroomInviteInput } from './classroom-invite';
 import { deriveClassroomLobbyState } from './classroom-lobby-state';
 import { getSharedLocalHostTransport } from './local-host-transport';
@@ -222,7 +226,7 @@ export function useClassroomLobby(messages?: {
 
     try {
       await localHostTransport.publishEvent({
-        round,
+        round: toGuestClassroomRound(round),
         roomCode: classroomSession.roomCode,
         type: 'round-started',
       });

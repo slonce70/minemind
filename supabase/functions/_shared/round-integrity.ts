@@ -1,5 +1,6 @@
 import {
   answerGraceMs,
+  computeRoundEndsAt,
   difficultyRules,
   type GameDifficulty,
   isGameDifficulty,
@@ -7,23 +8,10 @@ import {
   seededPermutation,
 } from './game-rules.ts';
 
-// Time a player gets between questions to read the explanation and tap "next".
-export const betweenQuestionsAllowanceMs = 10_000;
-// Slack for loading the round on slower phones before the first question.
-export const roundStartAllowanceMs = 30_000;
+export { computeRoundEndsAt };
 
 export function resolveDifficulty(value: unknown): GameDifficulty {
   return isGameDifficulty(value) ? value : 'medium';
-}
-
-export function computeRoundEndsAt(input: {
-  difficulty: GameDifficulty;
-  questionCount: number;
-  startedAt: Date;
-}) {
-  const perQuestionMs = difficultyRules[input.difficulty].timerSeconds * 1000 + betweenQuestionsAllowanceMs;
-
-  return new Date(input.startedAt.getTime() + roundStartAllowanceMs + perQuestionMs * input.questionCount);
 }
 
 export function isRoundExpired(endsAt: string | null | undefined, now: Date) {

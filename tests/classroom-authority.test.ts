@@ -118,3 +118,41 @@ test('buildClassroomRoundResults fans out truthful classroom records for every p
   assert.equal((hostRecord?.score ?? 0) > (guestRecord?.score ?? 0), true);
   assert.equal((hostRecord?.participants[0]?.score ?? 0) >= (hostRecord?.participants[1]?.score ?? 0), true);
 });
+
+test('guests get a round without correct answers or explanations', async () => {
+  const { toGuestClassroomRound } = await import('../src/features/classroom/classroom-session-sync');
+  const round = buildClassroomRoundManifest({ difficulty: 'easy', locale: 'en', roomCode: 'CLASS2' });
+  const guestRound = toGuestClassroomRound(round);
+
+  assert.ok(round.endsAt);
+  assert.ok(round.questions.every((question) => typeof question.correctIndex === 'number'));
+  assert.ok(guestRound.questions.every((question) => question.correctIndex === undefined && question.explanation === undefined));
+  assert.deepEqual(guestRound.questions.map((question) => question.options), round.questions.map((question) => question.options));
+});
+
+test('host records the first answer per question and ignores a guest claiming it was right', async () => {
+  const { recordClassroomAnswer } = await import('../src/features/classroom/classroom-round-authority');
+  const round = buildClassroomRoundManifest({ difficulty: 'hard', locale: 'en', roomCode: 'CLASS3' });
+  const question = round.questions[0];
+  const wrongIndex = ((question.correctIndex ?? 0) + 1) % 4;
+  const first = recordClassroomAnswer({}, round, { questionId: question.id, selectedIndex: wrongIndex, timeLeft: 99 });
+
+  assert.ok(first);
+  assert.equal(first.reveal.isCorrect, false);
+  assert.equal(first.answers[question.id].timeLeft, 15);
+  assert.equal(
+    recordClassroomAnswer(first.answers, round, { questionId: question.id, selectedIndex: question.correctIndex ?? 0, timeLeft: 5 }),
+    null
+  );
+  assert.equal(recordClassroomAnswer({}, round, { questionId: 'not-in-round', selectedIndex: 0, timeLeft: 5 }), null);
+
+  const [record] = buildClassroomRoundResults({
+    participants: [{ avatarId: 'bee', id: 'bee', isHost: false, isLocalPlayer: false, name: 'Bee', ready: true }],
+    round,
+    submissionsByParticipantId: {
+      bee: { [question.id]: { isCorrect: true, selectedIndex: wrongIndex, timeLeft: 10 } },
+    },
+  });
+
+  assert.equal(record.record.score, 0);
+});
