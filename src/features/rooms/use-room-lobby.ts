@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { ensureGuestSession } from '../profile/profile-service';
 import { useAppStore } from '../../state/app-store';
+import { isDemoPlayersEnabled } from '../../lib/dev-flags';
 import { isSupabaseConfigured } from '../../lib/supabase';
 import { createDemoRoomRound } from './live-room-service';
 import { getSoloQuestionSet } from '../quiz/quiz-service';
@@ -21,7 +22,7 @@ import {
 
 export { deriveRoomLobbyState } from './room-lobby-state';
 
-export function useRoomLobby(messages: { genericError: string }) {
+export function useRoomLobby(messages: { genericError: string; onlineUnavailable: string }) {
   const profile = useAppStore((state) => state.profile);
   const activeRoom = useAppStore((state) => state.activeRoom);
   const activeRoomRound = useAppStore((state) => state.activeRoomRound);
@@ -120,8 +121,11 @@ export function useRoomLobby(messages: { genericError: string }) {
         const room = await createLiveRoom(profile, settings);
         setActiveRoom(room);
         clearActiveRound();
-      } else {
+      } else if (isDemoPlayersEnabled) {
         createRoom();
+      } else {
+        // Release builds without a backend never invent other players.
+        setErrorMessage(messages.onlineUnavailable);
       }
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : messages.genericError);
@@ -144,8 +148,11 @@ export function useRoomLobby(messages: { genericError: string }) {
         const room = await joinLiveRoom(joinCode);
         setActiveRoom(room);
         clearActiveRound();
-      } else {
+      } else if (isDemoPlayersEnabled) {
         joinRoom(joinCode);
+      } else {
+        setErrorMessage(messages.onlineUnavailable);
+        return;
       }
 
       setJoinCode('');
@@ -259,7 +266,7 @@ export function useRoomLobby(messages: { genericError: string }) {
   return {
     activeRoom,
     activeRoomRound,
-    addDemoPlayersToRoom,
+    addDemoPlayersToRoom: isDemoPlayersEnabled ? addDemoPlayersToRoom : undefined,
     errorMessage,
     handleCreateRoom,
     handleJoinRoom,

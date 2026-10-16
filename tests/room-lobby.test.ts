@@ -37,3 +37,21 @@ test('room lobby uses realtime subscription as the primary sync path', () => {
   assert.match(source, /subscribeToRoomChannel/);
   assert.match(source, /refreshLiveRoom/);
 });
+
+test('room sync effect is keyed by room code, not by the polled room object', () => {
+  const source = readFileSync(new URL('../src/features/rooms/use-room-lobby.ts', import.meta.url), 'utf8');
+
+  assert.match(source, /\}, \[activeRoomCode, clearActiveRound, setActiveRoom, setActiveRoomRound\]\);/);
+  assert.doesNotMatch(source, /\}, \[activeRoom, activeRoomRound,/);
+});
+
+test('bots and invented room players are development-only', async () => {
+  const { isDemoPlayersEnabled } = await import('../src/lib/dev-flags');
+  const source = readFileSync(new URL('../src/features/rooms/use-room-lobby.ts', import.meta.url), 'utf8');
+
+  // Outside React Native dev mode (as in a release bundle) the flag is off.
+  assert.equal(isDemoPlayersEnabled, false);
+  assert.match(source, /addDemoPlayersToRoom: isDemoPlayersEnabled \? addDemoPlayersToRoom : undefined/);
+  assert.match(source, /\} else if \(isDemoPlayersEnabled\) \{\n\s+joinRoom\(joinCode\);/);
+  assert.match(source, /\} else if \(isDemoPlayersEnabled\) \{\n\s+createRoom\(\);/);
+});
