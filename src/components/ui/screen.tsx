@@ -46,10 +46,13 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.lg,
   },
   content: {
+    alignSelf: 'center',
     flex: 1,
     gap: appTheme.layout.screenGap,
+    maxWidth: appTheme.layout.maxContentWidth,
     paddingHorizontal: appTheme.layout.screenPadding,
     paddingTop: spacing.xl,
     paddingBottom: spacing.xl,
+    width: '100%',
   },
 });

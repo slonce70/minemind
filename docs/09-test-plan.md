@@ -46,8 +46,8 @@ Use `npm run serve:web-export` or `./script/build_and_run.sh --serve-web` to ins
 Use `npm run check:web-budget` after `npm run export:web`. Current budgets are:
 
 - web entry bundle: `4.5 MiB`
-- full exported `dist`: `21 MiB`
-- mirrored question illustrations: `8 MiB`
+- full exported `dist`: `8 MiB`
+- sounds and music in `assets/sounds`: `1 MiB`
 
 The release gate runs this after `npm run smoke:web-export`.
 

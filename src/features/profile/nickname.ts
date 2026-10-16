@@ -1,26 +1,18 @@
-const blockedFragments = ['admin', 'owner', 'mod', 'fuck', 'shit', 'sex', 'сука', 'хуй'];
+import { checkNickname, type NicknameProblem } from '../../../supabase/functions/_shared/nickname-rules';
+
+const reasonKeys: Record<NicknameProblem, string> = {
+  'invalid-chars': 'errors.nicknameInvalidChars',
+  'too-long': 'errors.nicknameTooLong',
+  'too-short': 'errors.nicknameTooShort',
+  unsafe: 'errors.nicknameUnsafe',
+};
 
 export function validateNickname(rawValue: string) {
-  const sanitizedValue = rawValue.trim().replace(/\s+/g, ' ');
+  const result = checkNickname(rawValue);
 
-  if (sanitizedValue.length < 2) {
-    return { valid: false as const, reasonKey: 'errors.nicknameTooShort', sanitizedValue };
+  if (!result.ok) {
+    return { valid: false as const, reasonKey: reasonKeys[result.problem], sanitizedValue: result.value };
   }
 
-  if (sanitizedValue.length > 16) {
-    return { valid: false as const, reasonKey: 'errors.nicknameTooLong', sanitizedValue };
-  }
-
-  if (!/^[\p{L}\p{N}_ -]+$/u.test(sanitizedValue)) {
-    return { valid: false as const, reasonKey: 'errors.nicknameInvalidChars', sanitizedValue };
-  }
-
-  const lowerCaseValue = sanitizedValue.toLowerCase();
-  const hasBlockedFragment = blockedFragments.some((fragment) => lowerCaseValue.includes(fragment));
-
-  if (hasBlockedFragment) {
-    return { valid: false as const, reasonKey: 'errors.nicknameUnsafe', sanitizedValue };
-  }
-
-  return { valid: true as const, sanitizedValue };
+  return { valid: true as const, sanitizedValue: result.value };
 }

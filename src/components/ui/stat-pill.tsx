@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-import { colors, radii, shadows, spacing, typography } from '../../theme/tokens';
+import { colors, fonts, radii, shadows, spacing, typography } from '../../theme/tokens';
 
 type StatPillProps = {
   label: string;
@@ -36,15 +36,15 @@ const styles = StyleSheet.create({
   label: {
     color: colors.textMuted,
     flexShrink: 1,
+    fontFamily: fonts.display,
     fontSize: typography.micro,
-    fontWeight: '700',
     textTransform: 'uppercase',
   },
   value: {
     color: colors.textPrimary,
     flexShrink: 1,
+    fontFamily: fonts.extraBold,
     fontSize: typography.caption,
-    fontWeight: '800',
     fontVariant: ['tabular-nums'],
     marginTop: 2,
   },

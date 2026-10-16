@@ -126,8 +126,9 @@ test('web layout source allows long translated labels to wrap instead of overlap
   assert.ok(styleHasProperty(onboardingModule.sourceFile, 'profilePlate', 'minWidth'));
   assert.ok(styleHasProperty(onboardingModule.sourceFile, 'previewRow', 'flexWrap'));
   assert.ok(styleHasProperty(onboardingModule.sourceFile, 'previewText', 'minWidth'));
-  assert.ok(styleHasProperty(onboardingModule.sourceFile, 'optionBlock', 'minWidth'));
-  assert.ok(styleHasProperty(onboardingModule.sourceFile, 'avatarCardActive', 'borderWidth'));
+  const controlsModule = parseTsxModule('../src/features/profile/profile-controls.tsx');
+  assert.ok(styleHasProperty(controlsModule.sourceFile, 'choice', 'minWidth'));
+  assert.ok(styleHasProperty(controlsModule.sourceFile, 'avatarCell', 'borderWidth'));
   assert.match(roomLobbySource, /participantMeta:\s*\{[\s\S]*minWidth:\s*0/);
-  assert.match(resultsSource, /podiumStage:\s*\{[\s\S]*flexWrap:\s*'wrap'/);
+  assert.match(resultsSource, /heroStats:\s*\{[\s\S]*flexWrap:\s*'wrap'/);
 });

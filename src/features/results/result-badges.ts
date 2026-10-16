@@ -24,7 +24,7 @@ export function getResultBadgeModel(input: {
   }
 
   return {
-    icon: 'pickaxe' as const,
+    icon: 'star' as const,
     id: 'standard-clear',
     labelKey: 'results.badges.standardClear',
     tone: difficultyConfig[input.difficulty].badgeTone,

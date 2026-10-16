@@ -6,14 +6,11 @@ import type { AppLocale } from '../../lib/locale';
 import { loadMinecraftQuestionBank } from '../content/content-loader';
 import { selectQuestionRound } from '../content/content-selection';
 import type { ContentDifficulty, ContentQuestionRecord } from '../content/types';
-import { getQuestionIllustration } from './question-illustrations';
 import type {
   QuizAnswerMap,
   QuizQuestion,
   QuizResultSummary,
 } from './types';
-
-export { getQuestionIllustration } from './question-illustrations';
 
 function buildRoundSeed(locale: AppLocale, difficulty: ContentDifficulty) {
   return `${locale}-${difficulty}-${Date.now().toString().slice(-6)}`;
@@ -24,9 +21,9 @@ function localizeQuestion(definition: ContentQuestionRecord, locale: AppLocale):
     id: definition.id,
     correctIndex: definition.correctIndex,
     explanation: definition.explanation[locale],
-    illustration: getQuestionIllustration(definition.id, locale),
     options: definition.options.map((option) => option[locale]),
     prompt: definition.prompt[locale],
+    topicId: definition.topicId,
   };
 }
 
@@ -83,8 +80,10 @@ export function buildQuizResult(
     }
 
     return {
+      correctIndex: answer?.correctIndex ?? question.correctIndex,
       explanation: answer?.explanation ?? question.explanation ?? '',
       isCorrect,
+      options: question.options,
       prompt: question.prompt,
       questionId: question.id,
       selectedIndex: answer?.selectedIndex ?? -1,

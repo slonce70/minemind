@@ -7,7 +7,8 @@ import {
   type ViewStyle,
 } from 'react-native';
 
-import { appTheme, colors, radii, shadows, spacing, typography } from '../../theme/tokens';
+import { feedback } from '../../features/feel/feedback';
+import { appTheme, colors, fonts, radii, shadows, spacing, typography } from '../../theme/tokens';
 
 type ButtonProps = PressableProps & {
   label: string;
@@ -19,6 +20,7 @@ export function PrimaryButton({
   accessibilityLabel,
   accessibilityState,
   label,
+  onPress,
   selected = false,
   style,
   ...props
@@ -33,6 +35,10 @@ export function PrimaryButton({
         disabled: Boolean(disabled),
         selected,
         ...accessibilityState,
+      }}
+      onPress={(event) => {
+        feedback.tap();
+        onPress?.(event);
       }}
       style={({ pressed }) => [
         styles.base,
@@ -61,6 +67,7 @@ export function SecondaryButton({
   accessibilityLabel,
   accessibilityState,
   label,
+  onPress,
   selected = false,
   style,
   ...props
@@ -75,6 +82,10 @@ export function SecondaryButton({
         disabled: Boolean(disabled),
         selected,
         ...accessibilityState,
+      }}
+      onPress={(event) => {
+        feedback.tap();
+        onPress?.(event);
       }}
       style={({ pressed }) => [
         styles.base,
@@ -154,8 +165,8 @@ const styles = StyleSheet.create({
   },
   label: {
     flexShrink: 1,
+    fontFamily: fonts.extraBold,
     fontSize: typography.body,
-    fontWeight: '800',
     letterSpacing: 0.2,
     lineHeight: 20,
     textAlign: 'center',

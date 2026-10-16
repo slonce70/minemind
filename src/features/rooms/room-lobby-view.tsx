@@ -4,12 +4,13 @@ import { PrimaryButton, SecondaryButton } from '../../components/ui/button';
 import { Card } from '../../components/ui/card';
 import { StatPill } from '../../components/ui/stat-pill';
 import { avatarLookup } from '../profile/avatar-presets';
+import { PlayerAvatar } from '../profile/player-avatar';
 import type { ContentDifficulty } from '../content/types';
 import { DifficultySelector } from '../home/difficulty-selector';
 import { BadgeChip } from '../ui/badge-chip';
 import { WorldBackground } from '../ui/world-background';
 import type { ActiveRoom } from './types';
-import { colors, radii, spacing, typography } from '../../theme/tokens';
+import { colors, fonts, radii, spacing, typography } from '../../theme/tokens';
 import { deriveRoomLobbyState } from './room-lobby-state';
 
 type RoomLobbyViewProps = {
@@ -38,9 +39,9 @@ type RoomLobbyViewProps = {
     activeRoomCopy: string;
     addDemoPlayers: string;
     createRoom: string;
+    createRoomCopy: string;
     difficultyHint: string;
     difficultyLabel: string;
-    heroEyebrow: string;
     joinRoomAction: string;
     joinRoomPlaceholder: string;
     joinRoomTitle: string;
@@ -53,7 +54,7 @@ type RoomLobbyViewProps = {
     readySummary: string;
     startBattle: string;
     subtitle: string;
-    title: string;
+    timerA11y: string;
     toggleReady: string;
   };
 };
@@ -88,8 +89,6 @@ export function RoomLobbyView({
       <Card highlight tone="scene">
         <WorldBackground style={styles.worldCard} variant="cave">
           <View style={styles.heroHeader}>
-            <Text style={styles.eyebrow}>{strings.heroEyebrow}</Text>
-            <Text style={styles.title}>{strings.title}</Text>
             <Text style={styles.subtitle}>{strings.subtitle}</Text>
             <BadgeChip label={difficultyStrings[displayedDifficulty]} tone="warning" />
           </View>
@@ -100,6 +99,7 @@ export function RoomLobbyView({
               onSelect={onSelectDifficulty}
               selectedDifficulty={displayedDifficulty}
               strings={difficultyStrings}
+              timerLabel={(seconds) => strings.timerA11y.replace('{{seconds}}', String(seconds))}
             />
           </View>
         </WorldBackground>
@@ -161,9 +161,7 @@ export function RoomLobbyView({
 
                 return (
                   <View key={participant.id} style={styles.participantRow}>
-                    <View style={[styles.participantBadge, { backgroundColor: avatar?.color ?? colors.highlight }]}>
-                      <Text style={styles.participantInitial}>{participant.name[0]}</Text>
-                    </View>
+                    <PlayerAvatar avatarId={avatar?.id} size={40} />
                     <View style={styles.participantMeta}>
                       <Text style={styles.participantName}>{participant.name}</Text>
                       <Text style={styles.participantState}>
@@ -180,7 +178,7 @@ export function RoomLobbyView({
         <>
           <Card style={styles.commandSurface} tone="scene">
             <Text style={styles.sectionTitle}>{strings.createRoom}</Text>
-            <Text style={styles.copy}>{strings.subtitle}</Text>
+            <Text style={styles.copy}>{strings.createRoomCopy}</Text>
             <View style={styles.commandActionRail}>
               <PrimaryButton
                 label={isBusy ? strings.loading : strings.createRoom}
@@ -192,6 +190,7 @@ export function RoomLobbyView({
           <Card style={styles.rosterSurface} tone="panel">
             <Text style={styles.sectionTitle}>{strings.joinRoomTitle}</Text>
             <TextInput
+              accessibilityLabel={strings.joinRoomTitle}
               autoCapitalize="characters"
               autoCorrect={false}
               maxLength={6}
@@ -232,25 +231,15 @@ const styles = StyleSheet.create({
   commandActionRail: {
     gap: spacing.sm,
   },
-  eyebrow: {
-    color: colors.highlight,
-    fontSize: typography.overline,
-    fontWeight: '800',
-    letterSpacing: 1.4,
-    textTransform: 'uppercase',
-  },
-  title: {
-    color: colors.textPrimary,
-    fontSize: typography.display,
-    fontWeight: '800',
-  },
   subtitle: {
     color: colors.textSecondary,
+    fontFamily: fonts.regular,
     fontSize: typography.body,
     lineHeight: 24,
   },
   helper: {
     color: colors.textMuted,
+    fontFamily: fonts.regular,
     fontSize: typography.caption,
     lineHeight: 20,
   },
@@ -273,28 +262,29 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     color: colors.textPrimary,
+    fontFamily: fonts.extraBold,
     fontSize: typography.h3,
-    fontWeight: '800',
   },
   copy: {
     color: colors.textSecondary,
+    fontFamily: fonts.regular,
     fontSize: typography.body,
     lineHeight: 22,
   },
   readySummary: {
     color: colors.highlight,
+    fontFamily: fonts.bold,
     fontSize: typography.caption,
-    fontWeight: '700',
   },
   errorText: {
     color: colors.danger,
+    fontFamily: fonts.bold,
     fontSize: typography.caption,
-    fontWeight: '700',
   },
   roomCode: {
     color: colors.highlight,
+    fontFamily: fonts.display,
     fontSize: typography.display,
-    fontWeight: '900',
     letterSpacing: 4,
   },
   participantList: {
@@ -305,18 +295,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: spacing.sm,
   },
-  participantBadge: {
-    alignItems: 'center',
-    borderRadius: 18,
-    height: 42,
-    justifyContent: 'center',
-    width: 42,
-  },
-  participantInitial: {
-    color: colors.canvas,
-    fontSize: typography.caption,
-    fontWeight: '900',
-  },
   participantMeta: {
     flex: 1,
     minWidth: 0,
@@ -324,12 +302,13 @@ const styles = StyleSheet.create({
   participantName: {
     color: colors.textPrimary,
     flexShrink: 1,
+    fontFamily: fonts.bold,
     fontSize: typography.body,
-    fontWeight: '700',
   },
   participantState: {
     color: colors.textSecondary,
     flexShrink: 1,
+    fontFamily: fonts.regular,
     fontSize: typography.caption,
   },
   input: {
@@ -338,6 +317,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     borderWidth: 1,
     color: colors.textPrimary,
+    fontFamily: fonts.regular,
     fontSize: typography.body,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.md,

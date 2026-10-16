@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { Card } from '../../components/ui/card';
-import { colors, radii, spacing, typography } from '../../theme/tokens';
+import { colors, fonts, radii, spacing, typography } from '../../theme/tokens';
 import type { RoundStanding } from '../rooms/types';
 import type { TimelinePhase } from './round/timeline';
 
@@ -69,8 +69,8 @@ export function RoomTimelinePanel({
 const styles = StyleSheet.create({
   eyebrow: {
     color: colors.accent,
+    fontFamily: fonts.display,
     fontSize: typography.overline,
-    fontWeight: '800',
     letterSpacing: 1.4,
     marginBottom: spacing.xs,
     textTransform: 'uppercase',
@@ -82,13 +82,13 @@ const styles = StyleSheet.create({
   standingName: {
     color: colors.textPrimary,
     flex: 1,
+    fontFamily: fonts.bold,
     fontSize: typography.body,
-    fontWeight: '700',
   },
   standingRank: {
     color: colors.textMuted,
+    fontFamily: fonts.extraBold,
     fontSize: typography.caption,
-    fontWeight: '800',
     width: 32,
   },
   standingRow: {
@@ -104,15 +104,15 @@ const styles = StyleSheet.create({
   },
   standingScore: {
     color: colors.highlight,
+    fontFamily: fonts.extraBold,
     fontSize: typography.body,
-    fontWeight: '800',
   },
   standings: {
     gap: spacing.xs,
   },
   status: {
     color: colors.textSecondary,
+    fontFamily: fonts.bold,
     fontSize: typography.body,
-    fontWeight: '700',
   },
 });

@@ -1,7 +1,8 @@
+import type { PixelIconName } from '../ui/pixel-art';
 import type { ContentTopicId } from './types';
 
 type TopicRule = {
-  icon: string;
+  icon: PixelIconName;
   priority: number;
   translationKey: string;
 };
@@ -18,7 +19,7 @@ export const minecraftTopicConfig: Record<ContentTopicId, TopicRule> = {
     translationKey: 'content.topic.blocksAndBuilding',
   },
   'crafting-and-smelting': {
-    icon: 'crafting-table',
+    icon: 'crafting',
     priority: 1,
     translationKey: 'content.topic.craftingAndSmelting',
   },
@@ -38,7 +39,7 @@ export const minecraftTopicConfig: Record<ContentTopicId, TopicRule> = {
     translationKey: 'content.topic.netherEndAndRedstone',
   },
   'survival-basics': {
-    icon: 'pickaxe',
+    icon: 'flame',
     priority: 1,
     translationKey: 'content.topic.survivalBasics',
   },

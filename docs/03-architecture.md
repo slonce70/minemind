@@ -7,6 +7,14 @@
 - `TanStack Query` для server/query state
 - `i18next + react-i18next` для локалізації
 
+## UI, звук і доступність
+- дизайн-токени в одному місці: `src/theme/tokens.ts` (кольори, шрифти `fonts`, відступи, радіуси, `motion`, ширина колонки для планшета)
+- пікселі в коді: `src/features/ui/pixel-art.ts` (іконки, маскот Кубик), `src/features/profile/avatar-presets.ts` (аватари); рендер через `react-native-svg`
+- анімації на `react-native-reanimated`; усі шанують системне «зменшення руху» (`useReducedMotion`)
+- `src/features/feel/feedback.ts`: звукові ефекти, музика й вібрація, кожне за своїм перемикачем у `settings` стора
+- озвучення питання: `src/features/feel/read-aloud.ts` (`expo-speech`)
+- правила ніків спільні для застосунку й Edge Functions: `supabase/functions/_shared/nickname-rules.ts`, SQL-дзеркало в міграції `20261017130000_nickname_rules.sql`
+
 ## Backend
 - `Supabase Auth` для anonymous session
 - `Postgres` для профілів, контенту, кімнат, результатів
