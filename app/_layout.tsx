@@ -76,7 +76,8 @@ export default function RootLayout() {
       <Stack
         screenOptions={{
           headerShadowVisible: false,
-          headerShown: true,
+          // Every screen draws its own top bar.
+          headerShown: false,
           headerTintColor: appTheme.text.primary,
           headerTitleStyle: {
             fontFamily: fonts.extraBold,

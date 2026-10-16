@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, {
   Easing,
@@ -119,9 +119,17 @@ export function TimerBar({ accessibilityLabel, isRunning, timeLeft, timeLimit }:
   const reduceMotion = useReducedMotion();
   const ratio = timeLimit > 0 ? Math.max(0, Math.min(1, timeLeft / timeLimit)) : 0;
   const fill = useSharedValue(ratio);
+  const previousTimeLeft = useRef(timeLeft);
   const isLow = timeLeft <= 5 && isRunning;
 
   useEffect(() => {
+    // A new question refills the bar at once instead of animating up from empty.
+    if (timeLeft > previousTimeLeft.current) {
+      fill.value = ratio;
+    }
+
+    previousTimeLeft.current = timeLeft;
+
     // Drain towards the next second while the clock runs; jump straight there otherwise.
     const target = isRunning ? Math.max(0, (timeLeft - 1) / Math.max(1, timeLimit)) : ratio;
 
