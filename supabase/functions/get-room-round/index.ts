@@ -4,7 +4,12 @@ import { requireAuthenticatedUser } from '../_shared/auth.ts';
 import { serviceClient } from '../_shared/client.ts';
 import { GameError } from '../_shared/error-codes.ts';
 import { errorResponse, handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
-import { loadQuestionsInOrder, resolveQuestionLocale, sanitizeQuestionsForClient } from '../_shared/questions.ts';
+import {
+  buildPlayerAnswers,
+  loadQuestionsInOrder,
+  resolveQuestionLocale,
+  sanitizeQuestionsForClient,
+} from '../_shared/questions.ts';
 import { assertRoomMembership, getRoomByCode, listRoomParticipants } from '../_shared/rooms.ts';
 
 type GetRoomRoundPayload = {
@@ -45,9 +50,21 @@ serve(async (request) => {
     }
 
     const questions = await loadQuestionsInOrder(round.question_ids, resolveQuestionLocale(body.locale));
+    const { data: submissions, error: submissionsError } = await serviceClient
+      .from('answer_submissions')
+      .select('question_id, selected_option, time_left_ms')
+      .eq('round_id', round.id)
+      .eq('player_id', user.id)
+      .not('selected_option', 'is', null);
+
+    if (submissionsError) {
+      throw submissionsError;
+    }
 
     return jsonResponse({
       participants: await listRoomParticipants(room.id),
+      // A reconnecting player gets back what they already answered (in display order).
+      myAnswers: buildPlayerAnswers({ questions, roundId: round.id, submissions: submissions ?? [] }),
       questions: sanitizeQuestionsForClient(questions, round.id),
       room,
       roomCode: room.room_code,

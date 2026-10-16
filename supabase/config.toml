@@ -27,3 +27,7 @@ enable_anonymous_sign_ins = true
 enabled = true
 policy = "per_worker"
 inspector_port = 8083
+
+[auth.rate_limit]
+# Local stack only (not pushed to hosted projects): e2e tests sign in many anonymous players.
+anonymous_users = 1000

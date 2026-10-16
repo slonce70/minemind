@@ -45,7 +45,11 @@ returns trigger
 language plpgsql
 as $$
 begin
-  new.last_activity_at := now();
+  -- An explicit last_activity_at (maintenance, tests) is kept; any other change counts as activity.
+  if new.last_activity_at is not distinct from old.last_activity_at then
+    new.last_activity_at := now();
+  end if;
+
   return new;
 end;
 $$;

@@ -132,3 +132,32 @@ export function questionsWithAnswersForClient(questions: QuestionRow[], seed: st
     prompt: question.prompt,
   }));
 }
+
+/** The player's own answers so far, mapped to the round's display order. */
+export function buildPlayerAnswers(input: {
+  questions: QuestionRow[];
+  roundId: string;
+  submissions: Array<{ question_id: string; selected_option: number | null; time_left_ms: number | null }>;
+}) {
+  const questionsById = new Map(input.questions.map((question) => [question.id, question]));
+
+  return input.submissions.flatMap((submission) => {
+    const question = questionsById.get(submission.question_id);
+
+    if (!question || submission.selected_option === null) {
+      return [];
+    }
+
+    return [
+      {
+        correctOption: toDisplayOption(question.correct_option, input.roundId, question.id),
+        explanation: question.explanation,
+        isCorrect: submission.selected_option === question.correct_option,
+        questionId: question.id,
+        selectedOption:
+          submission.selected_option < 0 ? -1 : toDisplayOption(submission.selected_option, input.roundId, question.id),
+        timeLeftMs: submission.time_left_ms ?? 0,
+      },
+    ];
+  });
+}

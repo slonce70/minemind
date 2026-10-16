@@ -1,5 +1,5 @@
 import type { ContentDifficulty } from '../content/types';
-import type { QuizQuestion } from '../quiz/types';
+import type { QuizAnswerMap, QuizQuestion } from '../quiz/types';
 import type { RoomMatchSettings } from './room-match-settings';
 
 export type RoomParticipant = {
@@ -23,6 +23,8 @@ export type ActiveRoom = {
 };
 
 export type ActiveRoomRound = {
+  /** Answers the server already holds for this player (reconnect). */
+  answers?: QuizAnswerMap;
   contentPackVersion?: string;
   difficulty?: ContentDifficulty;
   /** Server deadline for live rooms; after it unanswered questions score 0. */

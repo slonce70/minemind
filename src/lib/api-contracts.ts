@@ -55,7 +55,18 @@ const legacyStartSoloRoundResponseSchema = z.object({
   questions: z.array(quizQuestionSchema),
 });
 
+const playerAnswerSchema = z.object({
+  correctOption: z.number(),
+  explanation: z.string(),
+  isCorrect: z.boolean(),
+  questionId: z.string(),
+  selectedOption: z.number(),
+  timeLeftMs: z.number(),
+});
+
 export const startRoomRoundResponseSchema = z.object({
+  /** get-room-round only: the player's answers so far, for reconnecting mid-round. */
+  myAnswers: z.array(playerAnswerSchema).optional(),
   participants: z.array(roomParticipantSchema),
   questions: z.array(quizQuestionSchema).min(1),
   room: legacyRoomResponseSchema.extend({

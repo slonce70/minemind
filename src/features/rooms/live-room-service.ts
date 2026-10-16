@@ -328,6 +328,18 @@ export async function resumeLiveRoomRound(roomCode: string, locale: AppLocale) {
   return {
     room,
     round: {
+      answers: Object.fromEntries(
+        (parsedPayload.myAnswers ?? []).map((answer) => [
+          answer.questionId,
+          {
+            correctIndex: answer.correctOption,
+            explanation: answer.explanation,
+            isCorrect: answer.isCorrect,
+            selectedIndex: answer.selectedOption,
+            timeLeft: Math.floor(answer.timeLeftMs / 1000),
+          },
+        ])
+      ),
       contentPackVersion:
         parsedPayload.round.content_pack_version ??
         room.settings.contentPackVersion,

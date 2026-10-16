@@ -4,6 +4,7 @@ import { requireAuthenticatedUser } from '../_shared/auth.ts';
 import { serviceClient } from '../_shared/client.ts';
 import { GameError } from '../_shared/error-codes.ts';
 import { errorResponse, handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
+import { enforceRateLimit } from '../_shared/limits.ts';
 import { getRoomByCode, listRoomParticipants } from '../_shared/rooms.ts';
 
 type JoinRoomPayload = {
@@ -19,6 +20,8 @@ serve(async (request) => {
   try {
     const user = await requireAuthenticatedUser(request);
     const body = await requireJsonBody<JoinRoomPayload>(request);
+    // Also throttles guessing room codes.
+    await enforceRateLimit(user.id, 'join-room');
     const room = await getRoomByCode(body.roomCode);
 
     if (!room) {
@@ -59,7 +62,8 @@ serve(async (request) => {
     );
 
     if (upsertError) {
-      throw upsertError;
+      // The database trigger has the final word on the player cap when joins race.
+      throw upsertError.message === 'room_full' ? new GameError('room_full', 'Room is full.') : upsertError;
     }
 
     const participants = await listRoomParticipants(room.id);
