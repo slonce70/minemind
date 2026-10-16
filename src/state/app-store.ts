@@ -18,6 +18,14 @@ import type { MatchRecord } from '../features/results/match-record';
 import { defaultAppLocale, type AppLocale } from '../lib/locale';
 import { migratePersistedAppState } from './app-store-migration';
 
+export type AppSettings = {
+  haptics: boolean;
+  music: boolean;
+  sound: boolean;
+};
+
+export const defaultAppSettings: AppSettings = { haptics: true, music: true, sound: true };
+
 export type GuestProfile = {
   avatarId: string;
   locale: AppLocale;
@@ -55,8 +63,11 @@ type AppState = {
   setActiveRoomRound: (round?: ActiveRoomRound) => void;
   setHasHydrated: (value: boolean) => void;
   setSelectedDifficulty: (difficulty: ContentDifficulty) => void;
+  /** Device preferences: survive a profile reset. */
+  settings: AppSettings;
   startRoomBattle: () => void;
   toggleRoomReady: () => void;
+  updateSettings: (patch: Partial<AppSettings>) => void;
   selectedDifficulty: ContentDifficulty;
 };
 
@@ -104,6 +115,7 @@ export const useAppStore = create<AppState>()(
       profile: undefined,
       recentMatches: [],
       selectedDifficulty: 'medium',
+      settings: defaultAppSettings,
       resetProfile: () =>
         set({
           activeRoom: undefined,
@@ -153,6 +165,7 @@ export const useAppStore = create<AppState>()(
           activeRoom: state.activeRoom ? toggleLocalReady(state.activeRoom) : state.activeRoom,
         })),
       setClassroomSession: (classroomSession) => set({ classroomSession }),
+      updateSettings: (patch) => set((state) => ({ settings: { ...state.settings, ...patch } })),
     }),
     {
       migrate: migratePersistedAppState,
@@ -169,6 +182,7 @@ export const useAppStore = create<AppState>()(
         profile: state.profile,
         recentMatches: state.recentMatches,
         selectedDifficulty: state.selectedDifficulty,
+        settings: state.settings,
       }),
       storage: createJSONStorage(() => AsyncStorage),
       version: 5,

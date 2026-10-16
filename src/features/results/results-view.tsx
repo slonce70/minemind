@@ -1,14 +1,21 @@
+import { useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import Animated, { FadeInDown, ZoomIn } from 'react-native-reanimated';
 
 import { PrimaryButton, SecondaryButton } from '../../components/ui/button';
 import { Card } from '../../components/ui/card';
 import { Screen } from '../../components/ui/screen';
 import { StatPill } from '../../components/ui/stat-pill';
+import { colors, fonts, radii, spacing, typography } from '../../theme/tokens';
+import { feedback } from '../feel/feedback';
+import { useCountUp } from '../feel/use-count-up';
+import { optionLetters } from '../quiz/question-parts';
 import { BadgeChip } from '../ui/badge-chip';
+import { Mascot } from '../ui/mascot';
+import { PixelIcon } from '../ui/pixel-icon';
 import { WorldBackground } from '../ui/world-background';
-import { getResultBadgeModel } from './result-badges';
 import type { MatchRecord } from './match-record';
-import { colors, radii, spacing, typography } from '../../theme/tokens';
+import { getResultBadgeModel } from './result-badges';
 
 type ResultsViewProps = {
   difficultyLabel: string;
@@ -25,98 +32,136 @@ type ResultsViewProps = {
       standardClear: string;
     };
     bestStreak: string;
-    correctShort: string;
+    correctAnswer: string;
     difficulty: string;
-    insights: string;
-    learned: string;
+    noAnswer: string;
     playAgain: string;
+    questionNumber: (number: number) => string;
+    review: string;
     roomCodePrefix: string;
     score: string;
+    scoreA11y: (score: number) => string;
     source: string;
+    standings: string;
     subtitle: string;
     title: string;
     you: string;
+    yourAnswer: string;
   };
 };
 
-export function ResultsView({
-  difficultyLabel,
-  matchRecord,
-  onBackHome,
-  onPlayAgain,
-  sourceLabel,
-  strings,
-}: ResultsViewProps) {
-  const badge = getResultBadgeModel({
-    difficulty: matchRecord.difficulty ?? 'medium',
-    perfectRound: matchRecord.correctAnswers === matchRecord.questionCount,
-  });
-  const badgeLabel = {
-    'nether-pro-perfect': strings.badges.netherPerfect,
-    'perfect-clear': strings.badges.perfectClear,
-    'standard-clear': strings.badges.standardClear,
-  }[badge.id] ?? strings.badges.standardClear;
+export function ResultsView({ difficultyLabel, matchRecord, onBackHome, onPlayAgain, sourceLabel, strings }: ResultsViewProps) {
+  const isPerfect = matchRecord.questionCount > 0 && matchRecord.correctAnswers === matchRecord.questionCount;
+  const badge = getResultBadgeModel({ difficulty: matchRecord.difficulty ?? 'medium', perfectRound: isPerfect });
+  const badgeLabel =
+    {
+      'nether-pro-perfect': strings.badges.netherPerfect,
+      'perfect-clear': strings.badges.perfectClear,
+      'standard-clear': strings.badges.standardClear,
+    }[badge.id] ?? strings.badges.standardClear;
+  const accuracy = matchRecord.questionCount > 0 ? matchRecord.correctAnswers / matchRecord.questionCount : 0;
+  const shownScore = useCountUp(matchRecord.score);
+  const standings = matchRecord.participants.length > 1 ? matchRecord.participants : [];
+
+  useEffect(() => {
+    feedback.roundEnd();
+  }, []);
 
   return (
     <Screen scrollable>
       <Card highlight style={styles.hero}>
-        <WorldBackground
-          showTerrain={false}
-          style={styles.worldCard}
-          variant={badge.id === 'nether-pro-perfect' ? 'nether' : 'reward'}
-        >
-          <View style={styles.trophyHeader}>
+        <WorldBackground showTerrain={false} style={styles.worldCard} variant={badge.id === 'nether-pro-perfect' ? 'nether' : 'reward'}>
+          <View style={styles.heroTop}>
+            <Animated.View entering={ZoomIn.duration(360)}>
+              <Mascot mood={accuracy >= 0.75 ? 'happy' : accuracy >= 0.4 ? 'wow' : 'sad'} size={92} />
+            </Animated.View>
             <View style={styles.heroHeader}>
               <Text style={styles.kicker}>{strings.subtitle}</Text>
-              <Text style={styles.title}>{strings.title}</Text>
+              <Text accessibilityRole="header" style={styles.title}>
+                {strings.title}
+              </Text>
+              <BadgeChip icon={badge.icon} label={badgeLabel} tone={badge.tone} />
             </View>
-            <BadgeChip icon={badge.icon} label={badgeLabel} tone={badge.tone} />
           </View>
-          <View style={styles.heroSummary}>
-            <View style={styles.heroStats}>
-              <StatPill label={strings.score} value={String(matchRecord.score)} />
-              <StatPill label={strings.bestStreak} value={String(matchRecord.bestStreak)} />
-              <StatPill
-                label={strings.accuracyLabel}
-                value={`${matchRecord.correctAnswers}/${matchRecord.questionCount}`}
-              />
-              <StatPill label={strings.difficulty} value={difficultyLabel} />
-              <StatPill label={strings.source} value={sourceLabel} />
-            </View>
-            {matchRecord.roomCode ? <Text style={styles.roomCode}>{strings.roomCodePrefix} {matchRecord.roomCode}</Text> : null}
+
+          <View accessibilityLabel={strings.scoreA11y(matchRecord.score)} accessible style={styles.scoreBlock}>
+            <Text style={styles.scoreLabel}>{strings.score}</Text>
+            <Text style={styles.scoreValue}>{shownScore}</Text>
+          </View>
+
+          <View style={styles.heroStats}>
+            <StatPill label={strings.accuracyLabel} value={`${matchRecord.correctAnswers}/${matchRecord.questionCount}`} />
+            <StatPill label={strings.bestStreak} value={String(matchRecord.bestStreak)} />
+            <StatPill label={strings.difficulty} value={difficultyLabel} />
+            <StatPill label={strings.source} value={matchRecord.roomCode ? `${sourceLabel} · ${matchRecord.roomCode}` : sourceLabel} />
           </View>
         </WorldBackground>
       </Card>
 
-      <View style={styles.podiumStage}>
-        {matchRecord.participants.slice(0, 3).map((entry, index) => {
-          const isWinner = index === 0;
+      {standings.length > 0 ? (
+        <Card tone="panel">
+          <Text accessibilityRole="header" style={styles.sectionTitle}>
+            {strings.standings}
+          </Text>
+          {standings.map((entry, index) => (
+            <Animated.View
+              entering={FadeInDown.delay(120 + index * 80).duration(260)}
+              key={entry.id ?? `${entry.name}-${index}`}
+              style={[styles.standingRow, entry.isPlayer && styles.standingRowPlayer]}
+            >
+              <View style={styles.rank}>
+                {index === 0 ? <PixelIcon color={colors.highlight} name="crown" size={18} /> : <Text style={styles.rankText}>{index + 1}</Text>}
+              </View>
+              <Text numberOfLines={1} style={styles.standingName}>
+                {entry.isPlayer ? `${entry.name} (${strings.you})` : entry.name}
+              </Text>
+              <Text style={styles.standingScore}>{entry.score}</Text>
+            </Animated.View>
+          ))}
+        </Card>
+      ) : null}
+
+      <Card tone="panel">
+        <Text accessibilityRole="header" style={styles.sectionTitle}>
+          {strings.review}
+        </Text>
+        {matchRecord.breakdown.map((entry, index) => {
+          const yourAnswer =
+            entry.selectedIndex >= 0
+              ? entry.options?.[entry.selectedIndex]
+                ? `${optionLetters[entry.selectedIndex]}. ${entry.options[entry.selectedIndex]}`
+                : undefined
+              : strings.noAnswer;
+          const correctAnswer =
+            typeof entry.correctIndex === 'number' && entry.options?.[entry.correctIndex]
+              ? `${optionLetters[entry.correctIndex]}. ${entry.options[entry.correctIndex]}`
+              : undefined;
 
           return (
-            <Card
-              highlight={isWinner || entry.isPlayer}
-              key={`${entry.name}-${entry.score}`}
-              style={isWinner ? styles.podiumCenter : styles.podiumSide}
-            >
-              <Text style={styles.podiumPlace}>#{index + 1}</Text>
-              <Text style={isWinner ? styles.podiumScore : styles.podiumValue}>{entry.score}</Text>
-              <Text style={styles.podiumCopy}>{entry.isPlayer ? strings.you : entry.name}</Text>
-            </Card>
+            <View key={entry.questionId} style={styles.reviewRow}>
+              <View style={styles.reviewHeader}>
+                <View style={[styles.reviewMark, entry.isCorrect ? styles.reviewMarkCorrect : styles.reviewMarkWrong]}>
+                  <PixelIcon color={colors.canvas} name={entry.isCorrect ? 'check' : 'cross'} size={14} />
+                </View>
+                <Text style={styles.reviewNumber}>{strings.questionNumber(index + 1)}</Text>
+              </View>
+              <Text style={styles.reviewPrompt}>{entry.prompt}</Text>
+              {yourAnswer && !entry.isCorrect ? (
+                <Text style={styles.reviewLine}>
+                  <Text style={styles.reviewLabelWrong}>{strings.yourAnswer}: </Text>
+                  {yourAnswer}
+                </Text>
+              ) : null}
+              {correctAnswer ? (
+                <Text style={styles.reviewLine}>
+                  <Text style={styles.reviewLabelCorrect}>{strings.correctAnswer}: </Text>
+                  {correctAnswer}
+                </Text>
+              ) : null}
+              {entry.explanation ? <Text style={styles.reviewExplanation}>{entry.explanation}</Text> : null}
+            </View>
           );
         })}
-      </View>
-
-      <Card style={styles.fieldNotes} tone="panel">
-        <Text style={styles.sectionTitle}>{strings.insights}</Text>
-        {matchRecord.breakdown.slice(0, 3).map((entry) => (
-          <View key={entry.questionId} style={styles.insightRow}>
-            <Text style={styles.insightPrompt}>{entry.prompt}</Text>
-            <Text style={[styles.insightStatus, entry.isCorrect ? styles.correct : styles.wrong]}>
-              {entry.isCorrect ? strings.correctShort : strings.learned}
-            </Text>
-            <Text style={styles.insightExplanation}>{entry.explanation}</Text>
-          </View>
-        ))}
       </Card>
 
       <View style={styles.actionStack}>
@@ -128,126 +173,154 @@ export function ResultsView({
 }
 
 const styles = StyleSheet.create({
+  actionStack: {
+    gap: spacing.sm,
+  },
   hero: {
     padding: 0,
   },
-  kicker: {
-    color: colors.highlight,
-    fontSize: typography.overline,
-    fontWeight: '800',
-    letterSpacing: 1.4,
-    textTransform: 'uppercase',
-  },
-  title: {
-    color: colors.textPrimary,
-    fontSize: typography.display,
-    fontWeight: '800',
-  },
-  trophyHeader: {
-    gap: spacing.sm,
+  heroHeader: {
+    flex: 1,
+    gap: spacing.xs,
+    minWidth: 180,
   },
   heroStats: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.sm,
   },
-  worldCard: {
-    gap: spacing.sm,
-    padding: spacing.lg,
-    paddingTop: spacing.xl,
+  heroTop: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.md,
   },
-  heroHeader: {
-    gap: spacing.sm,
-    maxWidth: 720,
+  kicker: {
+    color: colors.highlight,
+    fontFamily: fonts.display,
+    fontSize: typography.overline,
+    letterSpacing: 1,
+    textTransform: 'uppercase',
   },
-  heroSummary: {
+  rank: {
+    alignItems: 'center',
+    width: 28,
+  },
+  rankText: {
+    color: colors.textMuted,
+    fontFamily: fonts.black,
+    fontSize: typography.h3,
+  },
+  reviewExplanation: {
+    color: colors.textMuted,
+    fontFamily: fonts.regular,
+    fontSize: typography.caption,
+    lineHeight: 20,
+  },
+  reviewHeader: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: spacing.sm,
+  },
+  reviewLabelCorrect: {
+    color: colors.success,
+    fontFamily: fonts.extraBold,
+  },
+  reviewLabelWrong: {
+    color: colors.wrong,
+    fontFamily: fonts.extraBold,
+  },
+  reviewLine: {
+    color: colors.textSecondary,
+    fontFamily: fonts.semiBold,
+    fontSize: typography.caption,
+    lineHeight: 20,
+  },
+  reviewMark: {
+    alignItems: 'center',
+    borderRadius: radii.sm,
+    height: 24,
+    justifyContent: 'center',
+    width: 24,
+  },
+  reviewMarkCorrect: {
+    backgroundColor: colors.success,
+  },
+  reviewMarkWrong: {
+    backgroundColor: colors.danger,
+  },
+  reviewNumber: {
+    color: colors.textMuted,
+    fontFamily: fonts.display,
+    fontSize: typography.overline,
+    textTransform: 'uppercase',
+  },
+  reviewPrompt: {
+    color: colors.textPrimary,
+    fontFamily: fonts.extraBold,
+    fontSize: typography.body,
+    lineHeight: 22,
+  },
+  reviewRow: {
+    borderTopColor: colors.border,
+    borderTopWidth: 1,
+    gap: spacing.xs,
+    paddingTop: spacing.md,
+  },
+  scoreBlock: {
+    alignItems: 'center',
     backgroundColor: colors.surfaceInset,
     borderColor: colors.borderStrong,
     borderRadius: radii.xl,
     borderWidth: 2,
-    gap: spacing.sm,
-    padding: spacing.lg,
+    paddingVertical: spacing.md,
   },
-  roomCode: {
-    color: colors.textSecondary,
-    fontSize: typography.caption,
-    fontWeight: '700',
-  },
-  podiumStage: {
-    alignItems: 'flex-end',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
-  },
-  fieldNotes: {
-    borderWidth: 2,
-  },
-  podiumCenter: {
-    flexBasis: 220,
-    flexGrow: 1.1,
-    minHeight: 168,
-    minWidth: 180,
-  },
-  podiumSide: {
-    flexBasis: 180,
-    flexGrow: 0.9,
-    minHeight: 132,
-    minWidth: 150,
-  },
-  podiumPlace: {
+  scoreLabel: {
     color: colors.textMuted,
-    fontSize: typography.caption,
-    fontWeight: '800',
+    fontFamily: fonts.display,
+    fontSize: typography.overline,
+    textTransform: 'uppercase',
   },
-  podiumScore: {
-    color: colors.textPrimary,
-    fontSize: 40,
-    fontWeight: '900',
-  },
-  podiumCopy: {
-    color: colors.textSecondary,
-    flexShrink: 1,
-    fontSize: typography.caption,
-    fontWeight: '700',
-  },
-  podiumValue: {
-    color: colors.textPrimary,
-    fontSize: typography.h2,
-    fontWeight: '800',
+  scoreValue: {
+    color: colors.highlight,
+    fontFamily: fonts.black,
+    fontSize: 56,
+    fontVariant: ['tabular-nums'],
   },
   sectionTitle: {
     color: colors.textPrimary,
-    fontSize: typography.h3,
-    fontWeight: '800',
+    fontFamily: fonts.display,
+    fontSize: typography.h2,
   },
-  insightRow: {
-    borderBottomColor: colors.border,
-    borderBottomWidth: 1,
-    gap: spacing.xs,
-    paddingVertical: spacing.sm,
-  },
-  insightPrompt: {
+  standingName: {
     color: colors.textPrimary,
+    flex: 1,
+    fontFamily: fonts.bold,
     fontSize: typography.body,
-    fontWeight: '800',
   },
-  insightStatus: {
-    fontSize: typography.caption,
-    fontWeight: '800',
-    textTransform: 'uppercase',
-  },
-  correct: {
-    color: colors.success,
-  },
-  wrong: {
-    color: colors.highlight,
-  },
-  insightExplanation: {
-    color: colors.textSecondary,
-    fontSize: typography.caption,
-    lineHeight: 20,
-  },
-  actionStack: {
+  standingRow: {
+    alignItems: 'center',
+    borderRadius: radii.md,
+    flexDirection: 'row',
     gap: spacing.sm,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+  },
+  standingRowPlayer: {
+    backgroundColor: colors.surfaceAccent,
+  },
+  standingScore: {
+    color: colors.highlight,
+    fontFamily: fonts.black,
+    fontSize: typography.h3,
+  },
+  title: {
+    color: colors.textPrimary,
+    fontFamily: fonts.display,
+    fontSize: typography.h1,
+  },
+  worldCard: {
+    gap: spacing.md,
+    padding: spacing.lg,
   },
 });

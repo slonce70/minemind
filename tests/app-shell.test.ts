@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
 
-import { iconMap } from '../src/features/ui/icon-map';
+import { pixelIcons } from '../src/features/ui/pixel-art';
 import { themeArt } from '../src/features/ui/theme-art';
 import { minecraftCategory } from '../src/features/quiz/mock-data';
 import { resources } from '../src/i18n/resources';
@@ -66,7 +66,7 @@ test('release validation enforces exported web bundle budgets', () => {
   assert.match(packageSource, /npm run check:web-budget/);
   assert.match(scriptSource, /maxWebEntryBundleBytes/);
   assert.match(scriptSource, /maxWebExportBytes/);
-  assert.match(scriptSource, /maxQuestionIllustrationsBytes/);
+  assert.match(scriptSource, /maxSoundsBytes/);
 });
 
 test('release validation runs the full content authoring gate', () => {
@@ -170,13 +170,17 @@ test('solo route keeps post-answer progression manual so facts remain readable',
 test('shared buttons and solo answers expose semantic web accessibility state', () => {
   const buttonSource = readFileSync(new URL('../src/components/ui/button.tsx', import.meta.url), 'utf8');
   const soloSource = readFileSync(new URL('../app/solo.tsx', import.meta.url), 'utf8');
+  const optionSource = readFileSync(new URL('../src/features/quiz/question-parts.tsx', import.meta.url), 'utf8');
 
   assert.match(buttonSource, /accessibilityRole="button"/);
   assert.match(buttonSource, /accessibilityLabel=\{accessibilityLabel \?\? label\}/);
   assert.match(buttonSource, /accessibilityState=\{\{/);
-  assert.match(soloSource, /import \{ Image, type ImageSource \} from 'expo-image';/);
+  assert.match(optionSource, /accessibilityRole="button"/);
+  assert.match(optionSource, /accessibilityState=\{\{ disabled, selected:/);
+  // Options announce their letter, text and, after answering, whether they were right.
+  assert.match(soloSource, /accessibilityLabel=\{optionA11y\(optionIndex, option\)\}/);
+  assert.match(soloSource, /t\('solo\.answerYoursWrong'\)/);
   assert.match(soloSource, /accessibilityRole="button"/);
-  assert.match(soloSource, /selected: isSelected/);
 });
 
 test('android qa command can regenerate the ignored native project before install', () => {
@@ -216,7 +220,7 @@ test('ukrainian UX copy stays fully localized in the most visible onboarding and
   assert.equal(uk.onboarding.subtitle, 'Обери безпечний нік, аватар і мову. Потім одразу стрибай у свій перший матч.');
   assert.equal(uk.results.badges.standardClear, 'Раунд завершено');
   assert.equal(uk.results.bestStreak, 'Найдовша серія');
-  assert.equal(uk.results.subtitle, 'Перемога, серії правильних відповідей і нові Minecraft-факти');
+  assert.equal(uk.results.subtitle, 'Підсумок матчу');
   assert.equal(uk.results.title, 'Твій результат');
   assert.equal(uk.rooms.activeRoomCopy, 'У кімнаті зараз {{countLabel}}. Можна позначити готовність і почати матч.');
   assert.equal(uk.rooms.ready, 'Готовий');
@@ -255,7 +259,7 @@ test('english and russian visible copy stays aligned with actual gameplay states
   assert.equal(ru.home.ready, 'Все готово');
   assert.equal(ru.onboarding.subtitle, 'Выбери безопасный ник, аватар и язык. После этого сразу прыгай в свой первый матч.');
   assert.equal(ru.results.badges.standardClear, 'Раунд завершен');
-  assert.equal(ru.results.subtitle, 'Победа, серии и новые факты о Minecraft');
+  assert.equal(ru.results.subtitle, 'Итог матча');
   assert.equal(ru.results.title, 'Твой результат');
   assert.equal(ru.rooms.activeRoomCopy, 'Сейчас в комнате {{countLabel}}. Можно отметить готовность и начать матч.');
   assert.equal(ru.rooms.ready, 'Готов');
@@ -322,8 +326,8 @@ test('onboarding avatar labels are driven by the selected locale instead of hard
 test('fantasy layer exposes themed backgrounds and icon markers', () => {
   assert.ok(themeArt.overworld);
   assert.ok(themeArt.nether);
-  assert.ok(iconMap.pickaxe);
-  assert.ok(iconMap.trophy);
+  assert.ok(pixelIcons.star);
+  assert.ok(pixelIcons.trophy);
 });
 
 test('room lobby hero no longer renders the empty block glyph marker', () => {

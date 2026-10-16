@@ -437,8 +437,6 @@ test('room lobby and results screens use wrapped slabs for controls and rewards'
     'heroControlZone',
   );
   const roomActionRailNode = findJsxNodeUsingStyle(roomLobbyModule.sourceFile, 'RoomLobbyView', 'commandActionRail');
-  const resultsTrophyHeaderNode = findJsxNodeUsingStyle(resultsModule.sourceFile, 'ResultsView', 'trophyHeader');
-  const resultsHeroSummaryNode = findJsxNodeUsingStyle(resultsModule.sourceFile, 'ResultsView', 'heroSummary');
   const resultsActionStackNode = findJsxNodeUsingStyle(resultsModule.sourceFile, 'ResultsView', 'actionStack');
 
   assert.ok(styleHasProperty(roomLobbyModule.sourceFile, 'heroHeader', 'gap'));
@@ -456,55 +454,41 @@ test('room lobby and results screens use wrapped slabs for controls and rewards'
   assert.ok(jsxNodeContainsIdentifier(roomActionRailNode, 'onLeaveRoom'));
 
   assert.ok(styleHasProperty(resultsModule.sourceFile, 'heroHeader', 'gap'));
-  assert.ok(styleHasProperty(resultsModule.sourceFile, 'trophyHeader', 'gap'));
-  assert.ok(styleHasProperty(resultsModule.sourceFile, 'heroSummary', 'borderWidth'));
+  assert.ok(styleHasProperty(resultsModule.sourceFile, 'heroStats', 'flexWrap'));
   assert.ok(styleHasProperty(resultsModule.sourceFile, 'actionStack', 'gap'));
   assert.ok(functionStylePropUses(resultsModule.sourceFile, 'ResultsView', 'heroHeader'));
-  assert.ok(functionStylePropUses(resultsModule.sourceFile, 'ResultsView', 'trophyHeader'));
-  assert.ok(functionStylePropUses(resultsModule.sourceFile, 'ResultsView', 'heroSummary'));
+  assert.ok(functionStylePropUses(resultsModule.sourceFile, 'ResultsView', 'heroStats'));
   assert.ok(functionStylePropUses(resultsModule.sourceFile, 'ResultsView', 'actionStack'));
-  assert.equal(resultsTrophyHeaderNode.parent, resultsHeroSummaryNode.parent);
-  assert.ok(ts.isJsxElement(resultsTrophyHeaderNode.parent) || ts.isJsxFragment(resultsTrophyHeaderNode.parent));
-  assert.equal(getDirectJsxChildren(resultsTrophyHeaderNode.parent)[0], resultsTrophyHeaderNode);
-  assert.equal(getDirectJsxChildren(resultsTrophyHeaderNode.parent)[1], resultsHeroSummaryNode);
   assert.ok(jsxNodeContainsIdentifier(resultsActionStackNode, 'onPlayAgain'));
   assert.ok(jsxNodeContainsIdentifier(resultsActionStackNode, 'onBackHome'));
 });
 
-test('solo screen supports optional question illustrations without replacing the quiz flow', () => {
+test('solo screen shows the topic, a read-aloud button and the fact card around the quiz flow', () => {
   const soloSource = readFileSync(new URL('../app/solo.tsx', import.meta.url), 'utf8');
 
-  assert.match(soloSource, /Image/);
-  assert.match(soloSource, /questionIllustrationSourceById/);
-  assert.match(soloSource, /round\.question\.illustration/);
-  assert.match(soloSource, /styles\.questionIllustrationFrame/);
-  assert.match(soloSource, /styles\.questionIllustration/);
-  assert.match(soloSource, /aspectRatio:\s*16\s*\/\s*7/);
-  assert.match(soloSource, /maxHeight:\s*180/);
-  assert.match(soloSource, /contentFit="cover"/);
+  assert.match(soloSource, /styles\.topicChip/);
+  assert.match(soloSource, /toggleReadAloud\(/);
   assert.match(soloSource, /styles\.factCard/);
   assert.match(soloSource, /t\('solo\.next'\)/);
+  assert.doesNotMatch(soloSource, /question-illustrations/);
 });
 
 test('solo screen renders answer options before the explanatory fact card', () => {
   const source = readFileSync(new URL('../app/solo.tsx', import.meta.url), 'utf8');
-  const optionListIndex = source.indexOf('<View style={styles.optionList}>');
+  const optionListIndex = source.indexOf('<View style={[styles.optionList');
   const factCardIndex = source.indexOf('<Card style={styles.factCard}>');
 
   assert.ok(optionListIndex >= 0);
   assert.ok(factCardIndex > optionListIndex);
 });
 
-test('results stage the trophy summary, podium, and field notes as distinct reward surfaces', () => {
-  const resultsModule = parseTsxModule('../src/features/results/results-view.tsx');
+test('results show the counted-up score, standings for group games and a review of every question', () => {
+  const source = readFileSync(new URL('../src/features/results/results-view.tsx', import.meta.url), 'utf8');
 
-  assert.ok(styleHasProperty(resultsModule.sourceFile, 'trophyHeader', 'gap'));
-  assert.ok(styleHasProperty(resultsModule.sourceFile, 'podiumStage', 'gap'));
-  assert.ok(styleHasProperty(resultsModule.sourceFile, 'fieldNotes', 'borderWidth'));
-
-  assert.ok(functionStylePropUses(resultsModule.sourceFile, 'ResultsView', 'trophyHeader'));
-  assert.ok(functionStylePropUses(resultsModule.sourceFile, 'ResultsView', 'podiumStage'));
-  assert.ok(functionStylePropUses(resultsModule.sourceFile, 'ResultsView', 'fieldNotes'));
+  assert.match(source, /useCountUp\(matchRecord\.score\)/);
+  assert.match(source, /matchRecord\.participants\.length > 1/);
+  assert.match(source, /matchRecord\.breakdown\.map\(/);
+  assert.doesNotMatch(source, /breakdown\.slice\(/);
 });
 
 test('results view disables terrain overlays in the dense summary hero', () => {

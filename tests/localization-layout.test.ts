@@ -129,5 +129,5 @@ test('web layout source allows long translated labels to wrap instead of overlap
   assert.ok(styleHasProperty(onboardingModule.sourceFile, 'optionBlock', 'minWidth'));
   assert.ok(styleHasProperty(onboardingModule.sourceFile, 'avatarCardActive', 'borderWidth'));
   assert.match(roomLobbySource, /participantMeta:\s*\{[\s\S]*minWidth:\s*0/);
-  assert.match(resultsSource, /podiumStage:\s*\{[\s\S]*flexWrap:\s*'wrap'/);
+  assert.match(resultsSource, /heroStats:\s*\{[\s\S]*flexWrap:\s*'wrap'/);
 });
