@@ -15,6 +15,7 @@
     "check:web-budget": "node scripts/check-web-export-budget.mjs",
     "export:content": "tsx scripts/export-master-question-packs.ts --out content/minecraft/minecraft-question-bank.v1.json && tsx scripts/export-supabase-seed.ts",
     "test": "tsx --test tests/**/*.test.ts",
+    "test:e2e": "tsx --test --test-concurrency=1 tests/e2e/*.e2e.ts",
     "typecheck": "tsc --noEmit",
     "typecheck:tests": "tsc --noEmit -p tsconfig.tests.json",
     "lint": "eslint .",
