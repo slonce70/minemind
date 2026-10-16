@@ -5,6 +5,7 @@ import { serviceClient } from '../_shared/client.ts';
 import { GameError } from '../_shared/error-codes.ts';
 import { scoreAnswer } from '../_shared/game-rules.ts';
 import { errorResponse, handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
+import { broadcastToRoom } from '../_shared/realtime.ts';
 import { assertQuestionBelongsToRound } from '../_shared/round-questions.ts';
 import {
   computeServerTimeLeftMs,
@@ -141,6 +142,11 @@ serve(async (request) => {
     }
 
     const isCorrect = selectedOption === question.correct_option;
+
+    if (round.room_id) {
+      // Others only learn that this player answered, not what or whether it was right.
+      await broadcastToRoom(round.room_id, 'answer-progress', { playerId: user.id, questionId: body.questionId });
+    }
 
     return jsonResponse({
       accepted: true,

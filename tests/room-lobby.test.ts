@@ -34,15 +34,26 @@ test('room lobby start action is visually disabled until the lobby can start', (
 test('room lobby uses realtime subscription as the primary sync path', () => {
   const source = readFileSync(new URL('../src/features/rooms/use-room-lobby.ts', import.meta.url), 'utf8');
 
-  assert.match(source, /subscribeToRoomChannel/);
+  assert.match(source, /useRoomChannel/);
   assert.match(source, /refreshLiveRoom/);
 });
 
-test('room sync effect is keyed by room code, not by the polled room object', () => {
+test('room sync is keyed by room code, not by the polled room object', () => {
   const source = readFileSync(new URL('../src/features/rooms/use-room-lobby.ts', import.meta.url), 'utf8');
+  const channelSource = readFileSync(new URL('../src/features/rooms/use-room-channel.ts', import.meta.url), 'utf8');
 
   assert.match(source, /\}, \[activeRoomCode, clearActiveRound, setActiveRoom, setActiveRoomRound\]\);/);
+  assert.match(source, /\}, \[activeRoomCode, isChannelLive, syncRoomState\]\);/);
   assert.doesNotMatch(source, /\}, \[activeRoom, activeRoomRound,/);
+  // The channel subscription depends only on primitives, so re-polled room objects never resubscribe.
+  assert.match(channelSource, /\}, \[localPlayerId, nickname, roomCode, roomId\]\);/);
+});
+
+test('polling is only a fallback while the realtime channel is live', () => {
+  const source = readFileSync(new URL('../src/features/rooms/use-room-lobby.ts', import.meta.url), 'utf8');
+
+  assert.match(source, /useRoomChannel\(/);
+  assert.match(source, /isChannelLive \? LIVE_POLL_INTERVAL_MS : OFFLINE_POLL_INTERVAL_MS/);
 });
 
 test('bots and invented room players are development-only', async () => {

@@ -48,6 +48,7 @@ export default function RoomsRoute() {
         onChangeJoinCode={lobby.setJoinCode}
         onCreateRoom={() => void lobby.handleCreateRoom()}
         onJoinRoom={() => void lobby.handleJoinRoom()}
+        onlinePlayerIds={lobby.onlinePlayerIds}
         onLeaveRoom={() => {
           lobby.handleLeaveRoom();
           router.replace('/home');
@@ -83,6 +84,7 @@ export default function RoomsRoute() {
           lobbyTitle: t('rooms.lobbyTitle'),
           loading: t('common.loading'),
           notReady: t('rooms.notReady'),
+          offline: t('rooms.offline'),
           ready: t('rooms.ready'),
           readySummary: t('rooms.readySummary'),
           startBattle: t('rooms.startBattle'),

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { ensureGuestSession } from '../profile/profile-service';
 import { useAppStore } from '../../state/app-store';
@@ -8,7 +8,7 @@ import { createDemoRoomRound } from './live-room-service';
 import { getSoloQuestionSet } from '../quiz/quiz-service';
 import { canStartOfflineRoom } from './demo-room-service';
 import { createDefaultRoomMatchSettings } from './room-match-settings';
-import { subscribeToRoomChannel } from './realtime-room-channel';
+import { useRoomChannel } from './use-room-channel';
 import {
   createLiveRoom,
   joinLiveRoom,
@@ -21,6 +21,9 @@ import {
 } from './live-room-service';
 
 export { deriveRoomLobbyState } from './room-lobby-state';
+
+const OFFLINE_POLL_INTERVAL_MS = 4000;
+const LIVE_POLL_INTERVAL_MS = 30_000;
 
 export function useRoomLobby(messages: { genericError: string; onlineUnavailable: string }) {
   const profile = useAppStore((state) => state.profile);
@@ -43,68 +46,71 @@ export function useRoomLobby(messages: { genericError: string; onlineUnavailable
   const canResumeRound = Boolean(activeRoomRound && (!isSupabaseConfigured || activeRoom?.roundId));
 
   const activeRoomCode = activeRoom?.roomCode;
+  const lastSyncAtRef = useRef(0);
+
+  const syncRoomState = useCallback(async () => {
+    if (!isSupabaseConfigured || !activeRoomCode) {
+      return;
+    }
+
+    lastSyncAtRef.current = Date.now();
+
+    try {
+      const room = await refreshLiveRoom(activeRoomCode);
+
+      // The room may have been left while the request was in flight.
+      if (useAppStore.getState().activeRoom?.roomCode !== activeRoomCode) {
+        return;
+      }
+
+      setActiveRoom(room);
+
+      // Read the round fresh from the store rather than closing over it, so
+      // this callback depends only on the stable room code.
+      const activeRoomRound = useAppStore.getState().activeRoomRound;
+
+      if ((room.status === 'active' || room.status === 'finalizing') && room.roundId && !activeRoomRound) {
+        const resumed = await resumeLiveRoomRound(room.roomCode);
+
+        if (useAppStore.getState().activeRoom?.roomCode !== activeRoomCode) {
+          return;
+        }
+
+        setActiveRoom(resumed.room);
+        setActiveRoomRound(resumed.round);
+      }
+
+      if ((room.status === 'lobby' || room.status === 'finished') && activeRoomRound) {
+        clearActiveRound();
+      }
+    } catch {
+      return undefined;
+    }
+  }, [activeRoomCode, clearActiveRound, setActiveRoom, setActiveRoomRound]);
+
+  // Realtime pushes every room change; the database stays the source of truth, so a push
+  // just triggers a re-read.
+  const roomChannel = useRoomChannel(isSupabaseConfigured ? activeRoom : undefined, () => void syncRoomState());
+  const isChannelLive = roomChannel.isLive;
 
   useEffect(() => {
     if (!isSupabaseConfigured || !activeRoomCode) {
       return undefined;
     }
 
-    let isCancelled = false;
-
-    const syncRoomState = async () => {
-      try {
-        const room = await refreshLiveRoom(activeRoomCode);
-
-        if (isCancelled) {
-          return;
-        }
-
-        setActiveRoom(room);
-
-        // Read the round fresh from the store rather than closing over it, so
-        // this effect can depend only on the stable room code. Depending on the
-        // activeRoom/activeRoomRound objects re-ran the effect on every sync
-        // (mapRoom mints a new identity each time), tearing down and recreating
-        // the realtime subscription in a tight loop.
-        const activeRoomRound = useAppStore.getState().activeRoomRound;
-
-        if ((room.status === 'active' || room.status === 'finalizing') && room.roundId && !activeRoomRound) {
-          const resumed = await resumeLiveRoomRound(room.roomCode);
-
-          if (isCancelled) {
-            return;
-          }
-
-          setActiveRoom(resumed.room);
-          setActiveRoomRound(resumed.round);
-        }
-
-        if ((room.status === 'lobby' || room.status === 'finished') && activeRoomRound) {
-          clearActiveRound();
-        }
-      } catch {
-        return undefined;
-      }
-    };
-
     void syncRoomState();
-    const unsubscribe = subscribeToRoomChannel(activeRoomCode, {
-      onRoomFinished: () => void syncRoomState(),
-      onRoomUpdated: () => void syncRoomState(),
-      onRoundFinalizing: () => void syncRoomState(),
-      onRoundStarted: () => void syncRoomState(),
-    });
 
+    // Fallback polling: fast while realtime is down, a slow safety net while it is up.
     const interval = setInterval(() => {
-      void syncRoomState();
-    }, 4000);
+      const maxAgeMs = isChannelLive ? LIVE_POLL_INTERVAL_MS : OFFLINE_POLL_INTERVAL_MS;
 
-    return () => {
-      isCancelled = true;
-      clearInterval(interval);
-      unsubscribe();
-    };
-  }, [activeRoomCode, clearActiveRound, setActiveRoom, setActiveRoomRound]);
+      if (Date.now() - lastSyncAtRef.current >= maxAgeMs) {
+        void syncRoomState();
+      }
+    }, OFFLINE_POLL_INTERVAL_MS);
+
+    return () => clearInterval(interval);
+  }, [activeRoomCode, isChannelLive, syncRoomState]);
 
   const handleCreateRoom = async () => {
     if (!profile) {
@@ -282,6 +288,7 @@ export function useRoomLobby(messages: { genericError: string; onlineUnavailable
     canResumeRound,
     isBusy,
     joinCode,
+    onlinePlayerIds: roomChannel.isLive ? roomChannel.onlinePlayerIds : undefined,
     profile,
     setJoinCode,
   };

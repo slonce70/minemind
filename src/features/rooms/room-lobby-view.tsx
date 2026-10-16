@@ -30,6 +30,8 @@ type RoomLobbyViewProps = {
   onSelectDifficulty: (difficulty: ContentDifficulty) => void;
   onStartBattle: () => void;
   onToggleReady: () => void;
+  /** Players connected to the live room channel; undefined while realtime is unavailable. */
+  onlinePlayerIds?: string[];
   roomActionLabel: string;
   strings: {
     activeRoom: string;
@@ -46,6 +48,7 @@ type RoomLobbyViewProps = {
     lobbyTitle: string;
     loading: string;
     notReady: string;
+    offline: string;
     ready: string;
     readySummary: string;
     startBattle: string;
@@ -72,6 +75,7 @@ export function RoomLobbyView({
   onSelectDifficulty,
   onStartBattle,
   onToggleReady,
+  onlinePlayerIds,
   roomActionLabel,
   strings,
 }: RoomLobbyViewProps) {
@@ -152,6 +156,8 @@ export function RoomLobbyView({
             <View style={styles.participantList}>
               {activeRoom.participants.map((participant) => {
                 const avatar = avatarLookup[participant.avatarId];
+                const isOffline =
+                  onlinePlayerIds !== undefined && !participant.isLocalPlayer && !onlinePlayerIds.includes(participant.id);
 
                 return (
                   <View key={participant.id} style={styles.participantRow}>
@@ -161,7 +167,7 @@ export function RoomLobbyView({
                     <View style={styles.participantMeta}>
                       <Text style={styles.participantName}>{participant.name}</Text>
                       <Text style={styles.participantState}>
-                        {participant.ready ? strings.ready : strings.notReady}
+                        {isOffline ? strings.offline : participant.ready ? strings.ready : strings.notReady}
                       </Text>
                     </View>
                   </View>
