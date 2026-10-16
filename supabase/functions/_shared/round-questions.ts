@@ -1,3 +1,5 @@
+import { GameError } from './error-codes.ts';
+
 export type RoundQuestionSubmission = {
   question_id: string;
 };
@@ -7,7 +9,7 @@ export function assertQuestionBelongsToRound(input: {
   roundQuestionIds: string[];
 }) {
   if (!input.roundQuestionIds.includes(input.questionId)) {
-    throw new Error('Question does not belong to this round.');
+    throw new GameError('question_not_in_round', 'Question does not belong to this round.');
   }
 }
 

@@ -2,7 +2,7 @@ import i18n, { type Resource } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
 import { appLocales, defaultAppLocale, type AppLocale } from '../lib/locale';
-import { playerErrorResources } from './player-error-resources';
+import { apiErrorResources, playerErrorResources } from './player-error-resources';
 import { resources } from './resources';
 
 const localizedResources = Object.fromEntries(
@@ -13,6 +13,7 @@ const localizedResources = Object.fromEntries(
         ...resources[locale].translation,
         errors: {
           ...resources[locale].translation.errors,
+          codes: apiErrorResources[locale],
           player: playerErrorResources[locale],
         },
       },

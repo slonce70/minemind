@@ -1,4 +1,5 @@
 import { serviceClient } from './client.ts';
+import { GameError } from './error-codes.ts';
 import type { ContentDifficulty } from './room-settings.ts';
 import { pickSeededIds, toDisplayOption, toDisplayOptions } from './round-integrity.ts';
 
@@ -71,7 +72,7 @@ export async function getLocalizedQuestionPack(
   }
 
   if (!pack) {
-    throw new Error(`No question pack found for locale "${locale}" and difficulty "${difficulty}".`);
+    throw new GameError('no_questions', `No question pack found for locale "${locale}" and difficulty "${difficulty}".`);
   }
 
   const { data: idRows, error: idsError } = await serviceClient
@@ -88,7 +89,7 @@ export async function getLocalizedQuestionPack(
   const allIds = (idRows ?? []).map((row) => row.id as string);
 
   if (allIds.length < Math.min(count, 4)) {
-    throw new Error('Question pack does not contain enough questions to start a round.');
+    throw new GameError('no_questions', 'Question pack does not contain enough questions to start a round.');
   }
 
   return {

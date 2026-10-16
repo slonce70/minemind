@@ -2,8 +2,9 @@ import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
 
 import { requireAuthenticatedUser } from '../_shared/auth.ts';
 import { serviceClient } from '../_shared/client.ts';
+import { GameError } from '../_shared/error-codes.ts';
 import { scoreAnswer } from '../_shared/game-rules.ts';
-import { handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
+import { errorResponse, handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
 import { assertQuestionBelongsToRound } from '../_shared/round-questions.ts';
 import {
   computeServerTimeLeftMs,
@@ -39,7 +40,7 @@ serve(async (request) => {
       .single();
 
     if (roundError || !round) {
-      throw roundError ?? new Error('Round not found.');
+      throw roundError ?? new GameError('round_not_found', 'Round not found.');
     }
 
     if (round.room_id) {
@@ -52,7 +53,7 @@ serve(async (request) => {
     });
 
     if (round.finalized_at || isRoundExpired(round.ends_at, now)) {
-      throw new Error('Round time is over.');
+      throw new GameError('round_over', 'Round time is over.');
     }
 
     const submissionKey = {
@@ -88,7 +89,7 @@ serve(async (request) => {
     }
 
     if (existing && existing.selected_option !== null) {
-      throw new Error('Answer already submitted.');
+      throw new GameError('answer_already_submitted', 'Answer already submitted.');
     }
 
     const difficulty = resolveDifficulty(round.difficulty);
@@ -116,7 +117,7 @@ serve(async (request) => {
       }
 
       if (!updated || updated.length === 0) {
-        throw new Error('Answer already submitted.');
+        throw new GameError('answer_already_submitted', 'Answer already submitted.');
       }
     } else {
       const { error: insertError } = await serviceClient
@@ -125,7 +126,7 @@ serve(async (request) => {
 
       if (insertError) {
         // Unique (round, player, question): a parallel request already answered.
-        throw insertError.code === '23505' ? new Error('Answer already submitted.') : insertError;
+        throw insertError.code === '23505' ? new GameError('answer_already_submitted', 'Answer already submitted.') : insertError;
       }
     }
 
@@ -150,11 +151,6 @@ serve(async (request) => {
       timedOut: timeLeftMs === null,
     });
   } catch (error) {
-    return jsonResponse(
-      {
-        error: error instanceof Error ? error.message : 'Unknown submit-answer failure.',
-      },
-      400
-    );
+    return errorResponse(error);
   }
 });

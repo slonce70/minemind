@@ -1,10 +1,11 @@
 import { serviceClient } from './client.ts';
+import { GameError } from './error-codes.ts';
 
 export async function requireAuthenticatedUser(request: Request) {
   const authHeader = request.headers.get('Authorization');
 
   if (!authHeader?.startsWith('Bearer ')) {
-    throw new Error('Missing bearer token.');
+    throw new GameError('unauthorized', 'Missing bearer token.');
   }
 
   const jwt = authHeader.replace('Bearer ', '');
@@ -14,7 +15,7 @@ export async function requireAuthenticatedUser(request: Request) {
   } = await serviceClient.auth.getUser(jwt);
 
   if (error || !user) {
-    throw new Error('Unable to authenticate user.');
+    throw new GameError('unauthorized', 'Unable to authenticate user.');
   }
 
   return user;

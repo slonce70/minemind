@@ -1,4 +1,5 @@
 import { serviceClient } from './client.ts';
+import { GameError } from './error-codes.ts';
 import { assertRoomStatus } from './validation.ts';
 
 export async function getRoomByCode(roomCode: string) {
@@ -57,6 +58,6 @@ export async function assertRoomMembership(roomId: string, playerId: string) {
   }
 
   if (!data) {
-    throw new Error('User is not a participant of this room.');
+    throw new GameError('not_room_member', 'User is not a participant of this room.');
   }
 }

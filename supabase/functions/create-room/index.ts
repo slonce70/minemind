@@ -2,7 +2,7 @@ import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
 
 import { requireAuthenticatedUser } from '../_shared/auth.ts';
 import { serviceClient } from '../_shared/client.ts';
-import { handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
+import { errorResponse, handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
 import { parseRoomMatchSettingsPayload, type RoomMatchSettingsPayload } from '../_shared/room-settings.ts';
 import { listRoomParticipants } from '../_shared/rooms.ts';
 
@@ -62,11 +62,6 @@ serve(async (request) => {
       room,
     });
   } catch (error) {
-    return jsonResponse(
-      {
-        error: error instanceof Error ? error.message : 'Unknown create-room failure.',
-      },
-      400
-    );
+    return errorResponse(error);
   }
 });

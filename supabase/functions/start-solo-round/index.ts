@@ -1,7 +1,7 @@
 import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
 
 import { requireAuthenticatedUser } from '../_shared/auth.ts';
-import { handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
+import { errorResponse, handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
 import { getLocalizedQuestionPack, questionsWithAnswersForClient } from '../_shared/questions.ts';
 import { resolveDifficulty } from '../_shared/round-integrity.ts';
 
@@ -29,11 +29,6 @@ serve(async (request) => {
       questions: questionsWithAnswersForClient(questions, seed),
     });
   } catch (error) {
-    return jsonResponse(
-      {
-        error: error instanceof Error ? error.message : 'Unknown start-solo-round failure.',
-      },
-      400
-    );
+    return errorResponse(error);
   }
 });

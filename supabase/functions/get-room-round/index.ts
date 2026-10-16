@@ -2,7 +2,8 @@ import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
 
 import { requireAuthenticatedUser } from '../_shared/auth.ts';
 import { serviceClient } from '../_shared/client.ts';
-import { handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
+import { GameError } from '../_shared/error-codes.ts';
+import { errorResponse, handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
 import { loadQuestionsInOrder, sanitizeQuestionsForClient } from '../_shared/questions.ts';
 import { assertRoomMembership, getRoomByCode, listRoomParticipants } from '../_shared/rooms.ts';
 
@@ -22,13 +23,13 @@ serve(async (request) => {
     const room = await getRoomByCode(body.roomCode);
 
     if (!room) {
-      throw new Error('Room not found.');
+      throw new GameError('room_not_found', 'Room not found.');
     }
 
     await assertRoomMembership(room.id, user.id);
 
     if (!room.current_round_id) {
-      throw new Error('Room does not have an active round.');
+      throw new GameError('no_active_round', 'Room does not have an active round.');
     }
 
     const { data: round, error: roundError } = await serviceClient
@@ -38,7 +39,7 @@ serve(async (request) => {
       .single();
 
     if (roundError || !round) {
-      throw roundError ?? new Error('Round not found.');
+      throw roundError ?? new GameError('round_not_found', 'Round not found.');
     }
 
     const questions = await loadQuestionsInOrder(round.question_ids);
@@ -51,11 +52,6 @@ serve(async (request) => {
       round,
     });
   } catch (error) {
-    return jsonResponse(
-      {
-        error: error instanceof Error ? error.message : 'Unknown get-room-round failure.',
-      },
-      400
-    );
+    return errorResponse(error);
   }
 });

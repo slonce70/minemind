@@ -2,7 +2,8 @@ import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
 
 import { requireAuthenticatedUser } from '../_shared/auth.ts';
 import { serviceClient } from '../_shared/client.ts';
-import { handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
+import { GameError } from '../_shared/error-codes.ts';
+import { errorResponse, handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
 import { filterSubmissionsForRoundQuestions } from '../_shared/round-questions.ts';
 import { assertRoomMembership, listRoomParticipants } from '../_shared/rooms.ts';
 import {
@@ -100,11 +101,11 @@ serve(async (request) => {
       .single();
 
     if (roundError || !round) {
-      throw roundError ?? new Error('Round not found.');
+      throw roundError ?? new GameError('round_not_found', 'Round not found.');
     }
 
     if (!round.room_id) {
-      throw new Error('Finalize-round currently supports room rounds only.');
+      throw new GameError('invalid_request', 'Finalize-round currently supports room rounds only.');
     }
 
     await assertRoomMembership(round.room_id, user.id);
@@ -209,11 +210,6 @@ serve(async (request) => {
       status: 'completed',
     });
   } catch (error) {
-    return jsonResponse(
-      {
-        error: error instanceof Error ? error.message : 'Unknown finalize-round failure.',
-      },
-      400
-    );
+    return errorResponse(error);
   }
 });
