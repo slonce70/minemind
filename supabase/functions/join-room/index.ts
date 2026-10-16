@@ -2,7 +2,9 @@ import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
 
 import { requireAuthenticatedUser } from '../_shared/auth.ts';
 import { serviceClient } from '../_shared/client.ts';
-import { handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
+import { GameError } from '../_shared/error-codes.ts';
+import { errorResponse, handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
+import { enforceRateLimit } from '../_shared/limits.ts';
 import { getRoomByCode, listRoomParticipants } from '../_shared/rooms.ts';
 
 type JoinRoomPayload = {
@@ -18,14 +20,16 @@ serve(async (request) => {
   try {
     const user = await requireAuthenticatedUser(request);
     const body = await requireJsonBody<JoinRoomPayload>(request);
+    // Also throttles guessing room codes.
+    await enforceRateLimit(user.id, 'join-room');
     const room = await getRoomByCode(body.roomCode);
 
     if (!room) {
-      throw new Error('Room not found.');
+      throw new GameError('room_not_found', 'Room not found.');
     }
 
     if (room.status === 'active' || room.current_round_id) {
-      throw new Error('Room already has a battle in progress.');
+      throw new GameError('room_in_progress', 'Room already has a battle in progress.');
     }
 
     // Only a room in the lobby accepts new players: 'lobby' right after
@@ -33,7 +37,7 @@ serve(async (request) => {
     // 'finalizing' would inflate the expected submission count and freeze the
     // finalize, while 'finished' rooms are effectively closed.
     if (room.status !== 'lobby' && room.status !== 'waiting') {
-      throw new Error('Room is not accepting new players.');
+      throw new GameError('room_closed', 'Room is not accepting new players.');
     }
 
     const existingParticipants = await listRoomParticipants(room.id);
@@ -43,7 +47,7 @@ serve(async (request) => {
     const MAX_ROOM_PARTICIPANTS = 8;
 
     if (!isAlreadyParticipant && existingParticipants.length >= MAX_ROOM_PARTICIPANTS) {
-      throw new Error('Room is full.');
+      throw new GameError('room_full', 'Room is full.');
     }
 
     const { error: upsertError } = await serviceClient.from('room_participants').upsert(
@@ -58,7 +62,8 @@ serve(async (request) => {
     );
 
     if (upsertError) {
-      throw upsertError;
+      // The database trigger has the final word on the player cap when joins race.
+      throw upsertError.message === 'room_full' ? new GameError('room_full', 'Room is full.') : upsertError;
     }
 
     const participants = await listRoomParticipants(room.id);
@@ -68,11 +73,6 @@ serve(async (request) => {
       room,
     });
   } catch (error) {
-    return jsonResponse(
-      {
-        error: error instanceof Error ? error.message : 'Unknown join-room failure.',
-      },
-      400
-    );
+    return errorResponse(error);
   }
 });

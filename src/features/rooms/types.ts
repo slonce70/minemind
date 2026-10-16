@@ -1,5 +1,5 @@
 import type { ContentDifficulty } from '../content/types';
-import type { QuizQuestion } from '../quiz/types';
+import type { QuizAnswerMap, QuizQuestion } from '../quiz/types';
 import type { RoomMatchSettings } from './room-match-settings';
 
 export type RoomParticipant = {
@@ -22,7 +22,28 @@ export type ActiveRoom = {
   participants: RoomParticipant[];
 };
 
+export type RoundStanding = {
+  correctCount: number;
+  name: string;
+  playerId: string;
+  rank: number;
+  score: number;
+};
+
+/** Live rooms: everyone follows one server timeline (see questionWindow in game-rules). */
+export type RoundTimeline = {
+  questionCount: number;
+  /** Server clock minus device clock, measured on the last response. */
+  serverOffsetMs: number;
+  standings: RoundStanding[];
+  /** How many closed questions the standings cover (they refresh a moment after each close). */
+  standingsQuestionCount: number;
+  startedAt: string;
+};
+
 export type ActiveRoomRound = {
+  /** Answers the server already holds for this player (reconnect). */
+  answers?: QuizAnswerMap;
   contentPackVersion?: string;
   difficulty?: ContentDifficulty;
   /** Server deadline for live rooms; after it unanswered questions score 0. */
@@ -32,4 +53,5 @@ export type ActiveRoomRound = {
   roomCode: string;
   roundId?: string;
   source: 'classroom' | 'demo' | 'supabase';
+  timeline?: RoundTimeline;
 };

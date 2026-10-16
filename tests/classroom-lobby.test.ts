@@ -84,7 +84,7 @@ test('classroom route offers host and join flows without Supabase', () => {
 });
 
 test('solo classroom flow waits for host-authoritative round completion', () => {
-  const source = readFileSync(new URL('../src/features/quiz/use-solo-round.ts', import.meta.url), 'utf8');
+  const source = readFileSync(new URL('../src/features/quiz/round/classroom-mode.ts', import.meta.url), 'utf8');
 
   assert.match(source, /getSharedLocalHostTransport/);
   assert.match(source, /round-submitted/);

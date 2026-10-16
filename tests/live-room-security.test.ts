@@ -51,7 +51,7 @@ test('edge functions wire the round-question guard before scoring', () => {
     'utf8'
   );
 
-  assert.match(submitAnswerSource, /select\('id, room_id, question_ids, difficulty, ends_at, finalized_at'\)/);
+  assert.match(submitAnswerSource, /select\('id, room_id, question_ids, difficulty, started_at, ends_at, finalized_at'\)/);
   assert.match(submitAnswerSource, /assertQuestionBelongsToRound\(/);
   assert.match(finalizeRoundSource, /filterSubmissionsForRoundQuestions\(/);
   assert.match(finalizeRoundSource, /const validSubmissions = /);

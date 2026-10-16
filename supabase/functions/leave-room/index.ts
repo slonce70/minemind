@@ -2,7 +2,7 @@ import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
 
 import { requireAuthenticatedUser } from '../_shared/auth.ts';
 import { serviceClient } from '../_shared/client.ts';
-import { handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
+import { errorResponse, handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
 import { getRoomByCode, listRoomParticipants } from '../_shared/rooms.ts';
 
 type LeaveRoomPayload = {
@@ -37,11 +37,11 @@ serve(async (request) => {
 
     const remaining = await listRoomParticipants(room.id);
 
-    // Empty room: close it entirely.
+    // Empty room: close it. Rows stay, so finished rounds and results keep their history.
     if (remaining.length === 0) {
       const { error: closeError } = await serviceClient
         .from('rooms')
-        .delete()
+        .update({ current_round_id: null, status: 'finished' })
         .eq('id', room.id);
 
       if (closeError) {
@@ -75,11 +75,6 @@ serve(async (request) => {
       roomClosed: false,
     });
   } catch (error) {
-    return jsonResponse(
-      {
-        error: error instanceof Error ? error.message : 'Unknown leave-room failure.',
-      },
-      400
-    );
+    return errorResponse(error);
   }
 });

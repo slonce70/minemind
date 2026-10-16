@@ -8,7 +8,12 @@ MineMind is a mobile quiz app for iOS and Android, built with Expo and React Nat
 - guest onboarding
 - localized UI: `uk`, `en`, `ru`
 - solo Minecraft quiz flow with `easy / medium / hard`
-- private room flow on Supabase (bots and offline demo rooms exist only in development builds)
+- private room flow on Supabase (bots and offline demo rooms exist only in development builds):
+  - one server timeline for everyone: 5 s countdown, then each question opens for its timer and is followed by 10 s of answer and standings; questions are handed out only as they open, answers are timed by the server
+  - every player reads the round in their own language (`question_translations`), answers are checked by option position
+  - realtime room channel `room:<id>` (members only): room updates, who is online (Presence) and who answered; polling is only a fallback
+  - limits: 8 players per room, rate limits on creating and joining rooms, rooms idle for 2 hours are closed (never deleted), a reconnecting player continues where they left off
+  - Edge Functions answer errors as `{ code, error }`; the app shows the code translated
 - classroom (LAN) matches where the host keeps the answers
 - validated local question bank: `360` active records in `uk`, `en`, `ru` (`120` per difficulty, `45` per topic), answer options shuffled every round
 - one scoring rule for every mode: `100 + 6 × seconds left`, times `×1 / ×1.25 / ×1.5` for `easy / medium / hard` (timers `20 / 18 / 15` s), defined in `supabase/functions/_shared/game-rules.ts`
@@ -22,6 +27,7 @@ MineMind is a mobile quiz app for iOS and Android, built with Expo and React Nat
 - `npm install`
 - `npm run dev`
 - `npm test`
+- `npm run test:e2e` (Edge Functions against a local Supabase, see below)
 - `npm run typecheck`
 - `npm run validate:content`
 - `npm run validate`
@@ -46,13 +52,25 @@ Copy `.env.example` to `.env.local` and fill in:
 ```bash
 EXPO_PUBLIC_SUPABASE_URL=
 EXPO_PUBLIC_SUPABASE_ANON_KEY=
+# Optional: error reporting to a Sentry DSN. Empty = off.
+EXPO_PUBLIC_SENTRY_DSN=
 ```
 
 If env vars are missing, solo and classroom play still work offline. Online rooms need Supabase; in development builds an offline demo room with bots is available for testing the flow.
 
 ### Local Supabase
 
-`supabase start` applies `supabase/migrations` and loads `supabase/seed.sql`, which is generated from the content bank by `npm run export:content` and upserts packs by slug and questions by content id (it never deletes rows). Load the same seed into a hosted project before enabling online play there.
+`supabase start` applies `supabase/migrations` and loads `supabase/seed.sql`, which is generated from the content bank by `npm run export:content`: one language-neutral pack per difficulty, each question once with its uk/en/ru translations, upserted by slug and content id (it never deletes rows; the first release's per-locale packs are only deactivated). Load the same seed into a hosted project before enabling online play there.
+
+End-to-end tests of the Edge Functions run against that local stack and refuse any other URL:
+
+```bash
+npx supabase start
+npx supabase functions serve
+npm run test:e2e
+```
+
+CI does the same in the `e2e` job.
 
 ## Next Active Wave
 - connect hosted Supabase project credentials

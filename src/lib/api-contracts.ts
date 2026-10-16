@@ -55,9 +55,35 @@ const legacyStartSoloRoundResponseSchema = z.object({
   questions: z.array(quizQuestionSchema),
 });
 
+const playerAnswerSchema = z.object({
+  correctOption: z.number(),
+  explanation: z.string(),
+  isCorrect: z.boolean(),
+  questionId: z.string(),
+  selectedOption: z.number(),
+  timeLeftMs: z.number(),
+});
+
+const roundStandingSchema = z.object({
+  correct_count: z.number(),
+  nickname: z.string(),
+  player_id: z.string(),
+  rank: z.number(),
+  score: z.number(),
+});
+
 export const startRoomRoundResponseSchema = z.object({
+  /** The player's answers so far, for reconnecting mid-round. */
+  myAnswers: z.array(playerAnswerSchema).optional(),
   participants: z.array(roomParticipantSchema),
-  questions: z.array(quizQuestionSchema).min(1),
+  /** Total questions in the round; `questions` only holds the ones released so far. */
+  questionCount: z.number().int().positive().optional(),
+  questions: z.array(quizQuestionSchema),
+  /** Server clock when the response was built, to align the shared timeline. */
+  serverNow: z.string().optional(),
+  /** Standings over the questions that are already closed. */
+  standings: z.array(roundStandingSchema).optional(),
+  standingsQuestionCount: z.number().int().nonnegative().optional(),
   room: legacyRoomResponseSchema.extend({
     status: roomStatusSchema,
   }),

@@ -16,11 +16,64 @@ export const speedBonusPerSecond = 6;
 // Extra time the server allows for network latency before a question counts as missed.
 export const answerGraceMs = 3000;
 
-// Time a player gets between questions to read the explanation and tap "next".
+// Self-paced rounds (classroom): time a player gets between questions to read the explanation
+// and tap "next", and slack for loading the round on slower phones.
 export const betweenQuestionsAllowanceMs = 10_000;
-// Slack for loading the round on slower phones before the first question.
 export const roundStartAllowanceMs = 30_000;
 
+// Live rooms run on one server timeline: a countdown, then each question opens for the timer and
+// is followed by the answer and the standings before the next one opens.
+export const roundLeadInMs = 5_000;
+export const betweenQuestionsMs = 10_000;
+
+export function questionWindow(input: { difficulty: GameDifficulty; index: number; startedAt: Date }) {
+  const timerMs = difficultyRules[input.difficulty].timerSeconds * 1000;
+  const opensAt = input.startedAt.getTime() + roundLeadInMs + input.index * (timerMs + betweenQuestionsMs);
+
+  return { closesAt: new Date(opensAt + timerMs), opensAt: new Date(opensAt) };
+}
+
+/** Live room deadline: the last question closes (plus network grace). */
+export function computeTimelineEndsAt(input: { difficulty: GameDifficulty; questionCount: number; startedAt: Date }) {
+  const last = questionWindow({ ...input, index: Math.max(0, input.questionCount - 1) });
+
+  return new Date(last.closesAt.getTime() + answerGraceMs);
+}
+
+// A question is handed out this long before it opens, so it is on screen right on time.
+export const questionPrefetchMs = 2_000;
+
+type TimelineInput = { difficulty: GameDifficulty; now: Date; questionCount: number; startedAt: Date };
+
+/** How many questions players may see by `now` (each a little before it opens). */
+export function countReleasedQuestions(input: TimelineInput) {
+  let released = 0;
+
+  while (
+    released < input.questionCount &&
+    questionWindow({ ...input, index: released }).opensAt.getTime() - questionPrefetchMs <= input.now.getTime()
+  ) {
+    released += 1;
+  }
+
+  return released;
+}
+
+/** How many questions are closed for good (answers are final), for the standings in between. */
+export function countClosedQuestions(input: TimelineInput) {
+  let closed = 0;
+
+  while (
+    closed < input.questionCount &&
+    questionWindow({ ...input, index: closed }).closesAt.getTime() + answerGraceMs <= input.now.getTime()
+  ) {
+    closed += 1;
+  }
+
+  return closed;
+}
+
+/** Self-paced deadline (classroom): every question plus reading time, generously. */
 export function computeRoundEndsAt(input: {
   difficulty: GameDifficulty;
   questionCount: number;

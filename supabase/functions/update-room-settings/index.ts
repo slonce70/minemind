@@ -2,7 +2,8 @@ import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
 
 import { requireAuthenticatedUser } from '../_shared/auth.ts';
 import { serviceClient } from '../_shared/client.ts';
-import { handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
+import { GameError } from '../_shared/error-codes.ts';
+import { errorResponse, handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
 import { parseRoomMatchSettingsPayload, type RoomMatchSettingsPayload } from '../_shared/room-settings.ts';
 import { getRoomByCode, listRoomParticipants } from '../_shared/rooms.ts';
 
@@ -22,15 +23,15 @@ serve(async (request) => {
     const room = await getRoomByCode(body.roomCode);
 
     if (!room) {
-      throw new Error('Room not found.');
+      throw new GameError('room_not_found', 'Room not found.');
     }
 
     if (room.host_id !== user.id) {
-      throw new Error('Only the room host can update match settings.');
+      throw new GameError('host_only', 'Only the room host can update match settings.');
     }
 
     if (room.current_round_id || room.status === 'active' || room.status === 'finalizing') {
-      throw new Error('Room settings can only be changed before a round starts.');
+      throw new GameError('room_in_progress', 'Room settings can only be changed before a round starts.');
     }
 
     const settings = parseRoomMatchSettingsPayload(body);
@@ -50,11 +51,6 @@ serve(async (request) => {
       room: updatedRoom,
     });
   } catch (error) {
-    return jsonResponse(
-      {
-        error: error instanceof Error ? error.message : 'Unknown update-room-settings failure.',
-      },
-      400
-    );
+    return errorResponse(error);
   }
 });

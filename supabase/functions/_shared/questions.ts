@@ -1,4 +1,5 @@
 import { serviceClient } from './client.ts';
+import { GameError } from './error-codes.ts';
 import type { ContentDifficulty } from './room-settings.ts';
 import { pickSeededIds, toDisplayOption, toDisplayOptions } from './round-integrity.ts';
 
@@ -13,35 +14,67 @@ export type QuestionRow = {
   prompt: string;
 };
 
+export type QuestionLocale = 'en' | 'ru' | 'uk';
+
 const questionColumns = 'id,prompt,option_a,option_b,option_c,option_d,correct_option,explanation';
+const translationColumns = 'question_id,prompt,option_a,option_b,option_c,option_d,explanation';
 
-/** Loads questions in the order of `ids` (round order), not table order. */
-export async function loadQuestionsInOrder(ids: string[]) {
-  const { data, error } = await serviceClient.from('questions').select(questionColumns).in('id', ids);
+export function resolveQuestionLocale(value: unknown): QuestionLocale {
+  return value === 'uk' || value === 'ru' ? value : 'en';
+}
 
-  if (error || !data) {
-    throw error ?? new Error('Unable to load questions for the round.');
+/**
+ * Loads questions in the order of `ids` (round order), with texts in `locale`. The option order and
+ * correct option are the same for every language; a missing translation falls back to the base
+ * (English) texts.
+ */
+export async function loadQuestionsInOrder(ids: string[], locale: QuestionLocale) {
+  const [questionsResult, translationsResult] = await Promise.all([
+    serviceClient.from('questions').select(questionColumns).in('id', ids),
+    serviceClient.from('question_translations').select(translationColumns).in('question_id', ids).eq('locale', locale),
+  ]);
+
+  if (questionsResult.error || !questionsResult.data) {
+    throw questionsResult.error ?? new Error('Unable to load questions for the round.');
   }
 
-  const byId = new Map((data as QuestionRow[]).map((question) => [question.id, question]));
+  if (translationsResult.error) {
+    throw translationsResult.error;
+  }
+
+  const translations = new Map(
+    (translationsResult.data ?? []).map((translation) => [translation.question_id as string, translation])
+  );
+  const byId = new Map(
+    (questionsResult.data as QuestionRow[]).map((question) => {
+      const translation = translations.get(question.id);
+
+      return [
+        question.id,
+        translation
+          ? {
+              ...question,
+              explanation: translation.explanation,
+              option_a: translation.option_a,
+              option_b: translation.option_b,
+              option_c: translation.option_c,
+              option_d: translation.option_d,
+              prompt: translation.prompt,
+            }
+          : question,
+      ];
+    })
+  );
 
   return ids.map((id) => byId.get(id)).filter((question): question is QuestionRow => Boolean(question));
 }
 
-export async function getLocalizedQuestionPack(
-  locale: string,
-  difficulty: ContentDifficulty = 'medium',
-  count = 8,
-  seed: string = crypto.randomUUID()
-) {
-  // Prefer a pack that matches the requested difficulty exactly, but fall back
-  // to any pack for the locale. Seed/demo databases ship a single pack per
-  // locale, so an exact-difficulty-only lookup left online rounds unable to
-  // start ("No question pack found") for every difficulty.
-  const { data: exactPack, error: packError } = await serviceClient
+/** Picks a seeded random set of active questions from the language-neutral pack for `difficulty`. */
+export async function pickRoundQuestionIds(difficulty: ContentDifficulty, count = 8, seed: string = crypto.randomUUID()) {
+  const { data: pack, error: packError } = await serviceClient
     .from('question_packs')
-    .select('id,title')
-    .eq('locale', locale)
+    .select('id')
+    .is('locale', null)
     .eq('difficulty', difficulty)
     .eq('is_active', true)
     .order('created_at', { ascending: false })
@@ -52,26 +85,8 @@ export async function getLocalizedQuestionPack(
     throw packError;
   }
 
-  let pack = exactPack;
-
   if (!pack) {
-    const { data: fallbackPack, error: fallbackError } = await serviceClient
-      .from('question_packs')
-      .select('id,title')
-      .eq('locale', locale)
-      .order('created_at', { ascending: true })
-      .limit(1)
-      .maybeSingle();
-
-    if (fallbackError) {
-      throw fallbackError;
-    }
-
-    pack = fallbackPack;
-  }
-
-  if (!pack) {
-    throw new Error(`No question pack found for locale "${locale}" and difficulty "${difficulty}".`);
+    throw new GameError('no_questions', `No question pack found for difficulty "${difficulty}".`);
   }
 
   const { data: idRows, error: idsError } = await serviceClient
@@ -87,15 +102,11 @@ export async function getLocalizedQuestionPack(
 
   const allIds = (idRows ?? []).map((row) => row.id as string);
 
-  if (allIds.length < Math.min(count, 4)) {
-    throw new Error('Question pack does not contain enough questions to start a round.');
+  if (allIds.length < count) {
+    throw new GameError('no_questions', 'Question pack does not contain enough questions to start a round.');
   }
 
-  return {
-    difficulty,
-    pack,
-    questions: await loadQuestionsInOrder(pickSeededIds(allIds, count, seed)),
-  };
+  return pickSeededIds(allIds, count, seed);
 }
 
 function originalOptions(question: QuestionRow) {
@@ -120,4 +131,33 @@ export function questionsWithAnswersForClient(questions: QuestionRow[], seed: st
     options: toDisplayOptions(originalOptions(question), seed, question.id),
     prompt: question.prompt,
   }));
+}
+
+/** The player's own answers so far, mapped to the round's display order. */
+export function buildPlayerAnswers(input: {
+  questions: QuestionRow[];
+  roundId: string;
+  submissions: Array<{ question_id: string; selected_option: number | null; time_left_ms: number | null }>;
+}) {
+  const questionsById = new Map(input.questions.map((question) => [question.id, question]));
+
+  return input.submissions.flatMap((submission) => {
+    const question = questionsById.get(submission.question_id);
+
+    if (!question || submission.selected_option === null) {
+      return [];
+    }
+
+    return [
+      {
+        correctOption: toDisplayOption(question.correct_option, input.roundId, question.id),
+        explanation: question.explanation,
+        isCorrect: submission.selected_option === question.correct_option,
+        questionId: question.id,
+        selectedOption:
+          submission.selected_option < 0 ? -1 : toDisplayOption(submission.selected_option, input.roundId, question.id),
+        timeLeftMs: submission.time_left_ms ?? 0,
+      },
+    ];
+  });
 }

@@ -5,6 +5,7 @@ import {
   parseStartRoomRoundResponse,
 } from '../../lib/api-contracts';
 import { toPlayerSafeErrorMessage } from '../shared/app-copy';
+import type { AppLocale } from '../../lib/locale';
 import { getAuthenticatedUser, invokeSupabaseFunction } from '../../lib/supabase';
 import { createDefaultRoomMatchSettings, type RoomMatchSettings } from './room-match-settings';
 import type { QuizResultSummary, QuizQuestion } from '../quiz/types';
@@ -280,34 +281,60 @@ export async function startLiveRoomRound(activeRoom: ActiveRoom, profile: GuestP
     room: parsedPayload.room,
   });
 
-  const round: ActiveRoomRound = {
-    contentPackVersion:
-      parsedPayload.round.content_pack_version ??
-      room.settings.contentPackVersion,
-    difficulty:
-      parsedPayload.round.difficulty ??
-      room.settings.difficulty,
-    endsAt: parsedPayload.round.ends_at ?? undefined,
-    mode: 'room',
-    questions: parsedPayload.questions,
-    roomCode: parsedPayload.roomCode,
-    roundId: parsedPayload.round.id,
-    source: 'supabase',
-  };
-
-  return { room, round };
+  return { room, round: mapLiveRound(parsedPayload, room) };
 }
 
-export async function resumeLiveRoomRound(roomCode: string) {
+function mapLiveRound(payload: ReturnType<typeof parseStartRoomRoundResponse>, room: ActiveRoom): ActiveRoomRound {
+  return {
+    answers: Object.fromEntries(
+      (payload.myAnswers ?? []).map((answer) => [
+        answer.questionId,
+        {
+          correctIndex: answer.correctOption,
+          explanation: answer.explanation,
+          isCorrect: answer.isCorrect,
+          selectedIndex: answer.selectedOption,
+          timeLeft: Math.floor(answer.timeLeftMs / 1000),
+        },
+      ])
+    ),
+    contentPackVersion: payload.round.content_pack_version ?? room.settings.contentPackVersion,
+    difficulty: payload.round.difficulty ?? room.settings.difficulty,
+    endsAt: payload.round.ends_at ?? undefined,
+    mode: 'room',
+    questions: payload.questions,
+    roomCode: payload.roomCode,
+    roundId: payload.round.id,
+    source: 'supabase',
+    timeline: {
+      questionCount: payload.questionCount ?? payload.round.question_ids.length,
+      serverOffsetMs: payload.serverNow ? Date.parse(payload.serverNow) - Date.now() : 0,
+      standings: (payload.standings ?? []).map((entry) => ({
+        correctCount: entry.correct_count,
+        name: entry.nickname,
+        playerId: entry.player_id,
+        rank: entry.rank,
+        score: entry.score,
+      })),
+      standingsQuestionCount: payload.standingsQuestionCount ?? 0,
+      startedAt: payload.round.started_at,
+    },
+  };
+}
+
+/** Loads the room's current round in `locale`; every player reads the same questions in their language. */
+export async function resumeLiveRoomRound(roomCode: string, locale: AppLocale) {
   let payload: StartRoomRoundResponse;
 
   try {
     payload = await invokeSupabaseFunction<
       StartRoomRoundResponse,
       {
+        locale: AppLocale;
         roomCode: string;
       }
     >('get-room-round', {
+      locale,
       roomCode,
     });
   } catch (error) {
@@ -321,45 +348,14 @@ export async function resumeLiveRoomRound(roomCode: string) {
     room: parsedPayload.room,
   });
 
-  return {
-    room,
-    round: {
-      contentPackVersion:
-        parsedPayload.round.content_pack_version ??
-        room.settings.contentPackVersion,
-      difficulty:
-        parsedPayload.round.difficulty ??
-        room.settings.difficulty,
-      endsAt: parsedPayload.round.ends_at ?? undefined,
-      mode: 'room' as const,
-      questions: parsedPayload.questions,
-      roomCode: parsedPayload.roomCode,
-      roundId: parsedPayload.round.id,
-      source: 'supabase' as const,
-    },
-  };
-}
-
-/** Starts the server-side timer for a question; the server ignores repeated opens. */
-export async function openLiveRoomQuestion(round: ActiveRoomRound, questionId: string) {
-  if (!round.roundId) {
-    return;
-  }
-
-  await invokeSupabaseFunction<{ opened: boolean }, { phase: 'open'; questionId: string; roundId: string }>(
-    'submit-answer',
-    {
-      phase: 'open',
-      questionId,
-      roundId: round.roundId,
-    }
-  );
+  return { room, round: mapLiveRound(parsedPayload, room) };
 }
 
 export async function submitLiveRoomAnswer(
   round: ActiveRoomRound,
   questionId: string,
-  selectedOption: number
+  selectedOption: number,
+  locale: AppLocale
 ) {
   if (!round.roundId) {
     return null;
@@ -374,11 +370,13 @@ export async function submitLiveRoomAnswer(
       scoreDelta: number;
     },
     {
+      locale: AppLocale;
       questionId: string;
       roundId: string;
       selectedOption: number;
     }
   >('submit-answer', {
+    locale,
     questionId,
     roundId: round.roundId,
     selectedOption,

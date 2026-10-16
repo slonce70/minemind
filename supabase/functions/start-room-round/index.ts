@@ -2,10 +2,12 @@ import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
 
 import { requireAuthenticatedUser } from '../_shared/auth.ts';
 import { serviceClient } from '../_shared/client.ts';
-import { handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
-import { getLocalizedQuestionPack, sanitizeQuestionsForClient } from '../_shared/questions.ts';
+import { GameError } from '../_shared/error-codes.ts';
+import { errorResponse, handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
+import { pickRoundQuestionIds, resolveQuestionLocale } from '../_shared/questions.ts';
 import { getRoomByCode, listRoomParticipants } from '../_shared/rooms.ts';
-import { computeRoundEndsAt, resolveDifficulty } from '../_shared/round-integrity.ts';
+import { computeTimelineEndsAt, resolveDifficulty } from '../_shared/round-integrity.ts';
+import { buildRoundView } from '../_shared/round-view.ts';
 
 type StartRoomRoundPayload = {
   locale?: 'en' | 'ru' | 'uk';
@@ -24,33 +26,28 @@ serve(async (request) => {
     const room = await getRoomByCode(body.roomCode);
 
     if (!room) {
-      throw new Error('Room not found.');
+      throw new GameError('room_not_found', 'Room not found.');
     }
 
     if (room.current_round_id) {
-      throw new Error('Room already has an active round.');
+      throw new GameError('room_in_progress', 'Room already has an active round.');
     }
 
     if (room.host_id !== user.id) {
-      throw new Error('Only the room host can start the round.');
+      throw new GameError('host_only', 'Only the room host can start the round.');
     }
 
     const participants = await listRoomParticipants(room.id);
 
     if (participants.length < 2) {
-      throw new Error('Room needs at least two players.');
+      throw new GameError('not_enough_players', 'Room needs at least two players.');
     }
 
     if (participants.some((participant) => !participant.ready_state)) {
-      throw new Error('All players need to be ready before the battle starts.');
+      throw new GameError('players_not_ready', 'All players need to be ready before the battle starts.');
     }
 
-    const { questions } = await getLocalizedQuestionPack(
-      body.locale ?? 'en',
-      room.difficulty,
-      room.question_count
-    );
-    const questionIds = questions.map((question) => question.id);
+    const questionIds = await pickRoundQuestionIds(resolveDifficulty(room.difficulty), room.question_count);
     const startedAt = new Date();
 
     const { data: round, error: roundError } = await serviceClient
@@ -59,7 +56,7 @@ serve(async (request) => {
         content_pack_version: room.content_pack_version,
         difficulty: room.difficulty,
         question_count: room.question_count,
-        ends_at: computeRoundEndsAt({
+        ends_at: computeTimelineEndsAt({
           difficulty: resolveDifficulty(room.difficulty),
           questionCount: questionIds.length,
           startedAt,
@@ -90,7 +87,14 @@ serve(async (request) => {
 
     return jsonResponse({
       participants,
-      questions: sanitizeQuestionsForClient(questions, round.id),
+      // Questions are handed out as they open (get-room-round); at the start none is open yet.
+      ...(await buildRoundView({
+        locale: resolveQuestionLocale(body.locale),
+        now: startedAt,
+        participants,
+        playerId: user.id,
+        round,
+      })),
       room: {
         ...room,
         current_round_id: round.id,
@@ -100,11 +104,6 @@ serve(async (request) => {
       round,
     });
   } catch (error) {
-    return jsonResponse(
-      {
-        error: error instanceof Error ? error.message : 'Unknown start-room-round failure.',
-      },
-      400
-    );
+    return errorResponse(error);
   }
 });

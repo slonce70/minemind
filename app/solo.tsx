@@ -9,6 +9,7 @@ import { LoadingScreen } from '../src/components/ui/loading-screen';
 import { Screen } from '../src/components/ui/screen';
 import { difficultyConfig } from '../src/features/content/difficulty-config';
 import { createQuizFeedbackState } from '../src/features/quiz/quiz-feedback';
+import { RoomTimelinePanel } from '../src/features/quiz/room-timeline-panel';
 import { useSoloRound } from '../src/features/quiz/use-solo-round';
 import { useAppStore } from '../src/state/app-store';
 import { colors, radii, spacing, typography } from '../src/theme/tokens';
@@ -77,6 +78,22 @@ export default function SoloRoute() {
     );
   }
 
+  // Live room before its first question: everyone waits for the same start.
+  if (round.roomTimeline && !round.question) {
+    const phase = round.roomTimeline.phase;
+
+    return (
+      <Screen scrollable={false}>
+        <Card highlight>
+          <Text style={styles.pendingTitle}>{t('solo.timelineGetReady')}</Text>
+          <Text style={styles.pendingCopy}>
+            {phase?.kind === 'lead-in' ? t('solo.timelineStartsIn', { seconds: phase.secondsLeft }) : t('common.loading')}
+          </Text>
+        </Card>
+      </Screen>
+    );
+  }
+
   if (!round.question) {
     return <Redirect href={round.isRoomMode ? '/rooms' : round.isClassroomMode ? '/classroom' : '/home'} />;
   }
@@ -94,7 +111,7 @@ export default function SoloRoute() {
         </Text>
         <Text style={styles.difficultyLabel}>{difficultyLabel}</Text>
         <Text style={styles.progressTitle}>
-          {t('solo.progress', { current: round.currentIndex + 1, total: round.questions.length })}
+          {t('solo.progress', { current: round.currentIndex + 1, total: round.questionTotal })}
         </Text>
       </View>
 
@@ -175,7 +192,19 @@ export default function SoloRoute() {
         </Text>
       </Card>
 
-      {round.isRevealed ? (
+      {round.roomTimeline ? (
+        <RoomTimelinePanel
+          answeredCount={round.roomTimeline.answeredCount}
+          localPlayerId={round.currentRoom?.participants.find((participant) => participant.isLocalPlayer)?.id}
+          phase={round.roomTimeline.phase}
+          playerCount={round.roomTimeline.playerCount}
+          questionCount={round.questionTotal}
+          standings={round.roomTimeline.standings}
+          standingsQuestionCount={round.roomTimeline.standingsQuestionCount}
+        />
+      ) : null}
+
+      {round.roomTimeline && round.isRevealed ? null : round.isRevealed ? (
         <PrimaryButton
           label={round.isSubmittingAnswer ? t('common.loading') : t('solo.next')}
           onPress={() => void round.goNext()}

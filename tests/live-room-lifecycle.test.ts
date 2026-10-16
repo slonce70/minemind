@@ -43,14 +43,14 @@ test('room resume CTAs rely on persisted round context instead of active-only st
 
 test('solo room recovery resumes post-match rounds beyond active status', () => {
   const soloRoundSource = readFileSync(
-    new URL('../src/features/quiz/use-solo-round.ts', import.meta.url),
+    new URL('../src/features/quiz/round/room-mode.ts', import.meta.url),
     'utf8'
   );
 
   assert.doesNotMatch(soloRoundSource, /currentRoom\.status !== 'active'/);
   assert.match(soloRoundSource, /!currentRoom\.roundId/);
-  assert.match(soloRoundSource, /currentRoom\.status === 'lobby'/);
-  assert.match(soloRoundSource, /currentRoom\.status === 'finished'/);
+  assert.match(soloRoundSource, /currentRoom\.status !== 'lobby'/);
+  assert.match(soloRoundSource, /currentRoom\.status !== 'finished'/);
   assert.match(soloRoundSource, /currentRoomRound\?\.source === 'supabase'/);
 });
 
@@ -76,7 +76,7 @@ test('waiting room results keep supabase round context long enough to recover fi
     'utf8'
   );
   const soloRoundSource = readFileSync(
-    new URL('../src/features/quiz/use-solo-round.ts', import.meta.url),
+    new URL('../src/features/quiz/round/room-mode.ts', import.meta.url),
     'utf8'
   );
 

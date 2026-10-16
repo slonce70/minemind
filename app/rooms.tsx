@@ -1,4 +1,5 @@
 import { Redirect, Stack, router } from 'expo-router';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { LoadingScreen } from '../src/components/ui/loading-screen';
@@ -19,6 +20,17 @@ export default function RoomsRoute() {
     onlineUnavailable: t('rooms.onlineUnavailable'),
   });
   const canResumeRound = Boolean(lobby.activeRoomRound && (!isSupabaseConfigured || lobby.activeRoom?.roundId));
+  // Live rooms share one timeline: when the host starts, everyone goes to the round at once.
+  const liveRoundId =
+    lobby.activeRoomRound?.source === 'supabase' && lobby.activeRoom?.status === 'active'
+      ? lobby.activeRoomRound.roundId
+      : undefined;
+
+  useEffect(() => {
+    if (liveRoundId) {
+      router.replace('/solo?mode=room');
+    }
+  }, [liveRoundId]);
 
   if (!hasHydrated) {
     return <LoadingScreen />;
@@ -48,6 +60,7 @@ export default function RoomsRoute() {
         onChangeJoinCode={lobby.setJoinCode}
         onCreateRoom={() => void lobby.handleCreateRoom()}
         onJoinRoom={() => void lobby.handleJoinRoom()}
+        onlinePlayerIds={lobby.onlinePlayerIds}
         onLeaveRoom={() => {
           lobby.handleLeaveRoom();
           router.replace('/home');
@@ -83,6 +96,7 @@ export default function RoomsRoute() {
           lobbyTitle: t('rooms.lobbyTitle'),
           loading: t('common.loading'),
           notReady: t('rooms.notReady'),
+          offline: t('rooms.offline'),
           ready: t('rooms.ready'),
           readySummary: t('rooms.readySummary'),
           startBattle: t('rooms.startBattle'),

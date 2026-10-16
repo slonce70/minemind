@@ -35,3 +35,47 @@ jobs:
 
       - name: Run release validation suite
         run: npm run validate:release
+
+  e2e:
+    # Edge Functions against a throwaway local Supabase (migrations + seed), never a hosted project.
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Set up Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Start local Supabase
+        run: supabase start -x studio,imgproxy,inbucket,vector,logflare,supavisor,storage-api
+
+      - name: Serve Edge Functions
+        run: |
+          supabase functions serve > functions.log 2>&1 &
+          for attempt in $(seq 1 60); do
+            curl -sf -X OPTIONS http://127.0.0.1:54321/functions/v1/create-room > /dev/null && exit 0
+            sleep 2
+          done
+          cat functions.log
+          exit 1
+
+      - name: Run e2e tests
+        run: |
+          eval "$(supabase status -o env | grep -E '^(API_URL|ANON_KEY|SERVICE_ROLE_KEY)=')"
+          E2E_SUPABASE_URL=$API_URL E2E_SUPABASE_ANON_KEY=$ANON_KEY E2E_SUPABASE_SERVICE_ROLE_KEY=$SERVICE_ROLE_KEY npm run test:e2e
+
+      - name: Show function logs on failure
+        if: failure()
+        run: cat functions.log || true

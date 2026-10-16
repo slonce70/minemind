@@ -10,7 +10,10 @@ import '../src/i18n';
 
 import { appTheme, colors } from '../src/theme/tokens';
 import { setI18nLanguage } from '../src/i18n';
+import { initMonitoring } from '../src/lib/monitoring';
 import { useAppStore } from '../src/state/app-store';
+
+initMonitoring();
 
 export default function RootLayout() {
   const locale = useAppStore((state) => state.locale);

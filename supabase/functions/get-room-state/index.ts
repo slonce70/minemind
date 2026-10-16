@@ -1,7 +1,8 @@
 import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
 
 import { requireAuthenticatedUser } from '../_shared/auth.ts';
-import { handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
+import { GameError } from '../_shared/error-codes.ts';
+import { errorResponse, handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
 import { assertRoomMembership, getRoomByCode, listRoomParticipants } from '../_shared/rooms.ts';
 
 type GetRoomStatePayload = {
@@ -20,7 +21,7 @@ serve(async (request) => {
     const room = await getRoomByCode(body.roomCode);
 
     if (!room) {
-      throw new Error('Room not found.');
+      throw new GameError('room_not_found', 'Room not found.');
     }
 
     await assertRoomMembership(room.id, user.id);
@@ -31,11 +32,6 @@ serve(async (request) => {
       room,
     });
   } catch (error) {
-    return jsonResponse(
-      {
-        error: error instanceof Error ? error.message : 'Unknown get-room-state failure.',
-      },
-      400
-    );
+    return errorResponse(error);
   }
 });
