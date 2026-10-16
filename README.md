@@ -2,14 +2,16 @@
 
 Mobile quiz app prototype for `iOS + Android` built with `Expo`, `React Native`, and `Supabase-first` architecture.
 
-MineMind is a mobile quiz app for iOS and Android, built with Expo and React Native in TypeScript on top of a Supabase-first backend that leans on Postgres, Edge Functions, and Realtime. The UI is fully localized across Ukrainian, English, and Russian, and questions are drawn from a validated content bank of 360 items organized into difficulty tiers. You can play through a solo mode or join private live multiplayer rooms, with a built-in demo fallback so the experience keeps working even without a live backend connection.
+MineMind is a mobile quiz app for iOS and Android, built with Expo and React Native in TypeScript on top of a Supabase-first backend that leans on Postgres, Edge Functions, and Realtime. The UI is fully localized across Ukrainian, English, and Russian, and questions are drawn from a validated content bank of 360 items organized into difficulty tiers. You can play through a solo mode or join private live multiplayer rooms, while solo and classroom play keep working without a backend.
 
 ## Current Status
 - guest onboarding
 - localized UI: `uk`, `en`, `ru`
 - solo Minecraft quiz flow with `easy / medium / hard`
-- private room flow with live-Supabase integration path and demo fallback
-- validated local Minecraft question bank with `360` active records
+- private room flow on Supabase (bots and offline demo rooms exist only in development builds)
+- classroom (LAN) matches where the host keeps the answers
+- validated local question bank: `360` active records in `uk`, `en`, `ru` (`120` per difficulty, `45` per topic), answer options shuffled every round
+- one scoring rule for every mode: `100 + 6 × seconds left`, times `×1 / ×1.25 / ×1.5` for `easy / medium / hard` (timers `20 / 18 / 15` s), defined in `supabase/functions/_shared/game-rules.ts`
 - Minecraft-inspired fantasy UI layer, difficulty badges, and reward framing
 - room match settings foundation with `contentPackVersion` + difficulty metadata
 - NEXUS-Full planning docs in `docs/`
@@ -31,6 +33,7 @@ MineMind is a mobile quiz app for iOS and Android, built with Expo and React Nat
 - `npm run check:web-budget`
 - `npx tsx scripts/validate-question-bank.ts`
 - `npx tsx scripts/export-question-packs.ts`
+- `npm run export:content` (master bank → runtime bank → `supabase/seed.sql`)
 - `npm run export:web`
 - `npm run serve:web-export`
 - `./script/build_and_run.sh --help`
@@ -45,7 +48,11 @@ EXPO_PUBLIC_SUPABASE_URL=
 EXPO_PUBLIC_SUPABASE_ANON_KEY=
 ```
 
-If env vars are missing, the app still works in offline/demo mode.
+If env vars are missing, solo and classroom play still work offline. Online rooms need Supabase; in development builds an offline demo room with bots is available for testing the flow.
+
+### Local Supabase
+
+`supabase start` applies `supabase/migrations` and loads `supabase/seed.sql`, which is generated from the content bank by `npm run export:content` and upserts packs by slug and questions by content id (it never deletes rows). Load the same seed into a hosted project before enabling online play there.
 
 ## Next Active Wave
 - connect hosted Supabase project credentials
