@@ -111,7 +111,8 @@ export default function SoloRoute() {
             {round.timeLeft}s / {round.timeLimit}s
           </Text>
         </View>
-        {round.question.illustration ? (
+        {/* Pictures show the answer itself, so they appear only after answering. */}
+        {round.isRevealed && round.question.illustration ? (
           <View style={styles.questionIllustrationFrame}>
             <Image
               accessibilityLabel={round.question.illustration.alt}
