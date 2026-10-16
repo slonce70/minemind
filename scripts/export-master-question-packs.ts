@@ -2,6 +2,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { shuffleOptions } from '../supabase/functions/_shared/game-rules';
 import type { ContentDifficulty, ContentQuestionRecord, ContentTopicId } from '../src/features/content/types';
 
 type LocalizedMasterPayload = {
@@ -26,12 +27,15 @@ type ExportReadyMasterRecord = {
 };
 
 export function buildRuntimeQuestionRecord(record: ExportReadyMasterRecord): ContentQuestionRecord {
-  const correctIndex = record.localized.en.options.findIndex((option) => option === record.correctAnswer);
+  const sourceCorrectIndex = record.localized.en.options.findIndex((option) => option === record.correctAnswer);
   const russianPayload = record.localized.ru ?? record.localized.uk;
 
-  if (correctIndex < 0) {
+  if (sourceCorrectIndex < 0) {
     throw new Error(`Localized english options for ${record.id} do not contain the correct answer.`);
   }
+
+  // Spread the correct answer across positions in the bank itself (the app shuffles again per round).
+  const { correctIndex, order } = shuffleOptions([0, 1, 2, 3], sourceCorrectIndex, record.id);
 
   return {
     ageBand: '8-12',
@@ -45,7 +49,7 @@ export function buildRuntimeQuestionRecord(record: ExportReadyMasterRecord): Con
     },
     id: record.id,
     isActive: record.isActive,
-    options: record.localized.en.options.map((_, index) => ({
+    options: order.map((index) => ({
       en: record.localized.en.options[index],
       uk: record.localized.uk.options[index],
       ru: russianPayload.options[index],

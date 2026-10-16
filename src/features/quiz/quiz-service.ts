@@ -1,5 +1,8 @@
+import {
+  scoreAnswer,
+  speedBonusForTimeLeft,
+} from '../../../supabase/functions/_shared/game-rules';
 import type { AppLocale } from '../../lib/locale';
-import { difficultyConfig } from '../content/difficulty-config';
 import { loadMinecraftQuestionBank } from '../content/content-loader';
 import { selectQuestionRound } from '../content/content-selection';
 import type { ContentDifficulty, ContentQuestionRecord } from '../content/types';
@@ -56,11 +59,10 @@ export function buildQuizResult(
   }
 ): QuizResultSummary {
   let correctAnswers = 0;
-  let baseScore = 0;
+  let finalScore = 0;
   let currentStreak = 0;
   let bestStreak = 0;
   let speedBonus = 0;
-  const multiplier = options?.difficulty ? difficultyConfig[options.difficulty].scoreMultiplier : 1;
 
   const breakdown = questions.map((question) => {
     const answer = answers[question.id];
@@ -68,14 +70,14 @@ export function buildQuizResult(
       answer?.isCorrect ?? (typeof question.correctIndex === 'number'
         ? answer?.selectedIndex === question.correctIndex
         : false);
-    const questionSpeedBonus = Math.max(0, (answer?.timeLeft ?? 0) * 6);
+    const timeLeftMs = (answer?.timeLeft ?? 0) * 1000;
 
     if (isCorrect) {
       correctAnswers += 1;
       currentStreak += 1;
       bestStreak = Math.max(bestStreak, currentStreak);
-      speedBonus += questionSpeedBonus;
-      baseScore += 100;
+      speedBonus += speedBonusForTimeLeft(timeLeftMs);
+      finalScore += scoreAnswer({ difficulty: options?.difficulty, isCorrect, timeLeftMs });
     } else {
       currentStreak = 0;
     }
@@ -88,8 +90,6 @@ export function buildQuizResult(
       selectedIndex: answer?.selectedIndex ?? -1,
     };
   });
-
-  const finalScore = Math.round((baseScore + speedBonus) * multiplier);
 
   return {
     bestStreak,
