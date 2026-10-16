@@ -7,7 +7,7 @@ import { avatarLookup } from '../profile/avatar-presets';
 import { WorldBackground } from '../ui/world-background';
 import { ClassroomInviteQr } from './classroom-invite-qr';
 import type { ClassroomSession } from './types';
-import { colors, radii, spacing, typography } from '../../theme/tokens';
+import { colors, fonts, radii, spacing, typography } from '../../theme/tokens';
 
 type ClassroomLobbyViewProps = {
   classroomSession?: ClassroomSession;
@@ -288,39 +288,41 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.textPrimary,
+    fontFamily: fonts.display,
     fontSize: typography.display,
-    fontWeight: '800',
   },
   subtitle: {
     color: colors.textSecondary,
+    fontFamily: fonts.regular,
     fontSize: typography.body,
     lineHeight: 22,
   },
   sectionTitle: {
     color: colors.textPrimary,
+    fontFamily: fonts.extraBold,
     fontSize: typography.h3,
-    fontWeight: '800',
   },
   copy: {
     color: colors.textSecondary,
+    fontFamily: fonts.regular,
     fontSize: typography.body,
     lineHeight: 22,
   },
   readySummary: {
     color: colors.highlight,
+    fontFamily: fonts.bold,
     fontSize: typography.caption,
-    fontWeight: '700',
   },
   roomCode: {
     color: colors.highlight,
+    fontFamily: fonts.display,
     fontSize: typography.display,
-    fontWeight: '900',
     letterSpacing: 3,
   },
   inputLabel: {
     color: colors.textMuted,
+    fontFamily: fonts.bold,
     fontSize: typography.caption,
-    fontWeight: '700',
   },
   input: {
     backgroundColor: colors.surfaceRaised,
@@ -328,6 +330,7 @@ const styles = StyleSheet.create({
     borderRadius: radii.xl,
     borderWidth: 1,
     color: colors.textPrimary,
+    fontFamily: fonts.regular,
     fontSize: typography.body,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.md,
@@ -338,14 +341,15 @@ const styles = StyleSheet.create({
     borderRadius: radii.xl,
     borderWidth: 1,
     color: colors.textPrimary,
+    fontFamily: fonts.regular,
     fontSize: typography.caption,
     lineHeight: 20,
     padding: spacing.md,
   },
   sessionStatus: {
     color: colors.highlight,
+    fontFamily: fonts.display,
     fontSize: typography.caption,
-    fontWeight: '800',
     textTransform: 'uppercase',
   },
   participantList: {
@@ -365,8 +369,8 @@ const styles = StyleSheet.create({
   },
   participantInitial: {
     color: colors.canvas,
+    fontFamily: fonts.black,
     fontSize: typography.body,
-    fontWeight: '900',
   },
   participantMeta: {
     flex: 1,
@@ -375,17 +379,17 @@ const styles = StyleSheet.create({
   },
   participantName: {
     color: colors.textPrimary,
+    fontFamily: fonts.bold,
     fontSize: typography.body,
-    fontWeight: '700',
   },
   participantState: {
     color: colors.textSecondary,
+    fontFamily: fonts.semiBold,
     fontSize: typography.caption,
-    fontWeight: '600',
   },
   errorText: {
     color: colors.danger,
+    fontFamily: fonts.bold,
     fontSize: typography.caption,
-    fontWeight: '700',
   },
 });

@@ -1,7 +1,7 @@
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { appTheme, colors, typography } from '../../theme/tokens';
+import { appTheme, colors, fonts, typography } from '../../theme/tokens';
 
 export function LoadingScreen() {
   const { t } = useTranslation();
@@ -26,11 +26,12 @@ const styles = StyleSheet.create({
   },
   label: {
     color: colors.textPrimary,
+    fontFamily: fonts.extraBold,
     fontSize: typography.h3,
-    fontWeight: '800',
   },
   subtle: {
     color: colors.textMuted,
+    fontFamily: fonts.regular,
     fontSize: typography.caption,
     textAlign: 'center',
   },

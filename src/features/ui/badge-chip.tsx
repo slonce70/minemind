@@ -1,10 +1,11 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-import { colors, radii, shadows, spacing, typography } from '../../theme/tokens';
-import { iconMap } from './icon-map';
+import { colors, fonts, radii, shadows, spacing, typography } from '../../theme/tokens';
+import type { PixelIconName } from './pixel-art';
+import { PixelIcon } from './pixel-icon';
 
 type BadgeChipProps = {
-  icon?: keyof typeof iconMap;
+  icon?: PixelIconName;
   label: string;
   tone?: 'danger' | 'success' | 'warning';
 };
@@ -32,7 +33,7 @@ export function BadgeChip({ icon, label, tone = 'warning' }: BadgeChipProps) {
 
   return (
     <View style={[styles.plate, { backgroundColor: style.backgroundColor, borderColor: style.borderColor }]}>
-      {icon ? <Text style={[styles.icon, { color: style.color }]}>{iconMap[icon]}</Text> : null}
+      {icon ? <PixelIcon color={style.color} name={icon} size={16} /> : null}
       <Text numberOfLines={2} style={[styles.label, { color: style.color }]}>
         {label}
       </Text>
@@ -53,14 +54,10 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xs,
     ...shadows.soft,
   },
-  icon: {
-    fontSize: typography.micro,
-    fontWeight: '900',
-  },
   label: {
     flexShrink: 1,
+    fontFamily: fonts.display,
     fontSize: typography.micro,
-    fontWeight: '900',
     letterSpacing: 0.4,
     textTransform: 'uppercase',
   },

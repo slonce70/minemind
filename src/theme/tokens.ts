@@ -22,8 +22,12 @@ export const appTheme = {
     cardRadius: 14,
     chipRadius: 10,
     controlHeight: 58,
+    /** Content column on tablets and the web; phones use the full width. */
+    maxContentWidth: 760,
     screenGap: 16,
     screenPadding: 20,
+    /** From this width two-column layouts kick in. */
+    wideBreakpoint: 700,
   },
   shadow: {
     card: '0 14px 26px rgba(0, 0, 0, 0.28)',
@@ -62,7 +66,7 @@ export const appTheme = {
   },
   text: {
     inverse: '#0D1410',
-    muted: '#9CB19A',
+    muted: '#A9BDA6',
     primary: '#F3F7E8',
     secondary: '#D3DDC5',
   },
@@ -73,9 +77,30 @@ export const appTheme = {
     h1: 28,
     h2: 24,
     h3: 20,
-    micro: 11,
-    overline: 12,
+    micro: 12,
+    overline: 14,
   },
+} as const;
+
+/**
+ * Tiny5 (pixel, OFL) for headings and numbers, Nunito (OFL) for everything people read.
+ * Each weight is its own family, so styles set `fontFamily` instead of `fontWeight`.
+ */
+export const fonts = {
+  black: 'Nunito_900Black',
+  bold: 'Nunito_700Bold',
+  display: 'Tiny5_400Regular',
+  extraBold: 'Nunito_800ExtraBold',
+  regular: 'Nunito_400Regular',
+  semiBold: 'Nunito_600SemiBold',
+} as const;
+
+export const motion = {
+  fast: 140,
+  base: 240,
+  slow: 420,
+  /** Count-up of scores on the results screen. */
+  countUp: 1100,
 } as const;
 
 export const colors = {
@@ -109,20 +134,25 @@ export const colors = {
   surfaceRaised: appTheme.surface.raised,
   utilitySurface: appTheme.surfaceTiers.utility.base,
   utilityEdge: appTheme.surfaceTiers.utility.edge,
+  wrong: appTheme.feedback.wrong,
   textMuted: appTheme.text.muted,
   textPrimary: appTheme.text.primary,
   textSecondary: appTheme.text.secondary,
 } as const;
 
 export const spacing = {
+  xxs: 4,
   xs: 6,
   sm: 10,
   md: 16,
   lg: appTheme.layout.screenPadding,
   xl: 32,
+  xxl: 48,
 } as const;
 
 export const radii = {
+  sm: 6,
+  md: 10,
   lg: 16,
   xl: appTheme.layout.cardRadius,
   full: appTheme.layout.chipRadius,

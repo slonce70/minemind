@@ -9,7 +9,7 @@ import { DifficultySelector } from '../home/difficulty-selector';
 import { BadgeChip } from '../ui/badge-chip';
 import { WorldBackground } from '../ui/world-background';
 import type { ActiveRoom } from './types';
-import { colors, radii, spacing, typography } from '../../theme/tokens';
+import { colors, fonts, radii, spacing, typography } from '../../theme/tokens';
 import { deriveRoomLobbyState } from './room-lobby-state';
 
 type RoomLobbyViewProps = {
@@ -234,23 +234,25 @@ const styles = StyleSheet.create({
   },
   eyebrow: {
     color: colors.highlight,
+    fontFamily: fonts.display,
     fontSize: typography.overline,
-    fontWeight: '800',
     letterSpacing: 1.4,
     textTransform: 'uppercase',
   },
   title: {
     color: colors.textPrimary,
+    fontFamily: fonts.display,
     fontSize: typography.display,
-    fontWeight: '800',
   },
   subtitle: {
     color: colors.textSecondary,
+    fontFamily: fonts.regular,
     fontSize: typography.body,
     lineHeight: 24,
   },
   helper: {
     color: colors.textMuted,
+    fontFamily: fonts.regular,
     fontSize: typography.caption,
     lineHeight: 20,
   },
@@ -273,28 +275,29 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     color: colors.textPrimary,
+    fontFamily: fonts.extraBold,
     fontSize: typography.h3,
-    fontWeight: '800',
   },
   copy: {
     color: colors.textSecondary,
+    fontFamily: fonts.regular,
     fontSize: typography.body,
     lineHeight: 22,
   },
   readySummary: {
     color: colors.highlight,
+    fontFamily: fonts.bold,
     fontSize: typography.caption,
-    fontWeight: '700',
   },
   errorText: {
     color: colors.danger,
+    fontFamily: fonts.bold,
     fontSize: typography.caption,
-    fontWeight: '700',
   },
   roomCode: {
     color: colors.highlight,
+    fontFamily: fonts.display,
     fontSize: typography.display,
-    fontWeight: '900',
     letterSpacing: 4,
   },
   participantList: {
@@ -314,8 +317,8 @@ const styles = StyleSheet.create({
   },
   participantInitial: {
     color: colors.canvas,
+    fontFamily: fonts.black,
     fontSize: typography.caption,
-    fontWeight: '900',
   },
   participantMeta: {
     flex: 1,
@@ -324,12 +327,13 @@ const styles = StyleSheet.create({
   participantName: {
     color: colors.textPrimary,
     flexShrink: 1,
+    fontFamily: fonts.bold,
     fontSize: typography.body,
-    fontWeight: '700',
   },
   participantState: {
     color: colors.textSecondary,
     flexShrink: 1,
+    fontFamily: fonts.regular,
     fontSize: typography.caption,
   },
   input: {
@@ -338,6 +342,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     borderWidth: 1,
     color: colors.textPrimary,
+    fontFamily: fonts.regular,
     fontSize: typography.body,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.md,

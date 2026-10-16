@@ -8,7 +8,7 @@ import { DifficultySelector } from './difficulty-selector';
 import type { MatchRecord } from '../results/match-record';
 import { BadgeChip } from '../ui/badge-chip';
 import { WorldBackground } from '../ui/world-background';
-import { colors, radii, spacing, typography } from '../../theme/tokens';
+import { colors, fonts, radii, spacing, typography } from '../../theme/tokens';
 
 type HomeViewProps = {
   difficultyLabel: string;
@@ -80,7 +80,7 @@ export function HomeView({
             <Text style={styles.heroEyebrow}>{strings.modeSelectorCopy}</Text>
             <Text style={styles.heroTitle}>{strings.title.replace('{{name}}', nickname)}</Text>
             <Text style={styles.heroSubtitle}>{strings.primaryCardCopy}</Text>
-            <BadgeChip icon="pickaxe" label={difficultyLabel} tone="warning" />
+            <BadgeChip icon="star" label={difficultyLabel} tone="warning" />
           </View>
 
           <View style={styles.heroControlZone}>
@@ -188,30 +188,32 @@ const styles = StyleSheet.create({
   },
   routeEyebrow: {
     color: colors.torch,
+    fontFamily: fonts.display,
     fontSize: typography.overline,
-    fontWeight: '800',
     letterSpacing: 1.4,
     textTransform: 'uppercase',
   },
   routeTitle: {
     color: colors.textSecondary,
+    fontFamily: fonts.regular,
     fontSize: typography.body,
     lineHeight: 24,
   },
   heroEyebrow: {
     color: colors.highlight,
+    fontFamily: fonts.display,
     fontSize: typography.overline,
-    fontWeight: '800',
     letterSpacing: 1.4,
     textTransform: 'uppercase',
   },
   heroTitle: {
     color: colors.textPrimary,
+    fontFamily: fonts.display,
     fontSize: typography.display,
-    fontWeight: '800',
   },
   heroSubtitle: {
     color: colors.textSecondary,
+    fontFamily: fonts.regular,
     fontSize: typography.body,
     lineHeight: 24,
   },
@@ -227,16 +229,18 @@ const styles = StyleSheet.create({
   },
   selectorCopy: {
     color: colors.textMuted,
+    fontFamily: fonts.regular,
     fontSize: typography.caption,
     lineHeight: 20,
   },
   sectionTitle: {
     color: colors.textPrimary,
+    fontFamily: fonts.extraBold,
     fontSize: typography.h3,
-    fontWeight: '800',
   },
   copy: {
     color: colors.textSecondary,
+    fontFamily: fonts.regular,
     fontSize: typography.body,
     lineHeight: 22,
   },

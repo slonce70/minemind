@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
 import { SecondaryButton } from '../../components/ui/button';
-import { colors, spacing, typography } from '../../theme/tokens';
+import { colors, fonts, spacing, typography } from '../../theme/tokens';
 import type { ContentDifficulty } from '../content/types';
 
 type DifficultySelectorProps = {
@@ -50,8 +50,8 @@ const styles = StyleSheet.create({
   },
   label: {
     color: colors.textMuted,
+    fontFamily: fonts.display,
     fontSize: typography.micro,
-    fontWeight: '800',
     letterSpacing: 1.2,
     textTransform: 'uppercase',
   },
