@@ -190,6 +190,7 @@ export function RoomLobbyView({
           <Card style={styles.rosterSurface} tone="panel">
             <Text style={styles.sectionTitle}>{strings.joinRoomTitle}</Text>
             <TextInput
+              accessibilityLabel={strings.joinRoomTitle}
               autoCapitalize="characters"
               autoCorrect={false}
               maxLength={6}

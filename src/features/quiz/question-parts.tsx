@@ -83,7 +83,9 @@ export function AnswerOption({ accessibilityLabel, disabled, index, label, onPre
         testID="answer-option"
       >
         <View style={[styles.letter, { backgroundColor: tone.border }]}>
-          <Text style={[styles.letterText, { color: tone.letterText }]}>{optionLetters[index]}</Text>
+          <Text maxFontSizeMultiplier={1.3} style={[styles.letterText, { color: tone.letterText }]}>
+            {optionLetters[index]}
+          </Text>
         </View>
         <Text style={styles.optionLabel}>{label}</Text>
         {mark ? <PixelIcon color={tone.border} name={mark} size={22} /> : null}
@@ -140,7 +142,9 @@ export function TimerBar({ accessibilityLabel, isRunning, timeLeft, timeLimit }:
       <View style={styles.timerTrack}>
         <Animated.View style={[styles.timerFill, { backgroundColor: isLow ? colors.danger : colors.highlight }, fillStyle]} />
       </View>
-      <Text style={[styles.timerValue, isLow && styles.timerValueLow]}>{timeLeft}</Text>
+      <Text maxFontSizeMultiplier={1.4} style={[styles.timerValue, isLow && styles.timerValueLow]}>
+        {timeLeft}
+      </Text>
     </View>
   );
 }
