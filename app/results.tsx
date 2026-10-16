@@ -12,6 +12,7 @@ export default function ResultsRoute() {
   const hasHydrated = useAppStore((state) => state.hasHydrated);
   const recentMatches = useAppStore((state) => state.recentMatches);
   const lastMatchId = useAppStore((state) => state.lastMatchId);
+  const lastRewards = useAppStore((state) => state.lastRewards);
   const selectedDifficulty = useAppStore((state) => state.selectedDifficulty);
   const latestMatch = recentMatches.find((entry) => entry.id === lastMatchId) ?? recentMatches[0];
 
@@ -43,6 +44,7 @@ export default function ResultsRoute() {
 
           router.replace('/solo');
         }}
+        rewards={lastRewards}
         sourceLabel={t(getMatchSourceTranslationKey(latestMatch))}
         strings={{
           accuracyLabel: t('results.correct'),
