@@ -10,7 +10,9 @@
 ## Backend
 - `Supabase Auth` для anonymous session
 - `Postgres` для профілів, контенту, кімнат, результатів
-- `Realtime Presence/Broadcast` для lobby і room sync
+- `Realtime`: postgres_changes по `rooms`, Presence і Broadcast у приватному каналі `room:<id>` для лобі й раунду; опитування лише як запасний шлях
+- спільний серверний таймлайн раунду, переклади питань у БД (див. `04-data-model.md`)
+- помилки Edge Functions як `{ code, error }`, переклад коду в застосунку; звіти про помилки в Sentry за `EXPO_PUBLIC_SENTRY_DSN` (без DSN вимкнено)
 - `Edge Functions` для server-authoritative actions
 
 ## Offline-First Foundation
