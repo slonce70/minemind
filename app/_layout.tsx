@@ -19,6 +19,7 @@ import '../src/i18n';
 import { appTheme, colors, fonts } from '../src/theme/tokens';
 import { setI18nLanguage } from '../src/i18n';
 import { syncMusic } from '../src/features/feel/feedback';
+import { useProgressSync } from '../src/features/progress/use-progress-sync';
 import { initMonitoring } from '../src/lib/monitoring';
 import { useAppStore } from '../src/state/app-store';
 
@@ -29,6 +30,7 @@ export default function RootLayout() {
   const musicEnabled = useAppStore((state) => state.settings.music);
   const hasHydrated = useAppStore((state) => state.hasHydrated);
   const reduceMotion = useReducedMotion();
+  useProgressSync();
   const [queryClient] = useState(() => new QueryClient());
   const [fontsLoaded, fontError] = useFonts({
     Nunito_400Regular,

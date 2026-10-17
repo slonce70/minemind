@@ -9,6 +9,7 @@ import { LoadingScreen } from '../src/components/ui/loading-screen';
 import { Screen } from '../src/components/ui/screen';
 import { ScreenHeader } from '../src/components/ui/screen-header';
 import { StatPill } from '../src/components/ui/stat-pill';
+import { CloudSaveCard } from '../src/features/progress/cloud-save-card';
 import { avatarPresets } from '../src/features/profile/avatar-presets';
 import { validateNickname } from '../src/features/profile/nickname';
 import { generateNickname } from '../src/features/profile/nickname-generator';
@@ -16,6 +17,7 @@ import { PlayerAvatar } from '../src/features/profile/player-avatar';
 import { AvatarPicker, NicknameField } from '../src/features/profile/profile-controls';
 import { ensureGuestSession } from '../src/features/profile/profile-service';
 import { summarizeMatches } from '../src/features/profile/profile-stats';
+import { supabase } from '../src/lib/supabase';
 import { useAppStore } from '../src/state/app-store';
 import { colors, fonts, spacing, typography } from '../src/theme/tokens';
 
@@ -146,6 +148,8 @@ export default function ProfileRoute() {
         />
       </Card>
 
+      <CloudSaveCard />
+
       <Card tone="utility">
         <Text style={styles.note}>{t('profile.resetHint')}</Text>
         <SecondaryButton
@@ -156,6 +160,8 @@ export default function ProfileRoute() {
               return;
             }
 
+            // A fresh guest account too, so the old cloud progress does not merge back in.
+            void supabase?.auth.signOut();
             resetProfile();
             router.replace('/onboarding');
           }}

@@ -2,6 +2,23 @@
 // resources in ./index.ts; tests/progress-copy.test.ts keeps the three locales in sync.
 export const progressResources = {
   uk: {
+    cloud: {
+      done: 'Готово! Прогрес на цьому пристрої.',
+      emailLabel: 'Пошта (попроси дорослого)',
+      emailPlaceholder: 'name@example.com',
+      failed: 'Не вийшло: {{reason}}',
+      invalidEmail: 'Перевір адресу пошти.',
+      link: 'Зберегти прогрес на пошту',
+      linkSent: 'Лист надіслано на {{email}}. Відкрий посилання в листі, щоб підтвердити.',
+      linked: 'Прогрес прив’язано до {{email}}. Його можна відновити на іншому пристрої.',
+      offline: 'Офлайн-режим: прогрес зберігається лише на цьому пристрої.',
+      restore: 'Відновити прогрес з пошти',
+      restoreHint: 'Є прогрес на іншому пристрої? Увійди за поштою, і він об’єднається з цим.',
+      restoreSent: 'Лист для входу надіслано на {{email}}.',
+      signingIn: 'Входимо...',
+      status: 'Прогрес зберігається в хмарі, але поки лише для цього пристрою. Прив’яжи пошту, щоб перенести його.',
+      title: 'Збереження прогресу',
+    },
     challenge: {
       accept: 'Прийняти виклик',
       copied: 'Посилання скопійовано',
@@ -125,6 +142,23 @@ export const progressResources = {
     },
   },
   en: {
+    cloud: {
+      done: 'Done! Your progress is on this device.',
+      emailLabel: 'Email (ask a grown-up)',
+      emailPlaceholder: 'name@example.com',
+      failed: 'That did not work: {{reason}}',
+      invalidEmail: 'Check the email address.',
+      link: 'Save progress to an email',
+      linkSent: 'We sent an email to {{email}}. Open the link in it to confirm.',
+      linked: 'Progress is linked to {{email}}. You can restore it on another device.',
+      offline: 'Offline mode: progress is kept on this device only.',
+      restore: 'Restore progress from email',
+      restoreHint: 'Played on another device? Sign in with email and the progress merges.',
+      restoreSent: 'A sign-in email was sent to {{email}}.',
+      signingIn: 'Signing in...',
+      status: 'Progress is saved in the cloud, but only for this device so far. Link an email to move it.',
+      title: 'Saving progress',
+    },
     challenge: {
       accept: 'Accept the challenge',
       copied: 'Link copied',
@@ -248,6 +282,23 @@ export const progressResources = {
     },
   },
   ru: {
+    cloud: {
+      done: 'Готово! Прогресс на этом устройстве.',
+      emailLabel: 'Почта (попроси взрослого)',
+      emailPlaceholder: 'name@example.com',
+      failed: 'Не получилось: {{reason}}',
+      invalidEmail: 'Проверь адрес почты.',
+      link: 'Сохранить прогресс на почту',
+      linkSent: 'Письмо отправлено на {{email}}. Открой ссылку в письме, чтобы подтвердить.',
+      linked: 'Прогресс привязан к {{email}}. Его можно восстановить на другом устройстве.',
+      offline: 'Офлайн-режим: прогресс хранится только на этом устройстве.',
+      restore: 'Восстановить прогресс с почты',
+      restoreHint: 'Есть прогресс на другом устройстве? Войди по почте, и он объединится с этим.',
+      restoreSent: 'Письмо для входа отправлено на {{email}}.',
+      signingIn: 'Входим...',
+      status: 'Прогресс хранится в облаке, но пока только для этого устройства. Привяжи почту, чтобы перенести его.',
+      title: 'Сохранение прогресса',
+    },
     challenge: {
       accept: 'Принять вызов',
       copied: 'Ссылка скопирована',
