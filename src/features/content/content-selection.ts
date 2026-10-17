@@ -38,13 +38,19 @@ export function shuffleRecordOptions(
   record: ContentQuestionRecord,
   seed: string
 ): ContentQuestionRecord {
-  const order = seededPermutation(4, `${seed}:options:${record.id}`);
-  const options = order.map((originalIndex) => record.options[originalIndex]) as ContentQuestionRecord['options'];
+  // True/false keeps its fixed order: "true" first.
+  if (record.kind === 'true-false') {
+    return record;
+  }
+
+  const order = seededPermutation(record.options.length, `${seed}:options:${record.id}`);
+  const options = order.map((originalIndex) => record.options[originalIndex]);
   const correctIndex = order.indexOf(record.correctIndex);
 
   return {
     ...record,
     correctIndex,
+    optionIcons: record.optionIcons ? order.map((originalIndex) => record.optionIcons![originalIndex]) : undefined,
     options,
   };
 }

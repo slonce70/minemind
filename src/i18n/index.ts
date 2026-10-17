@@ -3,6 +3,7 @@ import { initReactI18next } from 'react-i18next';
 
 import { appLocales, defaultAppLocale, type AppLocale } from '../lib/locale';
 import { apiErrorResources, playerErrorResources } from './player-error-resources';
+import { progressResources } from './progress-resources';
 import { resources } from './resources';
 
 const localizedResources = Object.fromEntries(
@@ -11,6 +12,7 @@ const localizedResources = Object.fromEntries(
     {
       translation: {
         ...resources[locale].translation,
+        ...progressResources[locale],
         errors: {
           ...resources[locale].translation.errors,
           codes: apiErrorResources[locale],

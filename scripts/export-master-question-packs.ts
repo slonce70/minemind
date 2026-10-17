@@ -3,11 +3,17 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { shuffleOptions } from '../supabase/functions/_shared/game-rules';
-import type { ContentDifficulty, ContentQuestionRecord, ContentTopicId } from '../src/features/content/types';
+import type {
+  ContentDifficulty,
+  ContentQuestionRecord,
+  ContentTopicId,
+  QuestionKind,
+  QuestionMedia,
+} from '../src/features/content/types';
 
 type LocalizedMasterPayload = {
   explanation: string;
-  options: [string, string, string, string];
+  options: string[];
   prompt: string;
 };
 
@@ -15,11 +21,14 @@ type ExportReadyMasterRecord = {
   correctAnswer: string;
   id: string;
   isActive: boolean;
+  kind?: QuestionKind;
   localized: {
     en: LocalizedMasterPayload;
     uk: LocalizedMasterPayload;
     ru?: LocalizedMasterPayload;
   };
+  media?: QuestionMedia;
+  optionIcons?: string[];
   sourceVersion: string;
   tags: string[];
   topicId: ContentTopicId;
@@ -34,8 +43,16 @@ export function buildRuntimeQuestionRecord(record: ExportReadyMasterRecord): Con
     throw new Error(`Localized english options for ${record.id} do not contain the correct answer.`);
   }
 
-  // Spread the correct answer across positions in the bank itself (the app shuffles again per round).
-  const { correctIndex, order } = shuffleOptions([0, 1, 2, 3], sourceCorrectIndex, record.id);
+  const indexes = record.localized.en.options.map((_, index) => index);
+  // True/false always reads "true, false". Other questions spread the correct answer across
+  // positions in the bank itself (the app shuffles again per round).
+  const { correctIndex, order } =
+    record.kind === 'true-false'
+      ? (() => {
+          const trueFirst = record.localized.en.options[0] === 'True' ? [0, 1] : [1, 0];
+          return { correctIndex: trueFirst.indexOf(sourceCorrectIndex), order: trueFirst };
+        })()
+      : shuffleOptions(indexes, sourceCorrectIndex, record.id);
 
   return {
     ageBand: '8-12',
@@ -49,11 +66,14 @@ export function buildRuntimeQuestionRecord(record: ExportReadyMasterRecord): Con
     },
     id: record.id,
     isActive: record.isActive,
+    ...(record.kind ? { kind: record.kind } : {}),
+    ...(record.media ? { media: record.media } : {}),
+    ...(record.optionIcons ? { optionIcons: order.map((index) => record.optionIcons![index]) } : {}),
     options: order.map((index) => ({
       en: record.localized.en.options[index],
       uk: record.localized.uk.options[index],
       ru: russianPayload.options[index],
-    })) as ContentQuestionRecord['options'],
+    })),
     prompt: {
       en: record.localized.en.prompt,
       uk: record.localized.uk.prompt,

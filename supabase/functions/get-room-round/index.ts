@@ -5,7 +5,7 @@ import { serviceClient } from '../_shared/client.ts';
 import { GameError } from '../_shared/error-codes.ts';
 import { errorResponse, handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
 import { resolveQuestionLocale } from '../_shared/questions.ts';
-import { assertRoomMembership, getRoomByCode, listRoomParticipants } from '../_shared/rooms.ts';
+import { assertRoomMembership, getRoomByCode, listRoomParticipants, playingParticipants } from '../_shared/rooms.ts';
 import { buildRoundView } from '../_shared/round-view.ts';
 
 type GetRoomRoundPayload = {
@@ -51,7 +51,7 @@ serve(async (request) => {
       ...(await buildRoundView({
         locale: resolveQuestionLocale(body.locale),
         now: new Date(),
-        participants,
+        participants: playingParticipants(room, participants),
         playerId: user.id,
         round,
       })),

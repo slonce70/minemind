@@ -12,6 +12,8 @@ export default function ResultsRoute() {
   const hasHydrated = useAppStore((state) => state.hasHydrated);
   const recentMatches = useAppStore((state) => state.recentMatches);
   const lastMatchId = useAppStore((state) => state.lastMatchId);
+  const lastRewards = useAppStore((state) => state.lastRewards);
+  const nickname = useAppStore((state) => state.profile?.nickname ?? '');
   const selectedDifficulty = useAppStore((state) => state.selectedDifficulty);
   const latestMatch = recentMatches.find((entry) => entry.id === lastMatchId) ?? recentMatches[0];
 
@@ -23,12 +25,19 @@ export default function ResultsRoute() {
     return <Redirect href="/home" />;
   }
 
+  const isModeRound = latestMatch.round?.soloMode === 'adaptive' || latestMatch.round?.soloMode === 'mistakes';
+
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <ResultsView
-        difficultyLabel={t(difficultyConfig[latestMatch.difficulty ?? selectedDifficulty].translationKey)}
+        difficultyLabel={
+          isModeRound
+            ? t(`modes.${latestMatch.round?.soloMode}`)
+            : t(difficultyConfig[latestMatch.difficulty ?? selectedDifficulty].translationKey)
+        }
         matchRecord={latestMatch}
+        nickname={nickname}
         onBackHome={() => router.replace('/home')}
         onPlayAgain={() => {
           if (latestMatch.mode === 'room') {
@@ -41,8 +50,18 @@ export default function ResultsRoute() {
             return;
           }
 
-          router.replace('/solo');
+          const round = latestMatch.round;
+
+          // The same kind of round again; a friend's challenge continues as a normal round.
+          if (round?.soloMode === 'topic' && round.topicId) {
+            router.replace({ params: { topic: round.topicId, variant: 'topic' }, pathname: '/solo' });
+          } else if (round?.soloMode === 'adaptive' || round?.soloMode === 'mistakes') {
+            router.replace({ params: { variant: round.soloMode }, pathname: '/solo' });
+          } else {
+            router.replace('/solo');
+          }
         }}
+        rewards={lastRewards}
         sourceLabel={t(getMatchSourceTranslationKey(latestMatch))}
         strings={{
           accuracyLabel: t('results.correct'),
@@ -54,7 +73,8 @@ export default function ResultsRoute() {
           },
           bestStreak: t('results.bestStreak'),
           correctAnswer: t('results.correctAnswer'),
-          difficulty: t('results.difficulty'),
+          // Adaptive and mistakes rounds mix difficulties: the pill names the mode instead.
+          difficulty: isModeRound ? t('results.mode') : t('results.difficulty'),
           noAnswer: t('results.noAnswer'),
           playAgain: t('results.playAgain'),
           questionNumber: (number) => t('results.questionNumber', { number }),

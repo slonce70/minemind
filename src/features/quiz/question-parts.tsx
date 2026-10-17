@@ -13,6 +13,7 @@ import Animated, {
 import { colors, fonts, motion, radii, spacing, typography } from '../../theme/tokens';
 import type { PixelIconName } from '../ui/pixel-art';
 import { PixelIcon } from '../ui/pixel-icon';
+import { ItemIcon } from './question-media';
 
 export const optionLetters = ['A', 'B', 'C', 'D'] as const;
 
@@ -21,6 +22,8 @@ export type OptionState = 'idle' | 'selected' | 'correct' | 'wrong' | 'dimmed';
 type AnswerOptionProps = {
   accessibilityLabel: string;
   disabled: boolean;
+  /** Item sprite shown before the text (recipe questions). */
+  icon?: string;
   index: number;
   label: string;
   onPress: () => void;
@@ -28,7 +31,7 @@ type AnswerOptionProps = {
 };
 
 /** One answer: letter badge, text and, once revealed, a ✓ / ✗ mark so the result never relies on colour. */
-export function AnswerOption({ accessibilityLabel, disabled, index, label, onPress, state }: AnswerOptionProps) {
+export function AnswerOption({ accessibilityLabel, disabled, icon, index, label, onPress, state }: AnswerOptionProps) {
   const reduceMotion = useReducedMotion();
   const scale = useSharedValue(1);
   const shift = useSharedValue(0);
@@ -87,6 +90,7 @@ export function AnswerOption({ accessibilityLabel, disabled, index, label, onPre
             {optionLetters[index]}
           </Text>
         </View>
+        {icon ? <ItemIcon id={icon} size={28} /> : null}
         <Text style={styles.optionLabel}>{label}</Text>
         {mark ? <PixelIcon color={tone.border} name={mark} size={22} /> : null}
       </Pressable>

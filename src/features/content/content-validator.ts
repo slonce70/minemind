@@ -1,11 +1,13 @@
 import { z } from 'zod';
 
+import { isItemSpriteId } from '../ui/item-sprites';
 import {
   contentAgeBands,
   contentCategoryIds,
   contentDifficulties,
   contentLocales,
   contentTopics,
+  questionKinds,
   type ContentQuestionBank,
   type ContentQuestionRecord,
   type LocalizedString,
@@ -26,6 +28,17 @@ export const minecraftCategorySchema = z.enum(contentCategoryIds);
 
 export const minecraftTopicSchema = z.enum(contentTopics);
 
+const itemSpriteSchema = z.string().refine(isItemSpriteId, 'unknown item sprite');
+
+export const questionMediaSchema = z.discriminatedUnion('type', [
+  z.strictObject({ sprite: itemSpriteSchema, type: z.literal('picture') }),
+  z.strictObject({
+    grid: z.array(itemSpriteSchema.nullable()).length(9),
+    missingSlot: z.number().int().min(0).max(8),
+    type: z.literal('recipe'),
+  }),
+]);
+
 export const minecraftQuestionRecordSchema: z.ZodType<ContentQuestionRecord> = z.strictObject({
     ageBand: minecraftAgeBandSchema,
     categoryId: minecraftCategorySchema,
@@ -34,12 +47,10 @@ export const minecraftQuestionRecordSchema: z.ZodType<ContentQuestionRecord> = z
     explanation: minecraftLocalizedStringSchema,
     id: z.string().trim().min(1).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
     isActive: z.boolean(),
-    options: z.tuple([
-      minecraftLocalizedStringSchema,
-      minecraftLocalizedStringSchema,
-      minecraftLocalizedStringSchema,
-      minecraftLocalizedStringSchema,
-    ]),
+    kind: z.enum(questionKinds).optional(),
+    media: questionMediaSchema.optional(),
+    optionIcons: z.array(itemSpriteSchema).optional(),
+    options: z.array(minecraftLocalizedStringSchema).min(2).max(4),
     prompt: minecraftLocalizedStringSchema,
     sourceVersion: z.string().trim().regex(/^[a-z0-9]+(?:[-.][a-z0-9]+)*$/),
     tags: z.array(z.string().trim().min(1).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)).min(1),
@@ -55,14 +66,49 @@ export const minecraftQuestionRecordSchema: z.ZodType<ContentQuestionRecord> = z
       });
     }
 
-    if (record.correctIndex < 0 || record.correctIndex > 3) {
+    if (record.correctIndex < 0 || record.correctIndex >= record.options.length) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'correctIndex must point at one of the four options',
+        message: 'correctIndex must point at one of the options',
         path: ['correctIndex'],
       });
     }
+
+    for (const issue of questionShapeIssues(record)) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: issue, path: [] });
+    }
   });
+
+/** What each question type needs: true-false has two options, the rest four; media must match. */
+export function questionShapeIssues(record: Pick<ContentQuestionRecord, 'kind' | 'media' | 'optionIcons' | 'options'>) {
+  const kind = record.kind ?? 'choice';
+  const issues: string[] = [];
+  const expectedOptions = kind === 'true-false' ? 2 : 4;
+
+  if (record.options.length !== expectedOptions) {
+    issues.push(`${kind} questions need ${expectedOptions} options`);
+  }
+
+  if ((kind === 'picture') !== (record.media?.type === 'picture')) {
+    issues.push('picture questions (and only they) carry a picture');
+  }
+
+  if (kind === 'recipe') {
+    if (record.media?.type !== 'recipe') {
+      issues.push('recipe questions need a recipe grid');
+    } else if (record.media.grid[record.media.missingSlot] !== null) {
+      issues.push('the missing recipe slot must be empty');
+    }
+
+    if (record.optionIcons?.length !== record.options.length) {
+      issues.push('recipe questions need an item icon per option');
+    }
+  } else if (record.media?.type === 'recipe') {
+    issues.push('only recipe questions carry a recipe grid');
+  }
+
+  return issues;
+}
 
 // Below this many records the distribution is too noisy to judge.
 const minRecordsForCorrectIndexCheck = 40;
@@ -70,16 +116,21 @@ const maxCorrectIndexShare = 0.35;
 const minCorrectIndexShare = 0.15;
 
 /** Returns a message when the correct answer sits in one position too often (or too rarely). */
-export function findCorrectIndexSkew(records: Pick<ContentQuestionRecord, 'correctIndex'>[]) {
-  if (records.length < minRecordsForCorrectIndexCheck) {
+export function findCorrectIndexSkew(
+  records: (Pick<ContentQuestionRecord, 'correctIndex'> & Partial<Pick<ContentQuestionRecord, 'options'>>)[]
+) {
+  // True/false keeps "true" first, so only four-option questions are judged.
+  const fourOption = records.filter((record) => (record.options?.length ?? 4) === 4);
+
+  if (fourOption.length < minRecordsForCorrectIndexCheck) {
     return null;
   }
 
   const counts = [0, 0, 0, 0];
-  records.forEach((record) => {
+  fourOption.forEach((record) => {
     counts[record.correctIndex] += 1;
   });
-  const shares = counts.map((count) => count / records.length);
+  const shares = counts.map((count) => count / fourOption.length);
 
   if (shares.every((share) => share >= minCorrectIndexShare && share <= maxCorrectIndexShare)) {
     return null;

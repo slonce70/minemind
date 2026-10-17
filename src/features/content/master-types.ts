@@ -1,4 +1,4 @@
-import type { ContentDifficulty, ContentTopicId } from './types';
+import type { ContentDifficulty, ContentTopicId, QuestionKind, QuestionMedia } from './types';
 
 export const canonScopes = ['common-canon', 'java-only', 'bedrock-only'] as const;
 
@@ -47,7 +47,8 @@ export type QuestionSourceRecord = {
 
 export type MasterLocalizedPayload = {
   explanation: string;
-  options: [string, string, string, string];
+  /** The answer first, then the distractors: four, or two for true-false. */
+  options: string[];
   prompt: string;
 };
 
@@ -58,16 +59,19 @@ export type MasterQuestionRecord = {
   clusterId: string;
   correctAnswer: string;
   difficulty: ContentDifficulty;
-  distractors: [string, string, string];
+  distractors: string[];
   explanationEn: string;
   id: string;
   isActive: boolean;
+  kind?: QuestionKind;
   localized: {
     en: MasterLocalizedPayload;
     uk: MasterLocalizedPayload;
     ru?: MasterLocalizedPayload;
   };
+  media?: QuestionMedia;
   notes?: string;
+  optionIcons?: string[];
   promptEn: string;
   reviewNotes?: string;
   reviewStatus: MasterQuestionReviewStatus;

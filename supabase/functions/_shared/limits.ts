@@ -4,6 +4,8 @@ import { GameError } from './error-codes.ts';
 export const rateLimits = {
   'create-room': { maxHits: 5, windowSeconds: 10 * 60 },
   'join-room': { maxHits: 20, windowSeconds: 60 },
+  // A solo round takes a minute or two; this leaves room for several devices on one account.
+  'report-answers': { maxHits: 60, windowSeconds: 60 * 60 },
 } as const;
 
 export async function enforceRateLimit(playerId: string, action: keyof typeof rateLimits) {

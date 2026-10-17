@@ -19,6 +19,8 @@ port = 54323
 [auth]
 enabled = true
 site_url = "http://localhost:8081"
+# Magic links for saving progress to an email land on the app's /auth screen (web and native).
+additional_redirect_urls = ["http://localhost:8081/auth", "minemind://auth"]
 enable_signup = true
 # Players are guests: the app signs in anonymously.
 enable_anonymous_sign_ins = true

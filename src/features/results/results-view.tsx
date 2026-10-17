@@ -9,19 +9,26 @@ import { StatPill } from '../../components/ui/stat-pill';
 import { colors, fonts, radii, spacing, typography } from '../../theme/tokens';
 import { feedback } from '../feel/feedback';
 import { useCountUp } from '../feel/use-count-up';
+import { RewardsPanel } from '../progress/progress-parts';
+import type { MatchRewards } from '../progress/progression';
 import { optionLetters } from '../quiz/question-parts';
 import { BadgeChip } from '../ui/badge-chip';
 import { Mascot } from '../ui/mascot';
 import { PixelIcon } from '../ui/pixel-icon';
 import { WorldBackground } from '../ui/world-background';
+import { ChallengeShare, ChallengeVerdict } from './challenge-panel';
 import type { MatchRecord } from './match-record';
 import { getResultBadgeModel } from './result-badges';
 
 type ResultsViewProps = {
   difficultyLabel: string;
   matchRecord: MatchRecord;
+  /** The player's nickname, put into challenge links. */
+  nickname: string;
   onBackHome: () => void;
   onPlayAgain: () => void;
+  /** Shown only when they belong to this match. */
+  rewards?: MatchRewards;
   sourceLabel: string;
   strings: {
     accuracyLabel: string;
@@ -50,7 +57,16 @@ type ResultsViewProps = {
   };
 };
 
-export function ResultsView({ difficultyLabel, matchRecord, onBackHome, onPlayAgain, sourceLabel, strings }: ResultsViewProps) {
+export function ResultsView({
+  difficultyLabel,
+  matchRecord,
+  nickname,
+  onBackHome,
+  onPlayAgain,
+  rewards,
+  sourceLabel,
+  strings,
+}: ResultsViewProps) {
   const isPerfect = matchRecord.questionCount > 0 && matchRecord.correctAnswers === matchRecord.questionCount;
   const badge = getResultBadgeModel({ difficulty: matchRecord.difficulty ?? 'medium', perfectRound: isPerfect });
   const badgeLabel =
@@ -97,6 +113,14 @@ export function ResultsView({ difficultyLabel, matchRecord, onBackHome, onPlayAg
           </View>
         </WorldBackground>
       </Card>
+
+      <ChallengeVerdict record={matchRecord} />
+
+      {rewards?.matchId === matchRecord.id ? (
+        <Card tone="panel">
+          <RewardsPanel rewards={rewards} />
+        </Card>
+      ) : null}
 
       {standings.length > 0 ? (
         <Card tone="panel">
@@ -165,6 +189,7 @@ export function ResultsView({ difficultyLabel, matchRecord, onBackHome, onPlayAg
       </Card>
 
       <View style={styles.actionStack}>
+        <ChallengeShare nickname={nickname} record={matchRecord} />
         <PrimaryButton label={strings.playAgain} onPress={onPlayAgain} />
         <SecondaryButton label={strings.backHome} onPress={onBackHome} />
       </View>

@@ -13,6 +13,11 @@ function sqlText(value: string) {
   return `'${value.replace(/'/g, "''")}'`;
 }
 
+/** Four option columns; true/false questions leave the last two empty. */
+function optionColumns(values: string[]) {
+  return [0, 1, 2, 3].map((index) => (values[index] === undefined ? 'null' : sqlText(values[index])));
+}
+
 /**
  * Idempotent seed: one language-neutral pack per difficulty, questions upserted by content id with
  * the canonical option order (English in the base columns as a fallback), and a translation row per
@@ -33,11 +38,14 @@ export function buildSeedSql(bank: ContentQuestionBank) {
       [
         sqlText(record.id),
         sqlText(record.prompt.en),
-        ...record.options.map((option) => sqlText(option.en)),
+        ...optionColumns(record.options.map((option) => option.en)),
         record.correctIndex,
         sqlText(record.explanation.en),
         index + 1,
         record.isActive,
+        sqlText(record.kind ?? 'choice'),
+        record.media ? `${sqlText(JSON.stringify(record.media))}::jsonb` : 'null::jsonb',
+        record.optionIcons ? `array[${record.optionIcons.map(sqlText).join(', ')}]::text[]` : 'null::text[]',
       ].join(', ')
     );
     const translationRows = records.flatMap((record) =>
@@ -46,7 +54,7 @@ export function buildSeedSql(bank: ContentQuestionBank) {
           sqlText(record.id),
           sqlText(locale),
           sqlText(record.prompt[locale]),
-          ...record.options.map((option) => sqlText(option[locale])),
+          ...optionColumns(record.options.map((option) => option[locale])),
           sqlText(record.explanation[locale]),
         ].join(', ')
       )
@@ -58,12 +66,12 @@ select id, null, '8-12', '${difficulty}', 'MineMind ${difficulty}', '${slug}', t
 from public.quiz_categories
 where slug = 'minecraft'
 on conflict (slug) do update set is_active = true, title = excluded.title;`,
-      `insert into public.questions (pack_id, content_id, prompt, option_a, option_b, option_c, option_d, correct_option, explanation, sort_order, is_active)
-select pack.id, v.content_id, v.prompt, v.option_a, v.option_b, v.option_c, v.option_d, v.correct_option, v.explanation, v.sort_order, v.is_active
+      `insert into public.questions (pack_id, content_id, prompt, option_a, option_b, option_c, option_d, correct_option, explanation, sort_order, is_active, kind, media, option_icons)
+select pack.id, v.content_id, v.prompt, v.option_a, v.option_b, v.option_c, v.option_d, v.correct_option, v.explanation, v.sort_order, v.is_active, v.kind, v.media, v.option_icons
 from public.question_packs pack
 cross join (values
   (${questionRows.join('),\n  (')})
-) as v(content_id, prompt, option_a, option_b, option_c, option_d, correct_option, explanation, sort_order, is_active)
+) as v(content_id, prompt, option_a, option_b, option_c, option_d, correct_option, explanation, sort_order, is_active, kind, media, option_icons)
 where pack.slug = '${slug}'
 on conflict (pack_id, content_id) do update set
   prompt = excluded.prompt,
@@ -74,7 +82,10 @@ on conflict (pack_id, content_id) do update set
   correct_option = excluded.correct_option,
   explanation = excluded.explanation,
   sort_order = excluded.sort_order,
-  is_active = excluded.is_active;`,
+  is_active = excluded.is_active,
+  kind = excluded.kind,
+  media = excluded.media,
+  option_icons = excluded.option_icons;`,
       `insert into public.question_translations (question_id, locale, prompt, option_a, option_b, option_c, option_d, explanation)
 select question.id, v.locale, v.prompt, v.option_a, v.option_b, v.option_c, v.option_d, v.explanation
 from public.questions question

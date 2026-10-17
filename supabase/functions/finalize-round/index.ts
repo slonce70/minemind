@@ -5,7 +5,7 @@ import { serviceClient } from '../_shared/client.ts';
 import { GameError } from '../_shared/error-codes.ts';
 import { errorResponse, handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
 import { filterSubmissionsForRoundQuestions } from '../_shared/round-questions.ts';
-import { assertRoomMembership, listRoomParticipants } from '../_shared/rooms.ts';
+import { assertRoomMembership, listRoomParticipants, playingParticipants } from '../_shared/rooms.ts';
 import {
   buildRoundRanking,
   countAnsweredSubmissions,
@@ -161,14 +161,27 @@ serve(async (request) => {
       submissions ?? [],
       round.question_ids
     );
-    const participants = await listRoomParticipants(round.room_id);
+    const { data: room, error: roomError } = await serviceClient
+      .from('rooms')
+      .select('host_id, screen_mode')
+      .eq('id', round.room_id)
+      .single();
+
+    if (roomError || !room) {
+      throw roomError ?? new GameError('room_not_found', 'Room not found.');
+    }
+
+    // A big-screen host shows the round but does not play: no place in the results.
+    const participants = playingParticipants(room, await listRoomParticipants(round.room_id));
     const ranking = buildRoundRanking({
       correctOptionByQuestionId: new Map(questions.map((question) => [question.id, question.correct_option])),
       difficulty: resolveDifficulty(round.difficulty),
       participantIds: [
         ...new Set([
           ...participants.map((participant) => participant.player_id),
-          ...validSubmissions.map((submission) => submission.player_id),
+          ...validSubmissions
+            .map((submission) => submission.player_id)
+            .filter((playerId) => !(room.screen_mode && playerId === room.host_id)),
         ]),
       ],
       questionIds: round.question_ids,

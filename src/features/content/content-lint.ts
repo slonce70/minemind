@@ -94,7 +94,7 @@ export function lintQuestionBank(records: ContentQuestionRecord[]) {
         }
       });
 
-      if (containsAnswer(prompt, correct, locale)) {
+      if (record.kind !== 'true-false' && containsAnswer(prompt, correct, locale)) {
         report(`${locale} prompt contains the correct answer "${correct}"`);
       }
 

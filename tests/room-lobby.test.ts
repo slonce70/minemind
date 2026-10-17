@@ -66,3 +66,21 @@ test('bots and invented room players are development-only', async () => {
   assert.match(source, /\} else if \(isDemoPlayersEnabled\) \{\n\s+joinRoom\(joinCode\);/);
   assert.match(source, /\} else if \(isDemoPlayersEnabled\) \{\n\s+createRoom\(\);/);
 });
+
+test('big screen rooms leave the host out of readiness and allow one player', () => {
+  const room = {
+    participants: [
+      { isHost: true, ready: false },
+      { isHost: false, ready: true },
+    ],
+    roomCode: 'TV1234',
+    settings: { ...createDefaultRoomMatchSettings(), screenMode: true },
+    status: 'lobby' as const,
+  };
+
+  assert.deepEqual(
+    { canStart: true, participantCount: 1, readyCount: 1 },
+    (({ canStart, participantCount, readyCount }) => ({ canStart, participantCount, readyCount }))(deriveRoomLobbyState(room))
+  );
+  assert.equal(deriveRoomLobbyState({ ...room, settings: createDefaultRoomMatchSettings() }).canStart, false);
+});

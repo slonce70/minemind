@@ -76,6 +76,7 @@ export default function RoomsRoute() {
           });
         }}
         onToggleReady={() => void lobby.handleToggleReady()}
+        onToggleScreenMode={isSupabaseConfigured ? lobby.handleToggleScreenMode : undefined}
         roomActionLabel={
           canResumeRound
             ? t('rooms.resumeBattle')
@@ -100,6 +101,8 @@ export default function RoomsRoute() {
           notReady: t('rooms.notReady'),
           offline: t('rooms.offline'),
           ready: t('rooms.ready'),
+          screenMode: t('rooms.screenMode'),
+          screenModeCopy: t('rooms.screenModeCopy'),
           readySummary: t('rooms.readySummary'),
           startBattle: t('rooms.startBattle'),
           subtitle: t('rooms.subtitle'),

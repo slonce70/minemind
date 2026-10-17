@@ -79,6 +79,19 @@ export const contentTopicValues = contentTopics as [
   ContentTopicId,
 ];
 
+export const questionKinds = ['choice', 'true-false', 'picture', 'recipe'] as const;
+
+export type QuestionKind = (typeof questionKinds)[number];
+
+/**
+ * What a question shows besides its text. Sprite ids point at the app's own pixel items
+ * (src/features/ui/item-sprites.ts).
+ */
+export type QuestionMedia =
+  | { sprite: string; type: 'picture' }
+  /** A 3×3 crafting grid read row by row; `missingSlot` is shown as "?". */
+  | { grid: (string | null)[]; missingSlot: number; type: 'recipe' };
+
 export type ContentQuestionRecord = {
   ageBand: ContentAgeBand;
   categoryId: ContentCategoryId;
@@ -87,7 +100,13 @@ export type ContentQuestionRecord = {
   explanation: LocalizedString;
   id: string;
   isActive: boolean;
-  options: [LocalizedString, LocalizedString, LocalizedString, LocalizedString];
+  /** Missing on plain multiple-choice questions. */
+  kind?: QuestionKind;
+  media?: QuestionMedia;
+  /** Item sprite per option, in option order (recipe questions). */
+  optionIcons?: string[];
+  /** Four options, or two (true, false) for true-false questions. */
+  options: LocalizedString[];
   prompt: LocalizedString;
   sourceVersion: string;
   tags: string[];

@@ -5,7 +5,8 @@ import {
 import type { AppLocale } from '../../lib/locale';
 import { loadMinecraftQuestionBank } from '../content/content-loader';
 import { selectQuestionRound } from '../content/content-selection';
-import type { ContentDifficulty, ContentQuestionRecord } from '../content/types';
+import type { ContentDifficulty } from '../content/types';
+import { localizeQuestion } from './solo-round-builder';
 import type {
   QuizAnswerMap,
   QuizQuestion,
@@ -14,17 +15,6 @@ import type {
 
 function buildRoundSeed(locale: AppLocale, difficulty: ContentDifficulty) {
   return `${locale}-${difficulty}-${Date.now().toString().slice(-6)}`;
-}
-
-function localizeQuestion(definition: ContentQuestionRecord, locale: AppLocale): QuizQuestion {
-  return {
-    id: definition.id,
-    correctIndex: definition.correctIndex,
-    explanation: definition.explanation[locale],
-    options: definition.options.map((option) => option[locale]),
-    prompt: definition.prompt[locale],
-    topicId: definition.topicId,
-  };
 }
 
 export function getSoloQuestionSet(
@@ -51,6 +41,7 @@ export function buildQuizResult(
     difficulty?: ContentDifficulty;
     mode?: 'room' | 'solo';
     roomCode?: string;
+    round?: QuizResultSummary['round'];
     standings?: QuizResultSummary['standings'];
     standingsBuilder?: (finalScore: number) => QuizResultSummary['standings'];
   }
@@ -60,6 +51,7 @@ export function buildQuizResult(
   let currentStreak = 0;
   let bestStreak = 0;
   let speedBonus = 0;
+  let lifelinesUsed = 0;
 
   const breakdown = questions.map((question) => {
     const answer = answers[question.id];
@@ -67,14 +59,19 @@ export function buildQuizResult(
       answer?.isCorrect ?? (typeof question.correctIndex === 'number'
         ? answer?.selectedIndex === question.correctIndex
         : false);
-    const timeLeftMs = (answer?.timeLeft ?? 0) * 1000;
+    // Hints cost points: "+time" drops the speed bonus, 50/50 halves the answer.
+    const lifelines = answer?.lifelines ?? [];
+    const timeLeftMs = lifelines.includes('time') ? 0 : (answer?.timeLeft ?? 0) * 1000;
+
+    lifelinesUsed += lifelines.length;
 
     if (isCorrect) {
       correctAnswers += 1;
       currentStreak += 1;
       bestStreak = Math.max(bestStreak, currentStreak);
       speedBonus += speedBonusForTimeLeft(timeLeftMs);
-      finalScore += scoreAnswer({ difficulty: options?.difficulty, isCorrect, timeLeftMs });
+      const points = scoreAnswer({ difficulty: options?.difficulty, isCorrect, timeLeftMs });
+      finalScore += lifelines.includes('fifty') ? Math.round(points / 2) : points;
     } else {
       currentStreak = 0;
     }
@@ -99,6 +96,7 @@ export function buildQuizResult(
     mode: options?.mode ?? 'solo',
     questionCount: questions.length,
     roomCode: options?.roomCode,
+    round: options?.round ? { ...options.round, ...(lifelinesUsed ? { lifelinesUsed } : {}) } : undefined,
     score: finalScore,
     speedBonus,
     standings:

@@ -1,7 +1,11 @@
 // Question flow of a round, shared by solo, room and classroom: which question is on screen, the
 // countdown, the player's answers and their verdicts. Pure: network and storage live in the mode
 // adapters, which read `pendingAnswer` and report back with `verdict` / `verdict-failed`.
-import type { QuizAnswerMap, QuizQuestion } from '../types';
+import { hashString } from '../../../../supabase/functions/_shared/game-rules';
+import type { LifelineId, QuizAnswerMap, QuizQuestion } from '../types';
+
+/** Seconds a "+time" hint adds. */
+export const extraTimeSeconds = 10;
 
 export type AnswerVerdict = {
   correctIndex?: number;
@@ -22,6 +26,12 @@ export type RoundState = {
   currentIndex: number;
   isRevealed: boolean;
   isSubmittingAnswer: boolean;
+  /** Hints left this round (solo only: rooms are scored on the server). */
+  lifelines: Record<LifelineId, number>;
+  /** Hints used per question, for the score and the record. */
+  lifelinesUsed: Record<string, LifelineId[]>;
+  /** Options a 50/50 removed from the current question. */
+  hiddenOptions: number[];
   /** An answer the mode adapter still has to send. */
   pendingAnswer: PendingAnswer | null;
   questions: QuizQuestion[];
@@ -31,7 +41,15 @@ export type RoundState = {
 };
 
 export type RoundAction =
-  | { type: 'load'; answers?: QuizAnswerMap; awaitsVerdict: boolean; questions: QuizQuestion[]; timeLimit: number }
+  | {
+      type: 'load';
+      answers?: QuizAnswerMap;
+      awaitsVerdict: boolean;
+      lifelines?: Record<LifelineId, number>;
+      questions: QuizQuestion[];
+      timeLimit: number;
+    }
+  | { type: 'lifeline'; lifeline: LifelineId }
   | { type: 'tick' }
   | { type: 'answer'; optionIndex: number; timeLeft: number }
   | { type: 'answer-sent' }
@@ -48,8 +66,11 @@ export const initialRoundState: RoundState = {
   answerMap: {},
   awaitsVerdict: false,
   currentIndex: 0,
+  hiddenOptions: [],
   isRevealed: false,
   isSubmittingAnswer: false,
+  lifelines: { fifty: 0, time: 0 },
+  lifelinesUsed: {},
   pendingAnswer: null,
   questions: [],
   selectedIndex: null,
@@ -66,7 +87,14 @@ function answer(state: RoundState, optionIndex: number, timeLeft: number): Round
 
   return {
     ...state,
-    answerMap: { ...state.answerMap, [question.id]: { selectedIndex: optionIndex, timeLeft } },
+    answerMap: {
+      ...state.answerMap,
+      [question.id]: {
+        selectedIndex: optionIndex,
+        timeLeft,
+        ...(state.lifelinesUsed[question.id] ? { lifelines: state.lifelinesUsed[question.id] } : {}),
+      },
+    },
     isRevealed: true,
     isSubmittingAnswer: state.awaitsVerdict,
     pendingAnswer: state.awaitsVerdict ? { optionIndex, questionId: question.id, timeLeft } : null,
@@ -88,6 +116,34 @@ function mergeVerdict(state: RoundState, questionId: string, verdict: AnswerVerd
   };
 }
 
+function spendLifeline(state: RoundState, lifeline: LifelineId): RoundState {
+  const question = state.questions[state.currentIndex];
+  const used = question ? (state.lifelinesUsed[question.id] ?? []) : [];
+
+  if (!question || state.isRevealed || state.lifelines[lifeline] <= 0 || used.includes(lifeline)) {
+    return state;
+  }
+
+  const spend = {
+    lifelines: { ...state.lifelines, [lifeline]: state.lifelines[lifeline] - 1 },
+    lifelinesUsed: { ...state.lifelinesUsed, [question.id]: [...used, lifeline] },
+  };
+
+  if (lifeline === 'time') {
+    return { ...state, ...spend, timeLeft: state.timeLeft + extraTimeSeconds };
+  }
+
+  // 50/50 needs the answer on the device and four options.
+  if (typeof question.correctIndex !== 'number' || question.options.length < 4) {
+    return state;
+  }
+
+  const wrong = question.options.map((_, index) => index).filter((index) => index !== question.correctIndex);
+  const keep = wrong[hashString(question.id) % wrong.length];
+
+  return { ...state, ...spend, hiddenOptions: wrong.filter((index) => index !== keep) };
+}
+
 export function roundReducer(state: RoundState, action: RoundAction): RoundState {
   switch (action.type) {
     case 'load': {
@@ -103,6 +159,7 @@ export function roundReducer(state: RoundState, action: RoundAction): RoundState
         awaitsVerdict: action.awaitsVerdict,
         currentIndex,
         isRevealed: Boolean(currentAnswer),
+        lifelines: action.lifelines ?? initialRoundState.lifelines,
         questions: action.questions,
         selectedIndex: currentAnswer?.selectedIndex ?? null,
         timeLeft: action.timeLimit,
@@ -119,6 +176,8 @@ export function roundReducer(state: RoundState, action: RoundAction): RoundState
     }
     case 'answer':
       return answer(state, action.optionIndex, action.timeLeft);
+    case 'lifeline':
+      return spendLifeline(state, action.lifeline);
     case 'answer-sent':
       return { ...state, pendingAnswer: null };
     case 'verdict':
@@ -155,6 +214,7 @@ export function roundReducer(state: RoundState, action: RoundAction): RoundState
       return {
         ...state,
         currentIndex: state.currentIndex + 1,
+        hiddenOptions: [],
         isRevealed: false,
         isSubmittingAnswer: false,
         selectedIndex: null,

@@ -12,9 +12,14 @@ These are original works of the project and ship under the project's own terms.
 | Pixel icons (check, cross, gear, trophy, topic icons and others) | `src/features/ui/pixel-art.ts` | Hand-drawn 10×10 grids in code, rendered with `react-native-svg` |
 | Kubik, the mascot (three moods) | `src/features/ui/pixel-art.ts` | Hand-drawn 16×16 sprite in code |
 | 14 player avatars | `src/features/profile/avatar-presets.ts` | Hand-drawn 12×12 sprites in code |
+| 26 item drawings for picture and recipe questions (diamond, stick, planks and others) | `src/features/ui/item-sprites.ts` | Hand-drawn 12×12 grids in code: our own simplified drawings of the items, not game textures |
+| 24 collectible Kubik cards | `src/features/progress/cards.ts`, `src/features/ui/pixel-art.ts` | Kubik sprite combined with original bodies, faces and hats (`buildKubikSprite`) |
+| Progress icons (book, card, cloud, 50/50, link, +time, TV) | `src/features/ui/pixel-art.ts` | Hand-drawn 10×10 grids in code |
 | App icon, Android adaptive icon layers, splash image, favicon | `assets/*.png` | Rendered from the Kubik sprite by `scripts/generate-app-icons.ts` |
 | Sound effects: click, correct, wrong, timer tick, round end | `assets/sounds/*.wav` | Synthesised by `scripts/generate-sounds.ts` |
 | Background music loop | `assets/sounds/music-loop.m4a` | Synthesised by `scripts/generate-sounds.ts`, compressed to AAC with macOS `afconvert` |
+
+Questions about mobs never play mob sounds: the game's sounds are not used anywhere, and sound questions were left out.
 
 To regenerate: `npx tsx scripts/generate-app-icons.ts` and `npx tsx scripts/generate-sounds.ts`.
 

@@ -1,5 +1,5 @@
 import type { AppLocale } from '../../lib/locale';
-import type { ContentDifficulty, ContentTopicId } from '../content/types';
+import type { ContentDifficulty, ContentTopicId, QuestionKind, QuestionMedia } from '../content/types';
 
 export type LocalizedString = Record<AppLocale, string>;
 
@@ -15,11 +15,16 @@ export type QuizQuestion = {
   correctIndex?: number;
   explanation?: string;
   id: string;
+  kind?: QuestionKind;
+  media?: QuestionMedia;
+  optionIcons?: string[];
   options: string[];
   prompt: string;
   /** Known for questions from the local bank; drives the topic icon on the question card. */
   topicId?: ContentTopicId;
 };
+
+export type LifelineId = 'fifty' | 'time';
 
 export type QuizAnswerMap = Record<
   string,
@@ -27,10 +32,24 @@ export type QuizAnswerMap = Record<
     correctIndex?: number;
     explanation?: string;
     isCorrect?: boolean;
+    lifelines?: LifelineId[];
     selectedIndex: number;
     timeLeft: number;
   }
 >;
+
+export type SoloMode = 'classic' | 'topic' | 'adaptive' | 'mistakes' | 'challenge';
+
+/** How a solo round was built; kept on the match record for rewards, replays and challenges. */
+export type RoundVariant = {
+  /** The friend challenge this round answered: their name and score from the link. */
+  challenge?: { from: string; score: number };
+  lifelinesUsed?: number;
+  /** Seed of the question set, so a friend can get the very same round. */
+  seed?: string;
+  soloMode: SoloMode;
+  topicId?: ContentTopicId;
+};
 
 export type QuizResultSummary = {
   bestStreak: number;
@@ -50,6 +69,7 @@ export type QuizResultSummary = {
   mode: 'room' | 'solo';
   questionCount: number;
   roomCode?: string;
+  round?: RoundVariant;
   score: number;
   speedBonus: number;
   standings: {

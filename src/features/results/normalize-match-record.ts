@@ -67,6 +67,7 @@ export function normalizeMatchRecord(input: NormalizeMatchRecordInput): MatchRec
     })),
     questionCount: normalized.questionCount,
     roomCode: normalized.roomCode,
+    round: normalized.round,
     score: normalized.score,
     speedBonus: normalized.speedBonus,
     syncStatus: deriveSyncStatus(input),

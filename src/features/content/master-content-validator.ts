@@ -5,9 +5,11 @@ import {
   masterQuestionReviewStatuses,
   translationStatuses,
 } from './master-types';
+import { questionMediaSchema, questionShapeIssues } from './content-validator';
 import {
   contentDifficulties,
   contentTopics,
+  questionKinds,
 } from './types';
 
 const sourceRecordSchema = z.strictObject({
@@ -36,14 +38,10 @@ const slotBlueprintEntrySchema = z.strictObject({
   topicId: z.enum(contentTopics),
 });
 
+// Options in authoring order: the correct answer first, then the distractors.
 const localizedMasterPayloadSchema = z.strictObject({
   explanation: z.string().trim().min(1),
-  options: z.tuple([
-    z.string().trim().min(1),
-    z.string().trim().min(1),
-    z.string().trim().min(1),
-    z.string().trim().min(1),
-  ]),
+  options: z.array(z.string().trim().min(1)).min(2).max(4),
   prompt: z.string().trim().min(1),
 });
 
@@ -54,20 +52,20 @@ const masterQuestionRecordSchema = z.strictObject({
   clusterId: z.string().trim().min(1),
   correctAnswer: z.string().trim().min(1),
   difficulty: z.enum(contentDifficulties),
-  distractors: z.tuple([
-    z.string().trim().min(1),
-    z.string().trim().min(1),
-    z.string().trim().min(1),
-  ]),
+  distractors: z.array(z.string().trim().min(1)).min(1).max(3),
   explanationEn: z.string().trim().min(1),
   id: z.string().trim().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
   isActive: z.boolean(),
+  kind: z.enum(questionKinds).optional(),
   localized: z.strictObject({
     en: localizedMasterPayloadSchema,
     uk: localizedMasterPayloadSchema,
     ru: localizedMasterPayloadSchema.optional(),
   }),
+  media: questionMediaSchema.optional(),
   notes: z.string().trim().min(1).optional(),
+  /** Item sprite per option, in authoring order (recipe questions). */
+  optionIcons: z.array(z.string().trim().min(1)).optional(),
   promptEn: z.string().trim().min(1),
   reviewNotes: z.string().trim().min(1).optional(),
   reviewStatus: z.enum(masterQuestionReviewStatuses),
@@ -77,6 +75,24 @@ const masterQuestionRecordSchema = z.strictObject({
   topicId: z.enum(contentTopics),
   translationStatus: z.enum(translationStatuses),
   versionGated: z.boolean(),
+}).superRefine((record, ctx) => {
+  const issues = questionShapeIssues({ ...record, options: record.localized.en.options.map((en) => ({ en, ru: en, uk: en })) });
+
+  if (record.kind === 'true-false' && !['True', 'False'].includes(record.correctAnswer)) {
+    issues.push('true-false answers are "True" or "False"');
+  }
+
+  for (const locale of ['en', 'uk', 'ru'] as const) {
+    const payload = record.localized[locale];
+
+    if (payload && payload.options.length !== record.distractors.length + 1) {
+      issues.push(`${locale} options must be the answer plus every distractor`);
+    }
+  }
+
+  for (const issue of issues) {
+    ctx.addIssue({ code: 'custom', message: issue, path: [] });
+  }
 });
 
 export const masterQuestionProgramSchema = z.strictObject({

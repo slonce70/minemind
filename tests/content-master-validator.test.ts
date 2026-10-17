@@ -180,7 +180,7 @@ test('villager and biome wave-two slices reach 15 records per difficulty pair', 
 
   assert.equal(coverage.size, 6);
   for (const count of coverage.values()) {
-    assert.equal(count, 15);
+    assert.ok(count >= 15, `${count} records`);
   }
 });
 
@@ -210,7 +210,7 @@ test('survival and crafting wave-three slices reach 15 records per difficulty pa
 
   assert.equal(coverage.size, 6);
   for (const count of coverage.values()) {
-    assert.equal(count, 15);
+    assert.ok(count >= 15, `${count} records`);
   }
 });
 
@@ -240,7 +240,7 @@ test('blocks and farming wave-four slices reach 15 records per difficulty pair',
 
   assert.equal(coverage.size, 6);
   for (const count of coverage.values()) {
-    assert.equal(count, 15);
+    assert.ok(count >= 15, `${count} records`);
   }
 });
 
@@ -270,7 +270,7 @@ test('mobs and nether wave-five slices reach 15 records per difficulty pair', ()
 
   assert.equal(coverage.size, 6);
   for (const count of coverage.values()) {
-    assert.equal(count, 15);
+    assert.ok(count >= 15, `${count} records`);
   }
 });
 
@@ -279,6 +279,7 @@ test('approved master bank ships ukrainian localization for every record', () =>
     readFileSync(new URL('../content/minecraft/minecraft-master-bank.v2.json', import.meta.url), 'utf8')
   ) as Array<{
     id: string;
+    kind?: string;
     localized?: {
       en?: { explanation: string; options: string[]; prompt: string };
       uk?: { explanation: string; options: string[]; prompt: string };
@@ -294,10 +295,10 @@ test('approved master bank ships ukrainian localization for every record', () =>
       (record) =>
         record.localized?.en?.prompt &&
         record.localized?.en?.explanation &&
-        record.localized?.en?.options.length === 4 &&
+        record.localized?.en?.options.length === (record.kind === 'true-false' ? 2 : 4) &&
         record.localized?.uk?.prompt &&
         record.localized?.uk?.explanation &&
-        record.localized?.uk?.options.length === 4
+        record.localized?.uk?.options.length === (record.kind === 'true-false' ? 2 : 4)
     )
   );
 });
@@ -347,7 +348,8 @@ test('ukrainian localization avoids placeholder phrasing and known broken terms'
 
     assert.match(prompt, /^[A-ZА-ЯІЇЄҐ0-9]/, `${record.id} prompt should start with an uppercase character`);
     for (const option of options) {
-      assert.match(option, /^[A-ZА-ЯІЇЄҐ0-9]/, `${record.id} option should start with an uppercase character`);
+      // Names in quotes (pottery sherds, trims) may open with «.
+      assert.match(option, /^«?[A-ZА-ЯІЇЄҐ0-9]/, `${record.id} option should start with an uppercase character`);
     }
   }
 });
