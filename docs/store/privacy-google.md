@@ -33,7 +33,7 @@ All are **collected**, **not shared**, **not processed ephemerally** unless note
 ### Not collected
 Location (approximate or precise), phone number, address, contacts, photos, videos, audio, files, calendar, messages (no chat, no SMS, no email reading), web browsing, installed apps, health, financial info, **Device or other IDs** (no Advertising ID, Android ID, IMEI, MAC, SSID/BSSID), app interactions/screen tracking, in-app search history.
 
-Data on the device only (local profile, settings, recent matches), on-device speech (read-aloud) and on-device QR reading (if a scanner ships) are not collected because they never leave the device.
+Data on the device only (local profile, settings, recent matches), on-device speech (read-aloud) and on-device QR reading (room scanner) are not collected because they never leave the device.
 
 ## Families policy self-check
 

@@ -2,6 +2,17 @@
 // ./index.ts; tests/release-copy.test.ts keeps the three locales in sync.
 export const releaseResources = {
   uk: {
+    qr: {
+      allow: 'Дозволити камеру',
+      close: 'Закрити',
+      denied: 'Доступ до камери вимкнено в налаштуваннях. Введи код вручну.',
+      hint: 'Наведи камеру на QR-код на екрані ведучого.',
+      joinA11y: 'QR-код, щоб приєднатися до кімнати {{code}}',
+      joinHint: 'Скануй камерою телефона, щоб приєднатися',
+      scan: 'Сканувати QR-код',
+      title: 'Сканування коду кімнати',
+      why: 'Камера потрібна лише щоб прочитати код. Ми нічого не знімаємо й не зберігаємо.',
+    },
     parents: {
       cancel: 'Скасувати',
       continue: 'Продовжити',
@@ -46,6 +57,17 @@ export const releaseResources = {
     },
   },
   en: {
+    qr: {
+      allow: 'Allow the camera',
+      close: 'Close',
+      denied: 'Camera access is off in Settings. Type the code instead.',
+      hint: 'Point the camera at the QR code on the host’s screen.',
+      joinA11y: 'QR code to join room {{code}}',
+      joinHint: 'Scan with a phone camera to join',
+      scan: 'Scan QR code',
+      title: 'Scan the room code',
+      why: 'The camera is only used to read the code. Nothing is recorded or saved.',
+    },
     parents: {
       cancel: 'Cancel',
       continue: 'Continue',
@@ -89,6 +111,17 @@ export const releaseResources = {
     },
   },
   ru: {
+    qr: {
+      allow: 'Разрешить камеру',
+      close: 'Закрыть',
+      denied: 'Доступ к камере выключен в настройках. Введи код вручную.',
+      hint: 'Наведи камеру на QR-код на экране ведущего.',
+      joinA11y: 'QR-код, чтобы присоединиться к комнате {{code}}',
+      joinHint: 'Сканируй камерой телефона, чтобы присоединиться',
+      scan: 'Сканировать QR-код',
+      title: 'Сканирование кода комнаты',
+      why: 'Камера нужна только чтобы прочитать код. Мы ничего не снимаем и не сохраняем.',
+    },
     parents: {
       cancel: 'Отмена',
       continue: 'Продолжить',

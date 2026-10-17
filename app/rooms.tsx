@@ -1,9 +1,12 @@
-import { Redirect, Stack, router } from 'expo-router';
-import { useEffect } from 'react';
+import { Redirect, Stack, router, useLocalSearchParams } from 'expo-router';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { LoadingScreen } from '../src/components/ui/loading-screen';
+import { challengeLinkBase } from '../src/features/quiz/challenge-link';
+import { buildRoomJoinUrl, parseRoomCode } from '../src/features/rooms/room-join-link';
 import { RoomLobbyView } from '../src/features/rooms/room-lobby-view';
+import { RoomQrScanner } from '../src/features/rooms/room-qr-scanner';
 import { useRoomLobby } from '../src/features/rooms/use-room-lobby';
 import { Screen } from '../src/components/ui/screen';
 import { ScreenHeader } from '../src/components/ui/screen-header';
@@ -20,6 +23,10 @@ export default function RoomsRoute() {
     genericError: t('rooms.genericError'),
     onlineUnavailable: t('rooms.onlineUnavailable'),
   });
+  const params = useLocalSearchParams<{ join?: string }>();
+  const linkedCode = parseRoomCode(params.join);
+  const joinedFromLink = useRef(false);
+  const [isScanning, setIsScanning] = useState(false);
   const canResumeRound = Boolean(lobby.activeRoomRound && (!isSupabaseConfigured || lobby.activeRoom?.roundId));
   // Live rooms share one timeline: when the host starts, everyone goes to the round at once.
   const liveRoundId =
@@ -32,6 +39,14 @@ export default function RoomsRoute() {
       router.replace('/solo?mode=room');
     }
   }, [liveRoundId]);
+
+  // A room link or QR code (…/rooms?join=AB12CD) joins right away once the player has a profile.
+  useEffect(() => {
+    if (linkedCode && lobby.profile && !lobby.activeRoom && !joinedFromLink.current) {
+      joinedFromLink.current = true;
+      void lobby.handleJoinRoom(linkedCode);
+    }
+  }, [linkedCode, lobby]);
 
   if (!hasHydrated) {
     return <LoadingScreen />;
@@ -61,7 +76,11 @@ export default function RoomsRoute() {
         onAddDemoPlayers={lobby.addDemoPlayersToRoom}
         onChangeJoinCode={lobby.setJoinCode}
         onCreateRoom={() => void lobby.handleCreateRoom()}
+        joinUrl={
+          isSupabaseConfigured && lobby.activeRoom ? buildRoomJoinUrl(challengeLinkBase(), lobby.activeRoom.roomCode) : undefined
+        }
         onJoinRoom={() => void lobby.handleJoinRoom()}
+        onScanCode={isSupabaseConfigured ? () => setIsScanning(true) : undefined}
         onlinePlayerIds={lobby.onlinePlayerIds}
         onLeaveRoom={() => {
           lobby.handleLeaveRoom();
@@ -101,6 +120,9 @@ export default function RoomsRoute() {
           notReady: t('rooms.notReady'),
           offline: t('rooms.offline'),
           ready: t('rooms.ready'),
+          joinQrA11y: t('qr.joinA11y', { code: lobby.activeRoom?.roomCode ?? '' }),
+          joinQrHint: t('qr.joinHint'),
+          scanQr: t('qr.scan'),
           screenMode: t('rooms.screenMode'),
           screenModeCopy: t('rooms.screenModeCopy'),
           readySummary: t('rooms.readySummary'),
@@ -110,6 +132,15 @@ export default function RoomsRoute() {
           toggleReady: t('rooms.toggleReady'),
         }}
       />
+      {isScanning ? (
+        <RoomQrScanner
+          onClose={() => setIsScanning(false)}
+          onCode={(code) => {
+            setIsScanning(false);
+            void lobby.handleJoinRoom(code);
+          }}
+        />
+      ) : null}
     </Screen>
   );
 }

@@ -78,7 +78,7 @@ Rules it imposes (Guidelines 1.3 and 5.1.4) and how MineMind meets them:
 Build checks before submitting (not text changes, but they affect review):
 - `expo-audio` config plugin by default adds `NSMicrophoneUsageDescription`, Android `RECORD_AUDIO` and background-audio permissions. The app never records. Pass plugin options `{ "microphonePermission": false, "recordAudioAndroid": false, "enableBackgroundPlayback": false }` (or block the permissions) so a kids app does not ship an unused microphone permission.
 - No AdSupport / App Tracking Transparency; no IDFA.
-- If a QR scanner is added later, it needs a camera usage string that says the picture stays on the device.
+- The room QR scanner uses the camera (expo-camera, asked only when the player taps "Scan QR code"); the usage string says the picture stays on the device. No microphone.
 
 ## 4. Google Play: target audience and Families
 

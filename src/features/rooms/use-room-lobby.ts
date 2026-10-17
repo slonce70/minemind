@@ -140,8 +140,11 @@ export function useRoomLobby(messages: { genericError: string; onlineUnavailable
     }
   };
 
-  const handleJoinRoom = async () => {
-    if (!profile || !joinCode.trim()) {
+  /** Joins the typed room, or `code` when it came from a link or a scanned QR code. */
+  const handleJoinRoom = async (code?: string) => {
+    const roomCode = code ?? joinCode;
+
+    if (!profile || !roomCode.trim()) {
       return;
     }
 
@@ -151,11 +154,11 @@ export function useRoomLobby(messages: { genericError: string; onlineUnavailable
     try {
       if (isSupabaseConfigured) {
         await ensureGuestSession(profile);
-        const room = await joinLiveRoom(joinCode);
+        const room = await joinLiveRoom(roomCode);
         setActiveRoom(room);
         clearActiveRound();
       } else if (isDemoPlayersEnabled) {
-        joinRoom(joinCode);
+        joinRoom(roomCode);
       } else {
         setErrorMessage(messages.onlineUnavailable);
         return;

@@ -63,7 +63,7 @@ test('bots and invented room players are development-only', async () => {
   // Outside React Native dev mode (as in a release bundle) the flag is off.
   assert.equal(isDemoPlayersEnabled, false);
   assert.match(source, /addDemoPlayersToRoom: isDemoPlayersEnabled \? addDemoPlayersToRoom : undefined/);
-  assert.match(source, /\} else if \(isDemoPlayersEnabled\) \{\n\s+joinRoom\(joinCode\);/);
+  assert.match(source, /\} else if \(isDemoPlayersEnabled\) \{\n\s+joinRoom\(roomCode\);/);
   assert.match(source, /\} else if \(isDemoPlayersEnabled\) \{\n\s+createRoom\(\);/);
 });
 

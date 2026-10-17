@@ -60,6 +60,15 @@
           "recordAudioAndroid": false,
           "enableBackgroundPlayback": false
         }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "MineMind uses the camera only to read a room QR code. Nothing is recorded or saved.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false,
+          "barcodeScannerEnabled": true
+        }
       ]
     ],
     "experiments": {

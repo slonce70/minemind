@@ -22,7 +22,7 @@ Supabase (backend) and Expo (update delivery) are service providers acting for u
 | **Diagnostics → Crash Data** | Only if Sentry is on | No | No | App Functionality | Error message and stack trace. No user id, name, email or nickname. Turn on "Prevent storing of IP addresses" in Sentry. |
 | **Diagnostics → Other Diagnostic Data** | Only if Sentry is on | No | No | App Functionality | Platform tag (iOS/Android/web) and error context. |
 | Diagnostics → Performance Data | No | | | | |
-| Location, Contacts, Health, Financial, Sensitive Info, Browsing/Search History, Purchases, Photos or Videos, Audio, Body, Surroundings | No | | | | Camera image for a QR scanner (if added) is processed on device only and never sent. |
+| Location, Contacts, Health, Financial, Sensitive Info, Browsing/Search History, Purchases, Photos or Videos, Audio, Body, Surroundings | No | | | | The room QR scanner processes the camera image on the device only and never sends it. |
 
 **If Sentry stays off** (recommended for the Kids Category build): remove both Diagnostics rows. The final label then shows: **Data Linked to You:** Identifiers (User ID), Contact Info (Email Address), User Content (Gameplay Content, Customer Support). **Data Not Linked to You:** nothing. **Data Used to Track You:** nothing.
 
@@ -38,7 +38,7 @@ Note on IP addresses: Supabase and Expo receive the device IP while serving requ
 - [ ] No IDFA, no AdSupport framework, no ATT prompt.
 - [ ] Parental gate in front of: outside links, email linking, sharing (room invite, challenge link), data export, account deletion. Check every `Linking.openURL` and share-sheet call in the build.
 - [ ] No purchases of any kind.
-- [ ] No unused permission strings: microphone removed from the expo-audio plugin config; Local Network string present and friendly; camera string only if the QR scanner ships.
+- [ ] No unused permission strings: microphone removed from the expo-audio plugin config; Local Network string present and friendly; camera string for the room QR scanner only (no microphone).
 - [ ] Privacy policy reachable in the app (Settings) and at `{{web}}/privacy?lang=xx`; App Privacy answers match it.
 - [ ] Account deletion in the app (Settings → "Delete account and all data"), not only by email (Guideline 5.1.1(v)).
 - [ ] Metadata: "for kids" wording only because the app is in the Kids Category; no "Minecraft" in name, subtitle, keywords, icon or screenshots.
