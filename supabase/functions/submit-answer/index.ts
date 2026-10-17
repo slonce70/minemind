@@ -2,6 +2,7 @@ import { serve } from 'https://deno.land/std@0.224.0/http/server.ts';
 
 import { requireAuthenticatedUser } from '../_shared/auth.ts';
 import { serviceClient } from '../_shared/client.ts';
+import { closeQuestionIfAllAnswered } from '../_shared/early-close.ts';
 import { GameError } from '../_shared/error-codes.ts';
 import { scoreAnswer } from '../_shared/game-rules.ts';
 import { errorResponse, handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
@@ -102,6 +103,11 @@ serve(async (request) => {
     if (round.room_id) {
       // Others only learn that this player answered, not what or whether it was right.
       await broadcastToRoom(round.room_id, 'answer-progress', { playerId: user.id, questionId: body.questionId });
+
+      // Everyone answered: no point waiting out the timer.
+      if (timeLeftMs !== null && (await closeQuestionIfAllAnswered({ difficulty, now, questionId: body.questionId, round }))) {
+        await broadcastToRoom(round.room_id, 'timeline-moved', { questionId: body.questionId });
+      }
     }
 
     return jsonResponse({

@@ -7,6 +7,7 @@ import { Card } from '../src/components/ui/card';
 import { LoadingScreen } from '../src/components/ui/loading-screen';
 import { Screen } from '../src/components/ui/screen';
 import { ScreenHeader } from '../src/components/ui/screen-header';
+import { ParentsCard } from '../src/features/account/parents-card';
 import { syncMusic } from '../src/features/feel/feedback';
 import { ChoiceRow, SettingSwitch } from '../src/features/profile/profile-controls';
 import { ensureGuestSession } from '../src/features/profile/profile-service';
@@ -94,6 +95,8 @@ export default function SettingsRoute() {
         </Text>
         <Text style={styles.body}>{t('settings.accessibilityNote')}</Text>
       </Card>
+
+      {profile ? <ParentsCard /> : null}
 
       <Card tone="utility">
         <Text accessibilityRole="header" style={styles.sectionTitle}>

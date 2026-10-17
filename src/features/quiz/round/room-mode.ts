@@ -372,6 +372,12 @@ export function useRoomMode({ difficulty, dispatch, enabled, locale, messages, r
     if (event.type === 'room-finished' && flow.resultsPending) {
       retryFinalize();
     }
+
+    if (event.type === 'timeline-moved') {
+      // Skip the refresh throttle: the question just closed early for everyone.
+      fetchStateRef.current.lastAttemptAt = 0;
+      void refreshRound(fetchStateRef.current.closed);
+    }
   });
   const currentQuestion = round.questions[round.currentIndex];
   const isScreenHost = Boolean(

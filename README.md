@@ -28,6 +28,9 @@ MineMind is a mobile quiz app for iOS and Android, built with Expo and React Nat
 - question types: multiple choice, true/false, picture and 3×3 recipe grid, drawn with original pixel items
 - answer statistics on the server and `scripts/suggest-difficulty.ts` for recalibrating difficulty
 - big screen rooms: the host's device (TV, projector) shows the question, timer, answer and standings; players answer on their phones
+- release 1.0.0: privacy policy and terms at `/privacy` and `/terms` (uk/en/ru), a parental gate before links, sharing and email, data export and account deletion in Settings ("For parents"), "report a question" button
+- rooms: the host shows a join QR (scan in the app with the camera or with any phone camera), a question closes early once everyone has answered
+- trademark rule: "Minecraft" appears in the app only inside the disclaimer (`tests/brand.test.ts`)
 - room match settings foundation with `contentPackVersion` + difficulty metadata
 - NEXUS-Full planning docs in `docs/`
 - Supabase schema and Edge Function scaffolding in `supabase/`
@@ -52,6 +55,8 @@ MineMind is a mobile quiz app for iOS and Android, built with Expo and React Nat
 - `npm run export:content` (master bank → runtime bank → `supabase/seed.sql`)
 - `npm run export:web`
 - `npm run serve:web-export`
+- `npm run check:release-env` (production env vars, also run by EAS before a production build)
+- `npx tsx scripts/add-question-pack.ts <pack.json>`, `npx tsx scripts/audit-game-version.ts --target 1.22`, `npx tsx scripts/list-question-reports.ts` (LiveOps, see `docs/release/liveops.md`)
 - `./script/build_and_run.sh --help`
 - `./script/build_and_run.sh --web`
 - `./script/build_and_run.sh --serve-web`
@@ -66,6 +71,10 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=
 EXPO_PUBLIC_SENTRY_DSN=
 # Optional: hosted web app address for friend challenge links. Empty = current page, or minemind:// on phones.
 EXPO_PUBLIC_WEB_URL=
+# Required for production builds: shown in the privacy policy and terms.
+EXPO_PUBLIC_CONTACT_EMAIL=
+EXPO_PUBLIC_LEGAL_DEVELOPER=
+EXPO_PUBLIC_DATA_REGION=
 ```
 
 If env vars are missing, solo and classroom play still work offline. Online rooms need Supabase; in development builds an offline demo room with bots is available for testing the flow.
@@ -88,11 +97,13 @@ CI does the same in the `e2e` job.
 
 Before and after Phase 2 ("game feel"): `docs/screenshots/phase-2/`. Phase 3 (progress, modes, question types): `docs/screenshots/phase-3/`.
 
-## Next Active Wave
-- connect hosted Supabase project credentials
-- run native iOS runtime checks
-- run internal testing with release metadata drafts
-- keep release gates green: Expo Doctor, npm audit, Edge Function check, web route smoke, and web bundle budget
+Store screenshots and preview videos: `docs/store/screenshots/`, `docs/store/video/`.
+
+## Release
+
+- builds and OTA updates: `eas.json` (development, preview, production; one update channel per profile), `docs/release/checklist.md`, `docs/release/beta-testing.md`, `docs/release/ota-updates.md`
+- store texts, age rating and privacy form answers: `docs/store/`
+- adding questions, checking them after a game update, handling reports: `docs/release/liveops.md`
 
 ## Web Hosting
 

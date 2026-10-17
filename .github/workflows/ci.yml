@@ -36,6 +36,34 @@ jobs:
       - name: Run release validation suite
         run: npm run validate:release
 
+  content:
+    # Fast feedback on question packs: schema, lint, duplicates, game-version stamps.
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate the question bank
+        run: npm run validate:content
+
+      - name: Every question states the game version it was checked on
+        run: npx tsx scripts/audit-game-version.ts --check
+
+      - name: Exported bank and seed match the master bank
+        run: |
+          npm run export:content
+          git diff --exit-code content/minecraft/minecraft-question-bank.v1.json supabase/seed.sql
+
   e2e:
     # Edge Functions against a throwaway local Supabase (migrations + seed), never a hosted project.
     runs-on: ubuntu-latest

@@ -1,0 +1,58 @@
+name: Question error
+description: A question in the game has a wrong answer, outdated fact, typo or unclear wording.
+title: "Question: <question id or first words>"
+labels: ["content"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping keep the quiz correct! Players can also report a question in the app
+        (the "Something wrong?" link under the answer); those reports land in the database.
+  - type: input
+    id: question
+    attributes:
+      label: Question id or text
+      description: The id from content/minecraft/minecraft-master-bank.v2.json, or the question as shown in the game.
+    validations:
+      required: true
+  - type: dropdown
+    id: reason
+    attributes:
+      label: What is wrong?
+      options:
+        - The answer is wrong
+        - Out of date after a game update
+        - Typo or bad translation
+        - Hard to understand
+        - Something else
+    validations:
+      required: true
+  - type: dropdown
+    id: language
+    attributes:
+      label: Language
+      multiple: true
+      options:
+        - Ukrainian
+        - English
+        - Russian
+  - type: dropdown
+    id: edition
+    attributes:
+      label: Edition and version where you checked
+      options:
+        - Java
+        - Bedrock
+        - Both
+  - type: input
+    id: version
+    attributes:
+      label: Game version
+      placeholder: "1.21.4"
+  - type: textarea
+    id: details
+    attributes:
+      label: Details and a source
+      description: What should it say? A minecraft.wiki link or a screenshot helps a lot.
+    validations:
+      required: true

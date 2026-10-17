@@ -1,5 +1,6 @@
 import { Platform, Share } from 'react-native';
 
+import { requestParentalGate } from '../parental/parental-gate';
 import { buildChallengeUrl, type ChallengeSpec } from './solo-round-builder';
 
 /**
@@ -20,9 +21,16 @@ export function challengeLinkBase() {
   return 'minemind://';
 }
 
-/** Opens the share sheet; on web without one, copies the link. Returns 'copied' when it did. */
+/**
+ * After the parental gate, opens the share sheet; on web without one, copies the link. Returns
+ * 'copied' when it did, 'cancelled' when no adult got through the gate.
+ */
 export async function shareChallenge(challenge: ChallengeSpec, message: (url: string) => string) {
   const url = buildChallengeUrl(challengeLinkBase(), challenge);
+
+  if (!(await requestParentalGate())) {
+    return { result: 'cancelled' as const, url };
+  }
 
   if (Platform.OS === 'web') {
     const nav = typeof navigator !== 'undefined' ? navigator : undefined;

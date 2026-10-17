@@ -79,8 +79,10 @@ test('a reconnecting player gets their answers back', async () => {
   await guest.call('set-room-ready', { ready: true, roomCode });
   const started = await host.call('start-room-round', { locale: 'en', roomCode });
   await openQuestion(admin, started.body.round, 0);
-  const first = { id: started.body.round.question_ids[0] as string };
-  const answer = await guest.call('submit-answer', { questionId: first.id, roundId: started.body.round.id, selectedOption: 2 });
+  const first = (await guest.call('get-room-round', { locale: 'en', roomCode })).body.questions[0] as { id: string; options: string[] };
+  // The last option exists in every question kind (true/false has only two).
+  const chosen = first.options.length - 1;
+  const answer = await guest.call('submit-answer', { questionId: first.id, roundId: started.body.round.id, selectedOption: chosen });
 
   const resumed = await guest.call('get-room-round', { locale: 'en', roomCode });
   assert.deepEqual(
@@ -90,7 +92,7 @@ test('a reconnecting player gets their answers back', async () => {
       questionId: entry.questionId,
       selectedOption: entry.selectedOption,
     })),
-    [{ correctOption: answer.body.correctOption, isCorrect: answer.body.isCorrect, questionId: first.id, selectedOption: 2 }],
+    [{ correctOption: answer.body.correctOption, isCorrect: answer.body.isCorrect, questionId: first.id, selectedOption: chosen }],
     'only answered questions, in display order'
   );
 });

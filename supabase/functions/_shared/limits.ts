@@ -6,6 +6,9 @@ export const rateLimits = {
   'join-room': { maxHits: 20, windowSeconds: 60 },
   // A solo round takes a minute or two; this leaves room for several devices on one account.
   'report-answers': { maxHits: 60, windowSeconds: 60 * 60 },
+  'report-question': { maxHits: 10, windowSeconds: 60 * 60 },
+  // Data exports are heavy and rarely needed.
+  'export-my-data': { maxHits: 5, windowSeconds: 60 * 60 },
 } as const;
 
 export async function enforceRateLimit(playerId: string, action: keyof typeof rateLimits) {

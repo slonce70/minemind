@@ -27,10 +27,12 @@ export const roomParticipantSchema = z.object({
 });
 
 const legacyRoomResponseSchema = z.object({
+  closed_reason: z.enum(['host-deleted', 'inactive']).nullable().optional(),
   content_pack_version: z.string().nullable().optional(),
   current_round_id: z.string().nullable().optional(),
   difficulty: difficultySchema.optional(),
-  host_id: z.string(),
+  // Null once the host deleted their account and the room was closed.
+  host_id: z.string().nullable(),
   id: z.string(),
   question_count: z.literal(8).nullable().optional(),
   room_code: z.string(),

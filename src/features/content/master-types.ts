@@ -81,4 +81,6 @@ export type MasterQuestionRecord = {
   topicId: ContentTopicId;
   translationStatus: TranslationStatus;
   versionGated: boolean;
+  /** Game version the fact was last checked against (Java and Bedrock), e.g. "1.21". */
+  verifiedForVersion?: string;
 };

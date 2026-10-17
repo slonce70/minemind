@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import test from 'node:test';
 
 import {
+  parseCreateOrJoinRoomResponse,
   roomStatusSchema,
   roomStateSchema,
   startRoomRoundResponseSchema,
@@ -114,4 +115,14 @@ test('live round functions select question packs by canonical difficulty', () =>
   assert.match(startRoundSource, /difficulty: room\.difficulty/);
   assert.match(startRoundSource, /content_pack_version: room\.content_pack_version/);
   assert.match(getRoundSource, /content_pack_version, difficulty, question_count, topic_mode/);
+});
+
+test('a closed room keeps its reason, also when its host deleted their account', () => {
+  const parsed = parseCreateOrJoinRoomResponse({
+    participants: [],
+    room: { closed_reason: 'host-deleted', host_id: null, id: 'room-1', room_code: 'AB12CD', status: 'finished' },
+  });
+
+  assert.equal(parsed.room.closed_reason, 'host-deleted');
+  assert.equal(parsed.room.host_id, null);
 });

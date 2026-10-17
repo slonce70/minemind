@@ -114,7 +114,8 @@ test('a room round runs on one server timeline and stays fair', async (t) => {
       locale: 'ru',
       questionId: first.id,
       roundId: round.id,
-      selectedOption: (correctDisplayIndex(hostView.questions[0]) + 1) % 4,
+      // Another existing option: true/false questions have only two.
+      selectedOption: (correctDisplayIndex(hostView.questions[0]) + 1) % first.options.length,
     });
 
     assert.equal(answer.status, 200, JSON.stringify(answer.body));
@@ -237,4 +238,30 @@ test('a big screen room: the host shows the round, one phone player is enough an
   const done = await guest.call('finalize-round', { roundId: round.id });
   assert.equal(done.body.status, 'completed', JSON.stringify(done.body));
   assert.deepEqual(done.body.rankings.map((entry: { player_id: string }) => entry.player_id), [guest.id]);
+});
+
+test('when every player has answered, the question closes early for everyone', async () => {
+  const host = await createPlayer(stack, 'QuickHost', 'en');
+  const guest = await createPlayer(stack, 'QuickGuest', 'en');
+  const created = await host.call('create-room', { difficulty: 'easy', locale: 'en' });
+  const roomCode = created.body.room.room_code as string;
+  await guest.call('join-room', { roomCode });
+  await guest.call('set-room-ready', { ready: true, roomCode });
+  const started = await host.call('start-room-round', { locale: 'en', roomCode });
+  const round = started.body.round;
+  await openQuestion(admin, round, 0);
+  const before = (await admin.from('round_sessions').select('started_at, ends_at').eq('id', round.id).single()).data!;
+
+  await host.call('submit-answer', { questionId: round.question_ids[0], roundId: round.id, selectedOption: 0 });
+  const half = (await admin.from('round_sessions').select('started_at').eq('id', round.id).single()).data!;
+  assert.equal(half.started_at, before.started_at, 'one answer is not enough');
+
+  await guest.call('submit-answer', { questionId: round.question_ids[0], roundId: round.id, selectedOption: 1 });
+  const after = (await admin.from('round_sessions').select('started_at, ends_at').eq('id', round.id).single()).data!;
+  const shiftMs = new Date(before.started_at).getTime() - new Date(after.started_at).getTime();
+  assert.ok(shiftMs > 15_000, `timeline moved back by the rest of the 20 s timer (${shiftMs} ms)`);
+  assert.equal(new Date(before.ends_at).getTime() - new Date(after.ends_at).getTime(), shiftMs);
+
+  const late = await guest.call('submit-answer', { questionId: round.question_ids[1], roundId: round.id, selectedOption: 0 });
+  assert.equal(late.body.code, 'question_not_open', 'the next one still waits for the reveal');
 });

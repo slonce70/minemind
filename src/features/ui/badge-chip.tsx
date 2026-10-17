@@ -34,7 +34,7 @@ export function BadgeChip({ icon, label, tone = 'warning' }: BadgeChipProps) {
   return (
     <View style={[styles.plate, { backgroundColor: style.backgroundColor, borderColor: style.borderColor }]}>
       {icon ? <PixelIcon color={style.color} name={icon} size={16} /> : null}
-      <Text numberOfLines={2} style={[styles.label, { color: style.color }]}>
+      <Text style={[styles.label, { color: style.color }]}>
         {label}
       </Text>
     </View>

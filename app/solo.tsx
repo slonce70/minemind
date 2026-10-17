@@ -5,6 +5,7 @@ import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { useTranslation } from 'react-i18next';
 
 import { PrimaryButton, SecondaryButton } from '../src/components/ui/button';
+import { ReportQuestion } from '../src/features/account/report-question';
 import { Card } from '../src/components/ui/card';
 import { LoadingScreen } from '../src/components/ui/loading-screen';
 import { Screen } from '../src/components/ui/screen';
@@ -403,6 +404,7 @@ export default function SoloRoute() {
             <Text style={styles.factText}>
               {answer?.explanation ?? question.explanation ?? t('solo.factPending')}
             </Text>
+            <ReportQuestion key={question.id} locale={locale} questionId={question.id} />
           </Card>
         </Animated.View>
       ) : null}

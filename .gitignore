@@ -45,3 +45,6 @@ yarn-error.*
 # Supabase
 supabase/.temp/
 supabase/.branches/
+
+# Store screenshot helpers (scripts/store/prepare.ts)
+scripts/store/.out/

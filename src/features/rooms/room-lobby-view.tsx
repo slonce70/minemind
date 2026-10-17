@@ -7,6 +7,7 @@ import { avatarLookup } from '../profile/avatar-presets';
 import { PlayerAvatar } from '../profile/player-avatar';
 import type { ContentDifficulty } from '../content/types';
 import { DifficultySelector } from '../home/difficulty-selector';
+import { ClassroomInviteQr } from '../classroom/classroom-invite-qr';
 import { SettingSwitch } from '../profile/profile-controls';
 import { BadgeChip } from '../ui/badge-chip';
 import { WorldBackground } from '../ui/world-background';
@@ -17,6 +18,8 @@ import { deriveRoomLobbyState } from './room-lobby-state';
 type RoomLobbyViewProps = {
   activeRoom?: ActiveRoom;
   canResumeRound: boolean;
+  /** Set when the server closed the room: shown instead of the ready and start buttons. */
+  closedNotice?: string;
   difficultyStrings: Record<ContentDifficulty, string>;
   selectedDifficulty: ContentDifficulty;
   errorMessage?: string | null;
@@ -32,6 +35,10 @@ type RoomLobbyViewProps = {
   onSelectDifficulty: (difficulty: ContentDifficulty) => void;
   onStartBattle: () => void;
   onToggleReady: () => void;
+  /** Opens the camera to read a room QR code; only where a camera can be used. */
+  onScanCode?: () => void;
+  /** Link that joins the active room; shown as a QR code to the host while players gather. */
+  joinUrl?: string;
   /** Host only, live rooms: this device becomes the big screen and does not play. */
   onToggleScreenMode?: (screenMode: boolean) => void;
   /** Players connected to the live room channel; undefined while realtime is unavailable. */
@@ -55,6 +62,9 @@ type RoomLobbyViewProps = {
     offline: string;
     ready: string;
     readySummary: string;
+    joinQrA11y: string;
+    joinQrHint: string;
+    scanQr: string;
     screenMode: string;
     screenModeCopy: string;
     startBattle: string;
@@ -67,6 +77,7 @@ type RoomLobbyViewProps = {
 export function RoomLobbyView({
   activeRoom,
   canResumeRound,
+  closedNotice,
   difficultyStrings,
   selectedDifficulty,
   errorMessage,
@@ -82,6 +93,8 @@ export function RoomLobbyView({
   onStartBattle,
   onToggleReady,
   onToggleScreenMode,
+  onScanCode,
+  joinUrl,
   onlinePlayerIds,
   roomActionLabel,
   strings,
@@ -123,6 +136,12 @@ export function RoomLobbyView({
             <Text style={styles.sectionTitle}>{strings.activeRoom}</Text>
             <Text style={styles.roomCode}>{activeRoom.roomCode}</Text>
             <Text style={styles.copy}>{strings.activeRoomCopy}</Text>
+            {joinUrl && activeRoom.status === 'lobby' && activeRoom.participants.some((entry) => entry.isLocalPlayer && entry.isHost) ? (
+              <View style={styles.joinQr}>
+                <ClassroomInviteQr accessibilityLabel={strings.joinQrA11y} value={joinUrl} />
+                <Text style={styles.copy}>{strings.joinQrHint}</Text>
+              </View>
+            ) : null}
             <View style={styles.commandMetaGrid}>
               <StatPill
                 label={strings.difficultyLabel}
@@ -155,17 +174,26 @@ export function RoomLobbyView({
                 value={activeRoom.settings.screenMode}
               />
             ) : null}
+            {closedNotice ? (
+              <Text accessibilityLiveRegion="polite" accessibilityRole="alert" style={styles.errorText}>
+                {closedNotice}
+              </Text>
+            ) : null}
             <View style={styles.commandActionRail}>
               {isOfflineMode && onAddDemoPlayers ? <PrimaryButton label={strings.addDemoPlayers} onPress={onAddDemoPlayers} /> : null}
-              <SecondaryButton
-                label={isBusy ? strings.loading : strings.toggleReady}
-                onPress={onToggleReady}
-              />
-              <PrimaryButton
-                disabled={isStartDisabled}
-                label={isBusy ? strings.loading : roomActionLabel}
-                onPress={onStartBattle}
-              />
+              {closedNotice ? null : (
+                <>
+                  <SecondaryButton
+                    label={isBusy ? strings.loading : strings.toggleReady}
+                    onPress={onToggleReady}
+                  />
+                  <PrimaryButton
+                    disabled={isStartDisabled}
+                    label={isBusy ? strings.loading : roomActionLabel}
+                    onPress={onStartBattle}
+                  />
+                </>
+              )}
               <SecondaryButton label={strings.leaveRoom} onPress={onLeaveRoom} />
             </View>
           </Card>
@@ -224,6 +252,7 @@ export function RoomLobbyView({
                 label={isBusy ? strings.loading : strings.joinRoomAction}
                 onPress={onJoinRoom}
               />
+              {onScanCode ? <SecondaryButton label={strings.scanQr} onPress={onScanCode} /> : null}
             </View>
           </Card>
         </>
@@ -233,6 +262,13 @@ export function RoomLobbyView({
 }
 
 const styles = StyleSheet.create({
+  joinQr: {
+    alignItems: 'center',
+    gap: spacing.xs,
+    maxWidth: 240,
+    alignSelf: 'center',
+    width: '100%',
+  },
   container: {
     gap: spacing.sm,
   },

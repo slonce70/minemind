@@ -5,6 +5,7 @@ import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { SecondaryButton } from '../../components/ui/button';
 import { Card } from '../../components/ui/card';
 import { isSupabaseConfigured } from '../../lib/supabase';
+import { requestParentalGate } from '../parental/parental-gate';
 import { colors, fonts, radii, spacing, typography } from '../../theme/tokens';
 import { PixelIcon } from '../ui/pixel-icon';
 import { isValidEmail, linkEmail, readAccountState, sendRestoreLink, type AccountState } from './account-link';
@@ -24,6 +25,10 @@ export function CloudSaveCard() {
   const run = async (action: (value: string) => Promise<{ confirmed: boolean }>, sentKey: string) => {
     if (!isValidEmail(email)) {
       setMessage({ error: true, text: t('cloud.invalidEmail') });
+      return;
+    }
+
+    if (!(await requestParentalGate())) {
       return;
     }
 

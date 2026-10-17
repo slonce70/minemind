@@ -6,6 +6,7 @@ import { LoadingScreen } from '../src/components/ui/loading-screen';
 import { Screen } from '../src/components/ui/screen';
 import { avatarPresets } from '../src/features/profile/avatar-presets';
 import { OnboardingView } from '../src/features/onboarding/onboarding-view';
+import { pathAfterOnboarding } from '../src/features/rooms/room-join-link';
 import { TutorialRound } from '../src/features/onboarding/tutorial-round';
 import { validateNickname } from '../src/features/profile/nickname';
 import { generateNickname } from '../src/features/profile/nickname-generator';
@@ -144,8 +145,10 @@ export default function OnboardingRoute() {
 
     try {
       await ensureGuestSession(profile);
+      const { pendingRoomCode, setPendingRoomCode } = useAppStore.getState();
       completeOnboarding(profile);
-      router.replace('/home');
+      setPendingRoomCode(undefined);
+      router.replace(pathAfterOnboarding(pendingRoomCode));
     } catch {
       dispatch({ type: 'saveFailed', message: t('onboarding.serverError', translationOptions) });
     } finally {

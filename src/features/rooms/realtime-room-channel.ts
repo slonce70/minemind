@@ -8,7 +8,9 @@ export type RoomRealtimeEvent =
   | { type: 'room-updated'; roomCode: string }
   | { type: 'round-started'; roomCode: string; roundId: string }
   | { type: 'round-finalizing'; roomCode: string; roundId?: string }
-  | { type: 'room-finished'; roomCode: string; roundId?: string };
+  | { type: 'room-finished'; roomCode: string; roundId?: string }
+  /** Everyone answered and the server closed the question early: re-read the timeline. */
+  | { type: 'timeline-moved'; roomCode: string };
 
 function deriveRoomRealtimeEvent(
   previous: RoomRealtimeSnapshot | undefined,
@@ -105,6 +107,9 @@ function openRoomChannel(
     )
     .on('broadcast', { event: 'answer-progress' }, ({ payload }) => {
       shared.listeners.forEach((listener) => listener.onAnswerProgress?.(payload as AnswerProgressEvent));
+    })
+    .on('broadcast', { event: 'timeline-moved' }, () => {
+      shared.listeners.forEach((listener) => listener.onRoomEvent?.({ roomCode: room.roomCode, type: 'timeline-moved' }));
     })
     .on('presence', { event: 'sync' }, () => {
       shared.onlinePlayerIds = Object.keys(channel.presenceState());
