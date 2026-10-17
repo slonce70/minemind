@@ -114,7 +114,8 @@ test('a room round runs on one server timeline and stays fair', async (t) => {
       locale: 'ru',
       questionId: first.id,
       roundId: round.id,
-      selectedOption: (correctDisplayIndex(hostView.questions[0]) + 1) % 4,
+      // Another existing option: true/false questions have only two.
+      selectedOption: (correctDisplayIndex(hostView.questions[0]) + 1) % first.options.length,
     });
 
     assert.equal(answer.status, 200, JSON.stringify(answer.body));

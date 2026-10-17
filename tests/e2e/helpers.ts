@@ -36,6 +36,21 @@ export function adminClient(stack: LocalStack) {
   return createClient(stack.url, stack.serviceRoleKey, { auth: { persistSession: false } });
 }
 
+/**
+ * The local Edge Runtime retires a worker once it uses up its CPU budget; a request that reaches
+ * it meanwhile fails before the function runs ("WorkerAlreadyRetired" in the runtime log), with
+ * this generic body. Our functions always answer errors as `{ code, error }`, so only this exact
+ * runtime response is retried; nothing was executed, so a retry cannot double an action.
+ */
+function isRetiredWorkerResponse(result: { body: Record<string, unknown>; status: number }) {
+  return (
+    result.status === 500 &&
+    result.body.code === 'Internal Server Error' &&
+    result.body.message === 'Request failed due to an internal server error' &&
+    !('error' in result.body)
+  );
+}
+
 export async function createPlayer(
   stack: LocalStack,
   nickname: string,
@@ -50,13 +65,20 @@ export async function createPlayer(
 
   const token = data.session.access_token;
   const call = async (functionName: string, body: Record<string, unknown>) => {
-    const response = await fetch(`${stack.url}/functions/v1/${functionName}`, {
-      body: JSON.stringify(body),
-      headers: { apikey: stack.anonKey, Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      method: 'POST',
-    });
+    for (let attempt = 1; ; attempt += 1) {
+      const response = await fetch(`${stack.url}/functions/v1/${functionName}`, {
+        body: JSON.stringify(body),
+        headers: { apikey: stack.anonKey, Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        method: 'POST',
+      });
+      const result = { body: (await response.json()) as Record<string, any>, status: response.status };
 
-    return { body: (await response.json()) as Record<string, any>, status: response.status };
+      if (attempt === 3 || !isRetiredWorkerResponse(result)) {
+        return result;
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 200 * attempt));
+    }
   };
   const synced = await call('sync-profile', { avatarId: 'fox', locale, nickname });
   assert.equal(synced.status, 200, JSON.stringify(synced.body));
