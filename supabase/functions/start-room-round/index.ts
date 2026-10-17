@@ -37,7 +37,8 @@ serve(async (request) => {
       throw new GameError('host_only', 'Only the room host can start the round.');
     }
 
-    const participants = playingParticipants(room, await listRoomParticipants(room.id));
+    const everyone = await listRoomParticipants(room.id);
+    const participants = playingParticipants(room, everyone);
 
     // Two players, or one player and the host's big screen.
     if (participants.length < (room.screen_mode ? 1 : 2)) {
@@ -87,7 +88,8 @@ serve(async (request) => {
     }
 
     return jsonResponse({
-      participants,
+      // Everyone, the big-screen host included: the app needs it to know its own role.
+      participants: everyone,
       // Questions are handed out as they open (get-room-round); at the start none is open yet.
       ...(await buildRoundView({
         locale: resolveQuestionLocale(body.locale),

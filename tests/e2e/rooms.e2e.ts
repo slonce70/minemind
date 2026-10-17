@@ -220,6 +220,7 @@ test('a big screen room: the host shows the round, one phone player is enough an
   const started = await host.call('start-room-round', { locale: 'en', roomCode });
   assert.equal(started.status, 200, JSON.stringify(started.body));
   const round = started.body.round;
+  assert.ok(started.body.participants.some((entry: { player_id: string }) => entry.player_id === host.id), 'the screen still sees itself');
 
   await openQuestion(admin, round, 0);
   const view = await guest.call('get-room-round', { locale: 'en', roomCode });
