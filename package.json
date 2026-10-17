@@ -1,6 +1,6 @@
 {
   "name": "minemind",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
@@ -28,7 +28,9 @@
     "check:edge": "node scripts/check-edge-functions.mjs",
     "validate:content": "npx tsx scripts/validate-question-bank.ts && npx tsx scripts/validate-master-question-program.ts && npx tsx scripts/lint-question-duplicates.ts",
     "validate": "npm test && npm run typecheck && npm run typecheck:tests && npm run lint && npm run export:web",
-    "validate:release": "npm test && npm run typecheck && npm run typecheck:tests && npm run lint && npm run validate:content && npm run doctor:expo && npm run audit:security && npm run check:edge && npm run smoke:web-export && npm run check:web-budget"
+    "validate:release": "npm test && npm run typecheck && npm run typecheck:tests && npm run lint && npm run validate:content && npm run doctor:expo && npm run audit:security && npm run check:edge && npm run smoke:web-export && npm run check:web-budget",
+    "check:release-env": "node scripts/check-release-env.mjs",
+    "eas-build-post-install": "node scripts/check-release-env.mjs --eas-hook"
   },
   "dependencies": {
     "@expo-google-fonts/nunito": "^0.4.2",
@@ -53,6 +55,7 @@
     "expo-secure-store": "~55.0.18",
     "expo-speech": "~55.0.18",
     "expo-status-bar": "~55.0.6",
+    "expo-updates": "~55.0.33",
     "i18next": "^25.8.18",
     "qrcode-generator": "^2.0.4",
     "react": "19.2.0",

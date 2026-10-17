@@ -3,7 +3,7 @@
     "name": "MineMind",
     "slug": "minemind",
     "scheme": "minemind",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -17,6 +17,10 @@
       "bundleIdentifier": "com.alina.minemind",
       "infoPlist": {
         "NSLocalNetworkUsageDescription": "MineMind uses your local network to host classroom matches on nearby devices."
+      },
+      "buildNumber": "1",
+      "config": {
+        "usesNonExemptEncryption": false
       }
     },
     "android": {
@@ -39,7 +43,8 @@
         "android.permission.WRITE_EXTERNAL_STORAGE",
         "android.permission.RECORD_AUDIO",
         "com.google.android.gms.permission.AD_ID"
-      ]
+      ],
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -66,6 +71,14 @@
         "projectId": "4e8dbd53-0ca8-4db9-af68-aef8abe6e3b0"
       }
     },
-    "owner": "slonce70"
+    "owner": "slonce70",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/4e8dbd53-0ca8-4db9-af68-aef8abe6e3b0",
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0
+    }
   }
 }
