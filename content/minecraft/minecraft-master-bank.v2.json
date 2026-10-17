@@ -68060,7 +68060,7 @@
     "isActive": true,
     "localized": {
       "en": {
-        "prompt": "In which direction does the sun rise in Minecraft?",
+        "prompt": "In which direction does the sun rise in the game?",
         "explanation": "The sun rises in the east and sets in the west, so it can help you find your way.",
         "options": [
           "East",
@@ -68070,7 +68070,7 @@
         ]
       },
       "uk": {
-        "prompt": "З якого боку сходить сонце в Майнкрафті?",
+        "prompt": "З якого боку сходить сонце в грі?",
         "explanation": "Сонце сходить на сході й заходить на заході, тож за ним можна орієнтуватися.",
         "options": [
           "Схід",
@@ -68080,7 +68080,7 @@
         ]
       },
       "ru": {
-        "prompt": "С какой стороны встаёт солнце в Майнкрафте?",
+        "prompt": "С какой стороны встаёт солнце в игре?",
         "explanation": "Солнце встаёт на востоке и садится на западе, поэтому по нему можно ориентироваться.",
         "options": [
           "Восток",
@@ -68090,7 +68090,7 @@
         ]
       }
     },
-    "promptEn": "In which direction does the sun rise in Minecraft?",
+    "promptEn": "In which direction does the sun rise in the game?",
     "reviewStatus": "approved",
     "sourceVersion": "minecraft-v3-wave5",
     "sources": [
@@ -69352,7 +69352,7 @@
     "isActive": true,
     "localized": {
       "en": {
-        "prompt": "About how many real minutes does the daytime part of a Minecraft day last?",
+        "prompt": "About how many real minutes does the daytime part of an in-game day last?",
         "explanation": "Daytime lasts 10 real minutes, half of the full 20-minute day-and-night cycle.",
         "options": [
           "10",
@@ -69362,7 +69362,7 @@
         ]
       },
       "uk": {
-        "prompt": "Скільки приблизно справжніх хвилин триває день у Майнкрафті, не рахуючи ночі?",
+        "prompt": "Скільки приблизно справжніх хвилин триває ігровий день, не рахуючи ночі?",
         "explanation": "Світлий день триває 10 справжніх хвилин — половину всього 20-хвилинного циклу дня й ночі.",
         "options": [
           "10",
@@ -69372,7 +69372,7 @@
         ]
       },
       "ru": {
-        "prompt": "Сколько примерно настоящих минут длится день в Майнкрафте, не считая ночи?",
+        "prompt": "Сколько примерно настоящих минут длится игровой день, не считая ночи?",
         "explanation": "Светлый день длится 10 настоящих минут — половину всего 20-минутного цикла дня и ночи.",
         "options": [
           "10",
@@ -69382,7 +69382,7 @@
         ]
       }
     },
-    "promptEn": "About how many real minutes does the daytime part of a Minecraft day last?",
+    "promptEn": "About how many real minutes does the daytime part of an in-game day last?",
     "reviewStatus": "approved",
     "sourceVersion": "minecraft-v3-wave5",
     "sources": [

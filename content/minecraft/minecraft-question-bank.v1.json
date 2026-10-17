@@ -46694,9 +46694,9 @@
       }
     ],
     "prompt": {
-      "en": "In which direction does the sun rise in Minecraft?",
-      "uk": "З якого боку сходить сонце в Майнкрафті?",
-      "ru": "С какой стороны встаёт солнце в Майнкрафте?"
+      "en": "In which direction does the sun rise in the game?",
+      "uk": "З якого боку сходить сонце в грі?",
+      "ru": "С какой стороны встаёт солнце в игре?"
     },
     "sourceVersion": "minecraft-v3-wave5",
     "tags": [
@@ -47587,9 +47587,9 @@
       }
     ],
     "prompt": {
-      "en": "About how many real minutes does the daytime part of a Minecraft day last?",
-      "uk": "Скільки приблизно справжніх хвилин триває день у Майнкрафті, не рахуючи ночі?",
-      "ru": "Сколько примерно настоящих минут длится день в Майнкрафте, не считая ночи?"
+      "en": "About how many real minutes does the daytime part of an in-game day last?",
+      "uk": "Скільки приблизно справжніх хвилин триває ігровий день, не рахуючи ночі?",
+      "ru": "Сколько примерно настоящих минут длится игровой день, не считая ночи?"
     },
     "sourceVersion": "minecraft-v3-wave5",
     "tags": [
