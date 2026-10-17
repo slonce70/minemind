@@ -2,7 +2,7 @@
 
 Mobile quiz app prototype for `iOS + Android` built with `Expo`, `React Native`, and `Supabase-first` architecture.
 
-MineMind is a mobile quiz app for iOS and Android, built with Expo and React Native in TypeScript on top of a Supabase-first backend that leans on Postgres, Edge Functions, and Realtime. The UI is fully localized across Ukrainian, English, and Russian, and questions are drawn from a validated content bank of 360 items organized into difficulty tiers. You can play through a solo mode or join private live multiplayer rooms, while solo and classroom play keep working without a backend.
+MineMind is a mobile quiz app for iOS and Android, built with Expo and React Native in TypeScript on top of a Supabase-first backend that leans on Postgres, Edge Functions, and Realtime. The UI is fully localized across Ukrainian, English, and Russian, and questions are drawn from a validated content bank of 1143 items organized into difficulty tiers. You can play through a solo mode or join private live multiplayer rooms, while solo and classroom play keep working without a backend.
 
 ## Current Status
 - guest onboarding
@@ -15,7 +15,7 @@ MineMind is a mobile quiz app for iOS and Android, built with Expo and React Nat
   - limits: 8 players per room, rate limits on creating and joining rooms, rooms idle for 2 hours are closed (never deleted), a reconnecting player continues where they left off
   - Edge Functions answer errors as `{ code, error }`; the app shows the code translated
 - classroom (LAN) matches where the host keeps the answers
-- validated local question bank: `360` active records in `uk`, `en`, `ru` (`120` per difficulty, `45` per topic), answer options shuffled every round
+- validated local question bank: `1143` active records in `uk`, `en`, `ru` (376 easy, 388 medium, 379 hard; 139–148 per topic), including 45 true/false, 18 picture and 20 recipe questions; answer options shuffled every round. On the web the bank loads as a separate chunk
 - one scoring rule for every mode: `100 + 6 × seconds left`, times `×1 / ×1.25 / ×1.5` for `easy / medium / hard` (timers `20 / 18 / 15` s), defined in `supabase/functions/_shared/game-rules.ts`
 - original pixel art direction: Tiny5 pixel headings and Nunito text (both OFL), hand-drawn pixel icons, the Kubik mascot and 14 avatars, all in code; app icon and splash rendered from the mascot (`scripts/generate-app-icons.ts`). Every asset and license is listed in `assets/LICENSES.md`
 - game feel: Reanimated animations (question entrance, answer pop and shake, timer bar, score count-up), synthesised sound effects and music loop (`scripts/generate-sounds.ts`), haptics; sound, music and vibration switches in Settings. Animations follow the system reduce-motion setting

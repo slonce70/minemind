@@ -348,7 +348,8 @@ test('ukrainian localization avoids placeholder phrasing and known broken terms'
 
     assert.match(prompt, /^[A-ZА-ЯІЇЄҐ0-9]/, `${record.id} prompt should start with an uppercase character`);
     for (const option of options) {
-      assert.match(option, /^[A-ZА-ЯІЇЄҐ0-9]/, `${record.id} option should start with an uppercase character`);
+      // Names in quotes (pottery sherds, trims) may open with «.
+      assert.match(option, /^«?[A-ZА-ЯІЇЄҐ0-9]/, `${record.id} option should start with an uppercase character`);
     }
   }
 });
