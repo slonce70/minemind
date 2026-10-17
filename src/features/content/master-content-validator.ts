@@ -75,6 +75,8 @@ const masterQuestionRecordSchema = z.strictObject({
   topicId: z.enum(contentTopics),
   translationStatus: z.enum(translationStatuses),
   versionGated: z.boolean(),
+  /** Game version the fact was last checked against (Java and Bedrock), e.g. "1.21". */
+  verifiedForVersion: z.string().regex(/^1\.\d+(?:\.\d+)?$/).optional(),
 }).superRefine((record, ctx) => {
   const issues = questionShapeIssues({ ...record, options: record.localized.en.options.map((en) => ({ en, ru: en, uk: en })) });
 

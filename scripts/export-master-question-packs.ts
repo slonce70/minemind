@@ -127,4 +127,6 @@ function main() {
   console.log(`Exported ${runtimeRecords.length} runtime question record(s). Use --out <path> to write the payload.`);
 }
 
-main();
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  main();
+}
