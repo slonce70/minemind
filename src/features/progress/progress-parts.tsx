@@ -92,7 +92,7 @@ export function CollectionCard({ count = 1, id, isNew, size = 96 }: { count?: nu
     <View
       accessibilityLabel={`${name}, ${rarity}${count > 1 ? `, ×${count}` : ''}`}
       accessible
-      style={[styles.card, { borderColor: rarityColors[card.rarity], width: size + spacing.md * 2 }]}
+      style={[styles.card, { borderColor: rarityColors[card.rarity], width: size + spacing.sm * 2 }]}
     >
       <View style={styles.cardArt}>
         <PixelSprite size={size} sprite={card.sprite} />
@@ -114,7 +114,7 @@ export function CollectionCard({ count = 1, id, isNew, size = 96 }: { count?: nu
 
 export function LockedCard({ size = 96 }: { size?: number }) {
   return (
-    <View style={[styles.card, styles.cardLocked, { width: size + spacing.md * 2 }]}>
+    <View style={[styles.card, styles.cardLocked, { width: size + spacing.sm * 2 }]}>
       <View style={[styles.cardArt, { height: size, justifyContent: 'center' }]}>
         <Text style={styles.lockedMark}>?</Text>
       </View>
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     gap: spacing.xxs,
     paddingBottom: spacing.sm,
-    paddingHorizontal: spacing.md,
+    paddingHorizontal: spacing.xs,
     paddingTop: spacing.md,
   },
   cardArt: {

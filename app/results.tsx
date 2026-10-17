@@ -25,13 +25,15 @@ export default function ResultsRoute() {
     return <Redirect href="/home" />;
   }
 
+  const isModeRound = latestMatch.round?.soloMode === 'adaptive' || latestMatch.round?.soloMode === 'mistakes';
+
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <ResultsView
         difficultyLabel={
-          latestMatch.round?.soloMode === 'adaptive' || latestMatch.round?.soloMode === 'mistakes'
-            ? t(`modes.${latestMatch.round.soloMode}`)
+          isModeRound
+            ? t(`modes.${latestMatch.round?.soloMode}`)
             : t(difficultyConfig[latestMatch.difficulty ?? selectedDifficulty].translationKey)
         }
         matchRecord={latestMatch}
@@ -71,7 +73,8 @@ export default function ResultsRoute() {
           },
           bestStreak: t('results.bestStreak'),
           correctAnswer: t('results.correctAnswer'),
-          difficulty: t('results.difficulty'),
+          // Adaptive and mistakes rounds mix difficulties: the pill names the mode instead.
+          difficulty: isModeRound ? t('results.mode') : t('results.difficulty'),
           noAnswer: t('results.noAnswer'),
           playAgain: t('results.playAgain'),
           questionNumber: (number) => t('results.questionNumber', { number }),
