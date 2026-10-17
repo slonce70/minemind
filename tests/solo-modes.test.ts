@@ -75,7 +75,8 @@ test('a challenge link replays the same questions in the same order for any lang
 });
 
 test('50/50 hides two wrong options, +time adds seconds, and both cost points', () => {
-  const questions = buildSoloRound({ bank, locale: 'en', seed: 's4', spec: { difficulty: 'medium', variant: 'classic' } }).questions;
+  const round = buildSoloRound({ bank, locale: 'en', seed: 's4', spec: { difficulty: 'medium', variant: 'classic' } }).questions;
+  const questions = round.filter((question) => question.options.length === 4);
   let state = roundReducer(initialRoundState, {
     awaitsVerdict: false,
     lifelines: { fifty: 1, time: 1 },
@@ -101,4 +102,11 @@ test('50/50 hides two wrong options, +time adds seconds, and both cost points', 
   assert.equal(withHints.score, Math.round(125 / 2));
   assert.ok(plain.score > withHints.score);
   assert.equal(withHints.round?.lifelinesUsed, 2);
+
+  const trueFalse = bank.find((record) => record.kind === 'true-false');
+  if (trueFalse) {
+    const [question] = buildSoloRound({ bank: [trueFalse], locale: 'en', seed: 's5', spec: { difficulty: trueFalse.difficulty, variant: 'classic' } }).questions;
+    const loaded = roundReducer(initialRoundState, { awaitsVerdict: false, lifelines: { fifty: 1, time: 1 }, questions: [question], timeLimit: 18, type: 'load' });
+    assert.equal(roundReducer(loaded, { lifeline: 'fifty', type: 'lifeline' }), loaded, '50/50 would give a two-option answer away');
+  }
 });

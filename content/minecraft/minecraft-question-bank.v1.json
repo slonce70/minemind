@@ -16918,5 +16918,4031 @@
       "circuits"
     ],
     "topicId": "nether-end-and-redstone"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "False: cooking meat makes it fill much more hunger, so a furnace is always worth it.",
+      "uk": "Неправда: приготоване м'ясо втамовує голод набагато краще, тож піч завжди стане в пригоді.",
+      "ru": "Неправда: приготовленное мясо утоляет голод намного лучше, так что печь всегда пригодится."
+    },
+    "id": "tf-cooked-meat-fills-less",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Cooked meat fills less hunger than the same meat eaten raw.",
+      "uk": "Смажене м'ясо втамовує голод слабше, ніж те саме м'ясо сирим.",
+      "ru": "Жареное мясо утоляет голод хуже, чем то же мясо в сыром виде."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "food",
+      "hunger"
+    ],
+    "topicId": "survival-basics"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "True: a cactus damages players and mobs that touch it, and it even destroys dropped items.",
+      "uk": "Правда: кактус ранить гравців і мобів, які його торкаються, і навіть знищує предмети.",
+      "ru": "Правда: кактус ранит игроков и мобов, которые его касаются, и даже уничтожает предметы."
+    },
+    "id": "tf-cactus-hurts-on-touch",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Touching a cactus hurts you.",
+      "uk": "Дотик до кактуса завдає тобі шкоди.",
+      "ru": "Прикосновение к кактусу наносит тебе урон."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "cactus",
+      "damage"
+    ],
+    "topicId": "survival-basics"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "True: you stay on fire for a while after leaving lava, so jump into water to put it out.",
+      "uk": "Правда: після лави ти ще якийсь час гориш, тож стрибай у воду, щоб загасити вогонь.",
+      "ru": "Правда: после лавы ты ещё какое-то время горишь, так что прыгай в воду, чтобы потушить огонь."
+    },
+    "id": "tf-still-burning-after-lava",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "After you climb out of lava, you keep burning for a few seconds.",
+      "uk": "Коли вилазиш із лави, ти ще кілька секунд продовжуєш горіти.",
+      "ru": "Когда выбираешься из лавы, ты ещё несколько секунд продолжаешь гореть."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "lava",
+      "fire"
+    ],
+    "topicId": "survival-basics"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "False: a grown sweet berry bush slows you down and hurts you while you move through it.",
+      "uk": "Неправда: дорослий кущ солодких ягід сповільнює тебе й ранить, поки ти крізь нього рухаєшся.",
+      "ru": "Неправда: взрослый куст сладких ягод замедляет тебя и ранит, пока ты сквозь него движешься."
+    },
+    "id": "tf-sweet-berry-bush-safe",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Walking through a grown sweet berry bush is completely safe.",
+      "uk": "Пробиратися крізь дорослий кущ солодких ягід цілком безпечно.",
+      "ru": "Пробираться сквозь взрослый куст сладких ягод совершенно безопасно."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "sweet-berries",
+      "hazards"
+    ],
+    "topicId": "survival-basics"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "False: a normal compass always points to the world spawn point, not to your bed.",
+      "uk": "Неправда: звичайний компас завжди вказує на точку появи світу, а не на твоє ліжко.",
+      "ru": "Неправда: обычный компас всегда указывает на точку появления мира, а не на твою кровать."
+    },
+    "id": "tf-compass-points-to-bed",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "A normal compass points to the bed you last slept in.",
+      "uk": "Звичайний компас указує на ліжко, у якому ти спав востаннє.",
+      "ru": "Обычный компас указывает на кровать, в которой ты спал последний раз."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "compass",
+      "navigation"
+    ],
+    "topicId": "survival-basics"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "True: every log, from oak to birch, crafts into four planks of its own wood type.",
+      "uk": "Правда: будь-яка колода, від дубової до березової, дає чотири дошки свого виду дерева.",
+      "ru": "Правда: любое бревно, от дубового до берёзового, даёт четыре доски своего вида дерева."
+    },
+    "id": "tf-planks-from-any-log",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "You can craft planks from any kind of log.",
+      "uk": "Дошки можна скрафтити з колоди будь-якого дерева.",
+      "ru": "Доски можно скрафтить из бревна любого дерева."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "planks",
+      "logs"
+    ],
+    "topicId": "crafting-and-smelting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "False: stone tools last more than twice as long as wooden ones, so upgrade early.",
+      "uk": "Неправда: кам'яні інструменти служать більш ніж удвічі довше за дерев'яні, тож переходь на них швидше.",
+      "ru": "Неправда: каменные инструменты служат больше чем вдвое дольше деревянных, так что переходи на них быстрее."
+    },
+    "id": "tf-wooden-tools-outlast-stone",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Wooden tools last longer than stone tools.",
+      "uk": "Дерев'яні інструменти служать довше за кам'яні.",
+      "ru": "Деревянные инструменты служат дольше каменных."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "tools",
+      "durability"
+    ],
+    "topicId": "crafting-and-smelting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "True: a furnace saves up experience while it smelts and gives it to you when you take the items.",
+      "uk": "Правда: піч накопичує досвід під час плавлення й віддає його, коли ти забираєш предмети.",
+      "ru": "Правда: печь копит опыт во время плавки и отдаёт его, когда ты забираешь предметы."
+    },
+    "id": "tf-smelting-gives-experience",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Taking smelted items out of a furnace gives you experience.",
+      "uk": "Коли забираєш переплавлені предмети з печі, ти отримуєш досвід.",
+      "ru": "Когда забираешь переплавленные предметы из печи, ты получаешь опыт."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "furnace",
+      "experience"
+    ],
+    "topicId": "crafting-and-smelting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "True: old iron tools, weapons and armor each smelt into one iron nugget.",
+      "uk": "Правда: старі залізні інструменти, зброя й обладунки переплавляються в один залізний самородок.",
+      "ru": "Правда: старые железные инструменты, оружие и броня переплавляются в один кусочек железа."
+    },
+    "id": "tf-iron-sword-smelts-to-nugget",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Smelting an iron sword in a furnace gives you an iron nugget.",
+      "uk": "Якщо переплавити залізний меч у печі, вийде залізний самородок.",
+      "ru": "Если переплавить железный меч в печи, получится кусочек железа."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "smelting",
+      "iron"
+    ],
+    "topicId": "crafting-and-smelting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "False: a block of coal is crafted only from regular coal, never from charcoal.",
+      "uk": "Неправда: блок вугілля крафтять лише зі звичайного вугілля, а не з деревного.",
+      "ru": "Неправда: угольный блок крафтят только из обычного угля, а не из древесного."
+    },
+    "id": "tf-charcoal-crafts-coal-block",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Nine pieces of charcoal craft a block of coal.",
+      "uk": "З дев'яти шматків деревного вугілля можна скрафтити блок вугілля.",
+      "ru": "Из девяти кусков древесного угля можно скрафтить угольный блок."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "charcoal",
+      "coal"
+    ],
+    "topicId": "crafting-and-smelting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "True: a torch can stand on top of a block or hang on its side, which is handy in tunnels.",
+      "uk": "Правда: смолоскип можна поставити зверху на блок або повісити збоку, що зручно в тунелях.",
+      "ru": "Правда: факел можно поставить сверху на блок или повесить сбоку, что удобно в туннелях."
+    },
+    "id": "tf-torch-on-wall-side",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Torches can be placed on the side of a wall.",
+      "uk": "Смолоскипи можна ставити на бічну стінку блока.",
+      "ru": "Факелы можно ставить на боковую сторону блока."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "torch",
+      "placement"
+    ],
+    "topicId": "blocks-and-building"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "False: dirt stays floating in place; only blocks like sand, gravel and concrete powder fall.",
+      "uk": "Неправда: ґрунт лишається на місці, а падають лише такі блоки, як пісок, гравій і сухий бетон.",
+      "ru": "Неправда: земля остаётся на месте, а падают только такие блоки, как песок, гравий и сухой бетон."
+    },
+    "id": "tf-dirt-falls-like-sand",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Dirt falls down when there is no block under it.",
+      "uk": "Ґрунт падає вниз, якщо під ним немає блока.",
+      "ru": "Земля падает вниз, если под ней нет блока."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "dirt",
+      "gravity"
+    ],
+    "topicId": "blocks-and-building"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "True: in the Overworld water spreads 7 blocks from its source, but lava only 3.",
+      "uk": "Правда: у Верхньому світі вода розтікається на 7 блоків від джерела, а лава лише на 3.",
+      "ru": "Правда: в Обычном мире вода растекается на 7 блоков от источника, а лава только на 3."
+    },
+    "id": "tf-water-flows-farther-than-lava",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "In the Overworld, water flows farther than lava.",
+      "uk": "У Верхньому світі вода розтікається далі, ніж лава.",
+      "ru": "В Обычном мире вода растекается дальше, чем лава."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "water",
+      "lava"
+    ],
+    "topicId": "blocks-and-building"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "False: fire lit on top of netherrack burns forever, and even rain can't put it out.",
+      "uk": "Неправда: вогонь на незераку горить вічно, і навіть дощ не може його загасити.",
+      "ru": "Неправда: огонь на незераке горит вечно, и даже дождь не может его потушить."
+    },
+    "id": "tf-netherrack-fire-goes-out",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Fire on top of netherrack goes out after a few seconds.",
+      "uk": "Вогонь на незераку гасне через кілька секунд.",
+      "ru": "Огонь на незераке гаснет через несколько секунд."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "netherrack",
+      "fire"
+    ],
+    "topicId": "blocks-and-building"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "True: in the Nether a wet sponge instantly dries with a puff of steam and can be used again.",
+      "uk": "Правда: у Незері мокра губка миттєво висихає з клубком пари, і її можна знову використати.",
+      "ru": "Правда: в Незере мокрая губка мгновенно высыхает с облачком пара, и её можно снова использовать."
+    },
+    "id": "tf-wet-sponge-dries-in-nether",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "A wet sponge placed in the Nether dries out right away.",
+      "uk": "Мокра губка, поставлена в Незері, одразу висихає.",
+      "ru": "Мокрая губка, поставленная в Незере, сразу высыхает."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "sponge",
+      "nether"
+    ],
+    "topicId": "blocks-and-building"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "False: only regular obsidian makes a working Nether portal frame; crying obsidian doesn't.",
+      "uk": "Неправда: робочу рамку порталу в Незер будують лише зі звичайного обсидіану, а не з плакучого.",
+      "ru": "Неправда: рабочую рамку портала в Незер строят только из обычного обсидиана, а не из плачущего."
+    },
+    "id": "tf-crying-obsidian-portal",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Crying obsidian works for building a Nether portal frame.",
+      "uk": "Плакучий обсидіан підходить для рамки порталу в Незер.",
+      "ru": "Плачущий обсидиан подходит для рамки портала в Незер."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "obsidian",
+      "nether-portal"
+    ],
+    "topicId": "blocks-and-building"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "True: like zombies, skeletons burn in daylight unless they wear a helmet or stay in water or shade.",
+      "uk": "Правда: як і зомбі, скелети горять удень, якщо на них немає шолома і вони не у воді чи тіні.",
+      "ru": "Правда: как и зомби, скелеты горят днём, если на них нет шлема и они не в воде или тени."
+    },
+    "id": "tf-skeletons-burn-in-sunlight",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Skeletons catch fire in direct sunlight.",
+      "uk": "Скелети спалахують під прямим сонячним світлом.",
+      "ru": "Скелеты загораются под прямым солнечным светом."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "skeleton",
+      "sunlight"
+    ],
+    "topicId": "mobs-and-combat"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "False: spiders climb walls, but creepers can only walk, so a tall wall keeps them out.",
+      "uk": "Неправда: по стінах лазять павуки, а кріпери лише ходять, тож висока стіна їх зупинить.",
+      "ru": "Неправда: по стенам лазают пауки, а криперы только ходят, так что высокая стена их остановит."
+    },
+    "id": "tf-creepers-climb-walls",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Creepers can climb up walls just like spiders.",
+      "uk": "Кріпери вміють лазити по стінах, як павуки.",
+      "ru": "Криперы умеют лазать по стенам, как пауки."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "creeper",
+      "spider"
+    ],
+    "topicId": "mobs-and-combat"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "True: after 30 seconds with its head underwater, a zombie starts shaking and becomes a drowned.",
+      "uk": "Правда: після 30 секунд із головою під водою зомбі починає тремтіти й стає потопельником.",
+      "ru": "Правда: после 30 секунд с головой под водой зомби начинает трястись и становится утопленником."
+    },
+    "id": "tf-zombie-turns-into-drowned",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "A zombie that stays underwater long enough turns into a drowned.",
+      "uk": "Зомбі, який надовго опиняється під водою, перетворюється на потопельника.",
+      "ru": "Зомби, который долго пробудет под водой, превращается в утопленника."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "zombie",
+      "drowned"
+    ],
+    "topicId": "mobs-and-combat"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "False: a big slime splits into several smaller slimes, and only the tiniest ones drop slimeballs.",
+      "uk": "Неправда: великий слимак розпадається на кілька менших, і лише найменші залишають слизові кульки.",
+      "ru": "Неправда: большой слизень распадается на несколько маленьких, и только самые мелкие оставляют сгустки слизи."
+    },
+    "id": "tf-big-slimes-vanish",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Big slimes disappear for good when you defeat them.",
+      "uk": "Великі слимаки зникають назавжди, щойно ти їх переможеш.",
+      "ru": "Большие слизни исчезают навсегда, как только ты их победишь."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "slime",
+      "combat"
+    ],
+    "topicId": "mobs-and-combat"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "True: strays, the icy skeletons of snowy biomes, shoot arrows of Slowness.",
+      "uk": "Правда: примари, крижані скелети засніжених біомів, стріляють стрілами Повільності.",
+      "ru": "Правда: зимогоры, ледяные скелеты снежных биомов, стреляют стрелами Замедления."
+    },
+    "id": "tf-stray-arrows-slowness",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Arrows shot by strays give you Slowness.",
+      "uk": "Стріли примар накладають на тебе Повільність.",
+      "ru": "Стрелы зимогоров накладывают на тебя Замедление."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "stray",
+      "arrows"
+    ],
+    "topicId": "mobs-and-combat"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "False: baby zombies are much faster than adults and have the same health, so watch out.",
+      "uk": "Неправда: маленькі зомбі набагато швидші за дорослих і мають стільки ж здоров'я, тож будь пильним.",
+      "ru": "Неправда: маленькие зомби намного быстрее взрослых и имеют столько же здоровья, так что будь начеку."
+    },
+    "id": "tf-baby-zombies-slower",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Baby zombies move slower than adult zombies.",
+      "uk": "Маленькі зомбі рухаються повільніше за дорослих.",
+      "ru": "Маленькие зомби двигаются медленнее взрослых."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "baby-zombie",
+      "combat"
+    ],
+    "topicId": "mobs-and-combat"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "True: a sheared sheep regrows wool only after grazing on grass, so keep grass in its pen.",
+      "uk": "Правда: острижена вівця відрощує вовну лише після того, як поїсть трави, тож лиши траву в загоні.",
+      "ru": "Правда: остриженная овца отращивает шерсть только после того, как поест травы, так что оставь траву в загоне."
+    },
+    "id": "tf-sheep-regrow-wool",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "A sheared sheep grows its wool back after eating grass.",
+      "uk": "Острижена вівця відрощує вовну, коли поїсть трави.",
+      "ru": "Остриженная овца отращивает шерсть, когда поест травы."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "sheep",
+      "wool"
+    ],
+    "topicId": "farming-and-animals"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "False: pigs drop only porkchops; leather comes from cows, horses, llamas and hoglins.",
+      "uk": "Неправда: зі свиней випадає лише свинина, а шкіра — з корів, коней, лам і гоґлінів.",
+      "ru": "Неправда: со свиней выпадает только свинина, а кожа — с коров, лошадей, лам и хоглинов."
+    },
+    "id": "tf-pigs-drop-leather",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Pigs drop leather when defeated.",
+      "uk": "Свині залишають шкіру, коли їх перемогти.",
+      "ru": "Свиньи оставляют кожу, если их победить."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "pig",
+      "drops"
+    ],
+    "topicId": "farming-and-animals"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "True: each feeding takes a little time off the 20 minutes a baby animal needs to grow up.",
+      "uk": "Правда: кожне годування трохи скорочує 20 хвилин, потрібних малечі, щоб вирости.",
+      "ru": "Правда: каждое кормление немного сокращает 20 минут, нужных детёнышу, чтобы вырасти."
+    },
+    "id": "tf-feeding-babies-grow-faster",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Feeding a baby animal its breeding food helps it grow up faster.",
+      "uk": "Якщо годувати маля тварини їжею для розведення, воно швидше виросте.",
+      "ru": "Если кормить детёныша животного едой для разведения, он быстрее вырастет."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "baby-animals",
+      "breeding"
+    ],
+    "topicId": "farming-and-animals"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "False: rabbits are bred with carrots, golden carrots or dandelions, not wheat.",
+      "uk": "Неправда: кроликів розводять морквою, золотою морквою або кульбабами, а не пшеницею.",
+      "ru": "Неправда: кроликов разводят морковью, золотой морковью или одуванчиками, а не пшеницей."
+    },
+    "id": "tf-rabbits-bred-with-wheat",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Rabbits can be bred with wheat.",
+      "uk": "Кроликів можна розводити пшеницею.",
+      "ru": "Кроликов можно разводить пшеницей."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "rabbit",
+      "breeding"
+    ],
+    "topicId": "farming-and-animals"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "True: sugar cane grows to 3 blocks; break the top two and leave the bottom one to regrow.",
+      "uk": "Правда: тростина виростає до 3 блоків, тож зрізай верхні два, а нижній лиши рости далі.",
+      "ru": "Правда: тростник вырастает до 3 блоков, так что срезай верхние два, а нижний оставь расти дальше."
+    },
+    "id": "tf-sugar-cane-grows-three-tall",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Planted sugar cane grows up to 3 blocks tall on its own.",
+      "uk": "Посаджена цукрова тростина сама виростає до 3 блоків заввишки.",
+      "ru": "Посаженный сахарный тростник сам вырастает до 3 блоков в высоту."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "sugar-cane",
+      "growth"
+    ],
+    "topicId": "farming-and-animals"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "False: turtles are bred with seagrass, and then one of them lays eggs on sand.",
+      "uk": "Неправда: черепах розводять морською травою, а потім одна з них відкладає яйця на піску.",
+      "ru": "Неправда: черепах разводят морской травой, а потом одна из них откладывает яйца на песке."
+    },
+    "id": "tf-turtles-bred-with-kelp",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "You breed turtles by feeding them kelp.",
+      "uk": "Щоб розвести черепах, їх годують ламінарією.",
+      "ru": "Чтобы развести черепах, их кормят ламинарией."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "turtle",
+      "breeding"
+    ],
+    "topicId": "farming-and-animals"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "True: iron golems patrol villages and attack hostile mobs that come near villagers.",
+      "uk": "Правда: залізні ґолеми патрулюють села й атакують ворожих мобів, що підходять до селян.",
+      "ru": "Правда: железные големы патрулируют деревни и атакуют враждебных мобов, которые подходят к крестьянам."
+    },
+    "id": "tf-iron-golems-protect-villagers",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Iron golems protect villagers from monsters.",
+      "uk": "Залізні ґолеми захищають селян від монстрів.",
+      "ru": "Железные големы защищают крестьян от монстров."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "iron-golem",
+      "village"
+    ],
+    "topicId": "villagers-and-enchanting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "False: every enchantment costs experience levels as well as lapis lazuli.",
+      "uk": "Неправда: кожне зачарування коштує рівнів досвіду, а ще лазуриту.",
+      "ru": "Неправда: каждое зачарование стоит уровней опыта, а ещё лазурита."
+    },
+    "id": "tf-enchanting-costs-nothing",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Enchanting at an enchanting table doesn't use any experience levels.",
+      "uk": "Зачарування на столі зачарування не витрачає рівнів досвіду.",
+      "ru": "Зачарование на чародейском столе не тратит уровни опыта."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "enchanting",
+      "experience"
+    ],
+    "topicId": "villagers-and-enchanting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "True: nitwits can't take a job or trade with you, but they can still have babies.",
+      "uk": "Правда: нездари не можуть отримати роботу чи торгувати, але можуть мати дітей.",
+      "ru": "Правда: деревенщины не могут получить работу или торговать, но могут заводить детей."
+    },
+    "id": "tf-nitwits-never-get-jobs",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Nitwit villagers in green robes can never get a job.",
+      "uk": "Нездари в зелених мантіях ніколи не можуть отримати роботу.",
+      "ru": "Деревенщины в зелёных халатах никогда не могут получить работу."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "nitwit",
+      "professions"
+    ],
+    "topicId": "villagers-and-enchanting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "False: baby villagers can't trade; you have to wait until they grow up and take a job.",
+      "uk": "Неправда: малі селяни не торгують, тож доведеться почекати, доки вони виростуть і знайдуть роботу.",
+      "ru": "Неправда: маленькие крестьяне не торгуют, так что придётся подождать, пока они вырастут и найдут работу."
+    },
+    "id": "tf-baby-villagers-trade",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Baby villagers can trade with you.",
+      "uk": "Малі селяни можуть торгувати з тобою.",
+      "ru": "Маленькие крестьяне могут торговать с тобой."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "villager",
+      "trading"
+    ],
+    "topicId": "villagers-and-enchanting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "True: for example, two Sharpness I books combine into one Sharpness II book on an anvil.",
+      "uk": "Правда: наприклад, дві книги з Гостротою I на ковадлі стають однією книгою з Гостротою II.",
+      "ru": "Правда: например, две книги с Остротой I на наковальне становятся одной книгой с Остротой II."
+    },
+    "id": "tf-anvil-combines-books",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "An anvil can join two matching enchanted books into a stronger one.",
+      "uk": "Ковадло може поєднати дві однакові зачаровані книги в сильнішу.",
+      "ru": "Наковальня может объединить две одинаковые зачарованные книги в более сильную."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "anvil",
+      "enchanted-books"
+    ],
+    "topicId": "villagers-and-enchanting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "False: the cleric's job block is a brewing stand; a lectern makes a librarian.",
+      "uk": "Неправда: робоче місце церковника — варильна стійка, а катедра робить селянина бібліотекарем.",
+      "ru": "Неправда: рабочий блок священника — зельеварка, а кафедра делает крестьянина библиотекарем."
+    },
+    "id": "tf-cleric-uses-lectern",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "A cleric villager uses a lectern as its job block.",
+      "uk": "Церковник використовує катедру як робоче місце.",
+      "ru": "Священник использует кафедру как рабочий блок."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "cleric",
+      "job-blocks"
+    ],
+    "topicId": "villagers-and-enchanting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "True: cacti generate in deserts and badlands, often next to dead bushes.",
+      "uk": "Правда: кактуси з'являються в пустелях і безплідних землях, часто поруч із сухими кущами.",
+      "ru": "Правда: кактусы появляются в пустынях и бесплодных землях, часто рядом с сухими кустами."
+    },
+    "id": "tf-cacti-grow-in-deserts",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Cacti grow naturally in deserts.",
+      "uk": "Кактуси природно ростуть у пустелях.",
+      "ru": "Кактусы растут в пустынях сами по себе."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "desert",
+      "cactus"
+    ],
+    "topicId": "biomes-and-structures"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "True: snowy plains have their own villages with spruce houses and villagers in warm clothes.",
+      "uk": "Правда: на засніжених рівнинах є власні села зі смерековими будинками й тепло вдягненими селянами.",
+      "ru": "Правда: на заснеженных равнинах есть свои деревни с еловыми домами и тепло одетыми крестьянами."
+    },
+    "id": "tf-villages-in-snowy-plains",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Villages can generate in snowy plains.",
+      "uk": "Села можуть з'являтися на засніжених рівнинах.",
+      "ru": "Деревни могут появляться на заснеженных равнинах."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "village",
+      "snowy-plains"
+    ],
+    "topicId": "biomes-and-structures"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "False: pandas live in jungles and are most common in bamboo jungles.",
+      "uk": "Неправда: панди живуть у джунглях і найчастіше трапляються в бамбукових джунглях.",
+      "ru": "Неправда: панды живут в джунглях и чаще всего встречаются в бамбуковых зарослях."
+    },
+    "id": "tf-pandas-in-birch-forests",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Pandas spawn naturally in birch forests.",
+      "uk": "Панди природно з'являються в березових лісах.",
+      "ru": "Панды сами по себе появляются в березняках."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "panda",
+      "jungle"
+    ],
+    "topicId": "biomes-and-structures"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "True: tripwires in a jungle temple trigger hidden dispensers full of arrows.",
+      "uk": "Правда: розтяжки в храмі у джунглях вмикають сховані роздавачі зі стрілами.",
+      "ru": "Правда: растяжки в джунглевой пирамиде включают спрятанные раздатчики со стрелами."
+    },
+    "id": "tf-jungle-temple-arrow-traps",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Jungle temples have tripwire traps that shoot arrows.",
+      "uk": "У храмах у джунглях є розтяжки, що стріляють стрілами.",
+      "ru": "В джунглевых пирамидах есть растяжки, которые стреляют стрелами."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "jungle-temple",
+      "traps"
+    ],
+    "topicId": "biomes-and-structures"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "False: only about half of igloos have a basement, hidden under a trapdoor and a carpet.",
+      "uk": "Неправда: підвал є лише приблизно в половині іглу, і він схований під люком і килимом.",
+      "ru": "Неправда: подвал есть только примерно у половины иглу, и он спрятан под люком и ковром."
+    },
+    "id": "tf-every-igloo-has-basement",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Every igloo has a secret basement under the floor.",
+      "uk": "У кожного іглу під підлогою є таємний підвал.",
+      "ru": "У каждого иглу под полом есть тайный подвал."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "igloo",
+      "basement"
+    ],
+    "topicId": "biomes-and-structures"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "True: endermen are the most common mob in the End, so try not to look them in the eyes.",
+      "uk": "Правда: ендермени — найпоширеніші моби в Енді, тож намагайся не дивитися їм в очі.",
+      "ru": "Правда: эндермены — самые частые мобы в Энде, так что старайся не смотреть им в глаза."
+    },
+    "id": "tf-endermen-roam-the-end",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Lots of endermen roam the End.",
+      "uk": "В Енді блукає багато ендерменів.",
+      "ru": "В Энде бродит много эндерменов."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "enderman",
+      "the-end"
+    ],
+    "topicId": "nether-end-and-redstone"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "False: the Ender Dragon lives in the End, reached through the End portal in a stronghold.",
+      "uk": "Неправда: Дракон Енду живе в Енді, куди веде портал Енду в цитаделі.",
+      "ru": "Неправда: Эндер-дракон живёт в Энде, куда ведёт портал Энда в крепости."
+    },
+    "id": "tf-dragon-lives-in-nether",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "The Ender Dragon lives in the Nether.",
+      "uk": "Дракон Енду живе в Незері.",
+      "ru": "Эндер-дракон живёт в Незере."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "ender-dragon",
+      "dimensions"
+    ],
+    "topicId": "nether-end-and-redstone"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "True: that is why players use Nether portals as shortcuts for long trips.",
+      "uk": "Правда: ось чому гравці використовують портали в Незер як короткий шлях у далекі мандри.",
+      "ru": "Правда: вот почему игроки используют порталы в Незер как короткий путь в дальних походах."
+    },
+    "id": "tf-nether-one-block-eight",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Walking 1 block in the Nether moves you 8 blocks in the Overworld.",
+      "uk": "Один блок у Незері відповідає 8 блокам у Верхньому світі.",
+      "ru": "Один блок в Незере соответствует 8 блокам в Обычном мире."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "nether-portal",
+      "travel"
+    ],
+    "topicId": "nether-end-and-redstone"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "False: a lever stays on until you flip it back; buttons are the ones that switch off by themselves.",
+      "uk": "Неправда: важіль лишається ввімкненим, доки ти його не перемкнеш, а самі вимикаються кнопки.",
+      "ru": "Неправда: рычаг остаётся включённым, пока ты его не переключишь, а сами выключаются кнопки."
+    },
+    "id": "tf-lever-turns-itself-off",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "A lever turns off by itself a moment after you flip it.",
+      "uk": "Важіль сам вимикається за мить після того, як ти його перемкнув.",
+      "ru": "Рычаг сам выключается через мгновение после того, как ты его переключил."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "lever",
+      "redstone"
+    ],
+    "topicId": "nether-end-and-redstone"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "True: shulker bullets give Levitation, and you can take fall damage when it wears off.",
+      "uk": "Правда: снаряди шалкера дають Левітацію, і коли вона мине, можна отримати шкоду від падіння.",
+      "ru": "Правда: снаряды шалкера дают Левитацию, и когда она пройдёт, можно получить урон от падения."
+    },
+    "id": "tf-shulker-bullet-levitation",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Getting hit by a shulker's bullet makes you float up.",
+      "uk": "Від влучання снаряда шалкера ти злітаєш угору.",
+      "ru": "От попадания снаряда шалкера ты взлетаешь вверх."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "shulker",
+      "levitation"
+    ],
+    "topicId": "nether-end-and-redstone"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "False: a shulker box keeps its items inside when broken, so you can carry it like a backpack.",
+      "uk": "Неправда: зламана шалкерова коробка зберігає речі всередині, тож її можна носити як рюкзак.",
+      "ru": "Неправда: сломанный шалкеровый ящик сохраняет вещи внутри, так что его можно носить как рюкзак."
+    },
+    "id": "tf-shulker-box-spills-items",
+    "isActive": true,
+    "kind": "true-false",
+    "options": [
+      {
+        "en": "True",
+        "uk": "Правда",
+        "ru": "Правда"
+      },
+      {
+        "en": "False",
+        "uk": "Неправда",
+        "ru": "Неправда"
+      }
+    ],
+    "prompt": {
+      "en": "Breaking a shulker box spills all the items inside it.",
+      "uk": "Якщо зламати шалкерову коробку, усі речі з неї висиплються.",
+      "ru": "Если сломать шалкеровый ящик, все вещи из него высыплются."
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "true-false",
+      "shulker-box",
+      "storage"
+    ],
+    "topicId": "nether-end-and-redstone"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "Skeletons drop bones, which you can grind into bone meal or use to tame wolves.",
+      "uk": "Скелети залишають кістки, з яких роблять кісткове борошно або якими приручають вовків.",
+      "ru": "Скелеты оставляют кости, из которых делают костную муку или которыми приручают волков."
+    },
+    "id": "pic-bone-dropped-by-skeleton",
+    "isActive": true,
+    "kind": "picture",
+    "media": {
+      "type": "picture",
+      "sprite": "bone"
+    },
+    "options": [
+      {
+        "en": "Skeleton",
+        "uk": "Скелет",
+        "ru": "Скелет"
+      },
+      {
+        "en": "Slime",
+        "uk": "Слимак",
+        "ru": "Слизень"
+      },
+      {
+        "en": "Creeper",
+        "uk": "Кріпер",
+        "ru": "Крипер"
+      },
+      {
+        "en": "Drowned",
+        "uk": "Потопельник",
+        "ru": "Утопленник"
+      }
+    ],
+    "prompt": {
+      "en": "Which mob drops the item in the picture?",
+      "uk": "Який моб залишає предмет із картинки?",
+      "ru": "Какой моб оставляет предмет с картинки?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "picture",
+      "drops",
+      "skeleton"
+    ],
+    "topicId": "mobs-and-combat"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "Creepers drop gunpowder, the key ingredient for TNT and fireworks.",
+      "uk": "Кріпери залишають порох — головний складник динаміту й феєрверків.",
+      "ru": "Криперы оставляют порох — главный ингредиент динамита и фейерверков."
+    },
+    "id": "pic-gunpowder-from-creeper",
+    "isActive": true,
+    "kind": "picture",
+    "media": {
+      "type": "picture",
+      "sprite": "gunpowder"
+    },
+    "options": [
+      {
+        "en": "Creeper",
+        "uk": "Кріпер",
+        "ru": "Крипер"
+      },
+      {
+        "en": "Enderman",
+        "uk": "Ендермен",
+        "ru": "Эндермен"
+      },
+      {
+        "en": "Zombie",
+        "uk": "Зомбі",
+        "ru": "Зомби"
+      },
+      {
+        "en": "Spider",
+        "uk": "Павук",
+        "ru": "Паук"
+      }
+    ],
+    "prompt": {
+      "en": "Defeating which mob can give you the item shown?",
+      "uk": "Перемога над яким мобом може дати тобі цей предмет?",
+      "ru": "Победа над каким мобом может дать тебе этот предмет?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "picture",
+      "drops",
+      "creeper"
+    ],
+    "topicId": "mobs-and-combat"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "Spiders drop string, which you need for bows, fishing rods and leads.",
+      "uk": "Павуки залишають нитки, потрібні для луків, вудок і повідців.",
+      "ru": "Пауки оставляют нити, нужные для луков, удочек и поводков."
+    },
+    "id": "pic-string-from-spider",
+    "isActive": true,
+    "kind": "picture",
+    "media": {
+      "type": "picture",
+      "sprite": "string"
+    },
+    "options": [
+      {
+        "en": "Spider",
+        "uk": "Павук",
+        "ru": "Паук"
+      },
+      {
+        "en": "Skeleton",
+        "uk": "Скелет",
+        "ru": "Скелет"
+      },
+      {
+        "en": "Creeper",
+        "uk": "Кріпер",
+        "ru": "Крипер"
+      },
+      {
+        "en": "Slime",
+        "uk": "Слимак",
+        "ru": "Слизень"
+      }
+    ],
+    "prompt": {
+      "en": "Which hostile mob leaves this item behind when defeated?",
+      "uk": "Який ворожий моб залишає цей предмет після перемоги над ним?",
+      "ru": "Какой враждебный моб оставляет этот предмет после победы над ним?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "picture",
+      "drops",
+      "spider"
+    ],
+    "topicId": "mobs-and-combat"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 2,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "Chickens drop feathers, which you need to craft arrows.",
+      "uk": "Кури залишають пір'я, потрібне для крафту стріл.",
+      "ru": "Курицы оставляют перья, нужные для крафта стрел."
+    },
+    "id": "pic-feather-from-chicken",
+    "isActive": true,
+    "kind": "picture",
+    "media": {
+      "type": "picture",
+      "sprite": "feather"
+    },
+    "options": [
+      {
+        "en": "Rabbit",
+        "uk": "Кролик",
+        "ru": "Кролик"
+      },
+      {
+        "en": "Pig",
+        "uk": "Свиня",
+        "ru": "Свинья"
+      },
+      {
+        "en": "Chicken",
+        "uk": "Курка",
+        "ru": "Курица"
+      },
+      {
+        "en": "Cow",
+        "uk": "Корова",
+        "ru": "Корова"
+      }
+    ],
+    "prompt": {
+      "en": "Which farm animal can drop the item shown?",
+      "uk": "Яка свійська тварина може залишити цей предмет?",
+      "ru": "Какое домашнее животное может оставить этот предмет?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "picture",
+      "drops",
+      "chicken"
+    ],
+    "topicId": "farming-and-animals"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "Hoglins drop leather and porkchops, so they are the Nether's source of both.",
+      "uk": "Гоґліни залишають шкіру й свинину, тож у Незері це джерело обох.",
+      "ru": "Хоглины оставляют кожу и свинину, так что в Незере это источник обоих."
+    },
+    "id": "pic-leather-from-hoglin",
+    "isActive": true,
+    "kind": "picture",
+    "media": {
+      "type": "picture",
+      "sprite": "leather"
+    },
+    "options": [
+      {
+        "en": "Hoglin",
+        "uk": "Гоґлін",
+        "ru": "Хоглин"
+      },
+      {
+        "en": "Magma Cube",
+        "uk": "Магмокуб",
+        "ru": "Магмовый куб"
+      },
+      {
+        "en": "Strider",
+        "uk": "Блукач",
+        "ru": "Лавомерка"
+      },
+      {
+        "en": "Piglin",
+        "uk": "Піґлін",
+        "ru": "Пиглин"
+      }
+    ],
+    "prompt": {
+      "en": "Which Nether mob can drop the item in the picture?",
+      "uk": "Який моб із Незеру може залишити предмет із картинки?",
+      "ru": "Какой моб из Незера может оставить предмет с картинки?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "picture",
+      "drops",
+      "hoglin"
+    ],
+    "topicId": "mobs-and-combat"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 2,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "Witches can drop sticks, along with glass bottles, sugar, redstone and gunpowder.",
+      "uk": "Відьми можуть залишити палиці, а ще скляні пляшки, цукор, редстоун і порох.",
+      "ru": "Ведьмы могут оставить палки, а ещё бутылочки, сахар, редстоун и порох."
+    },
+    "id": "pic-stick-from-witch",
+    "isActive": true,
+    "kind": "picture",
+    "media": {
+      "type": "picture",
+      "sprite": "stick"
+    },
+    "options": [
+      {
+        "en": "Enderman",
+        "uk": "Ендермен",
+        "ru": "Эндермен"
+      },
+      {
+        "en": "Zombie",
+        "uk": "Зомбі",
+        "ru": "Зомби"
+      },
+      {
+        "en": "Witch",
+        "uk": "Відьма",
+        "ru": "Ведьма"
+      },
+      {
+        "en": "Skeleton",
+        "uk": "Скелет",
+        "ru": "Скелет"
+      }
+    ],
+    "prompt": {
+      "en": "Which hostile mob sometimes drops the item shown?",
+      "uk": "Який ворожий моб іноді залишає показаний предмет?",
+      "ru": "Какой враждебный моб иногда оставляет показанный предмет?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "picture",
+      "drops",
+      "witch"
+    ],
+    "topicId": "mobs-and-combat"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 2,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "Four blocks of iron in a T shape topped with a carved pumpkin build an iron golem.",
+      "uk": "Чотири блоки заліза у формі літери Т і вирізаний гарбуз зверху створюють залізного ґолема.",
+      "ru": "Четыре железных блока буквой Т и вырезанная тыква сверху создают железного голема."
+    },
+    "id": "pic-iron-builds-golem",
+    "isActive": true,
+    "kind": "picture",
+    "media": {
+      "type": "picture",
+      "sprite": "iron-ingot"
+    },
+    "options": [
+      {
+        "en": "Wither",
+        "uk": "Візер",
+        "ru": "Визер"
+      },
+      {
+        "en": "Villager",
+        "uk": "Селянин",
+        "ru": "Крестьянин"
+      },
+      {
+        "en": "Iron Golem",
+        "uk": "Залізний ґолем",
+        "ru": "Железный голем"
+      },
+      {
+        "en": "Snow Golem",
+        "uk": "Сніговий ґолем",
+        "ru": "Снежный голем"
+      }
+    ],
+    "prompt": {
+      "en": "Players can build which mob from blocks of the item shown?",
+      "uk": "Якого моба можна збудувати з блоків, зроблених із цього предмета?",
+      "ru": "Какого моба можно построить из блоков, сделанных из этого предмета?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "picture",
+      "iron-golem",
+      "building-mobs"
+    ],
+    "topicId": "mobs-and-combat"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "A thrown egg has a 1 in 8 chance to hatch a baby chicken, and very rarely four.",
+      "uk": "Кинуте яйце з шансом 1 до 8 дає курча, а дуже рідко навіть чотири.",
+      "ru": "Брошенное яйцо с шансом 1 к 8 даёт цыплёнка, а очень редко даже четырёх."
+    },
+    "id": "pic-thrown-egg-hatches-chick",
+    "isActive": true,
+    "kind": "picture",
+    "media": {
+      "type": "picture",
+      "sprite": "egg"
+    },
+    "options": [
+      {
+        "en": "Baby Chicken",
+        "uk": "Курча",
+        "ru": "Цыплёнок"
+      },
+      {
+        "en": "Baby Turtle",
+        "uk": "Черепашеня",
+        "ru": "Черепашонок"
+      },
+      {
+        "en": "Silverfish",
+        "uk": "Лусківниця",
+        "ru": "Чешуйница"
+      },
+      {
+        "en": "Bat",
+        "uk": "Кажан",
+        "ru": "Летучая мышь"
+      }
+    ],
+    "prompt": {
+      "en": "Throw the item in the picture. What can sometimes hatch?",
+      "uk": "Кинь предмет із картинки. Хто іноді може з нього вилупитися?",
+      "ru": "Брось предмет с картинки. Кто иногда может из него вылупиться?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "picture",
+      "egg",
+      "chicken"
+    ],
+    "topicId": "farming-and-animals"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 2,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "Eight gold ingots around an apple craft a golden apple, a strong healing food.",
+      "uk": "Вісім золотих злитків навколо яблука дають золоте яблуко, сильну цілющу їжу.",
+      "ru": "Восемь золотых слитков вокруг яблока дают золотое яблоко, сильную целебную еду."
+    },
+    "id": "pic-gold-makes-golden-apple",
+    "isActive": true,
+    "kind": "picture",
+    "media": {
+      "type": "picture",
+      "sprite": "gold-ingot"
+    },
+    "options": [
+      {
+        "en": "Glistering Melon Slice",
+        "uk": "Блискуча скибка кавуна",
+        "ru": "Сверкающий ломтик арбуза"
+      },
+      {
+        "en": "Cake",
+        "uk": "Торт",
+        "ru": "Торт"
+      },
+      {
+        "en": "Golden Apple",
+        "uk": "Золоте яблуко",
+        "ru": "Золотое яблоко"
+      },
+      {
+        "en": "Golden Carrot",
+        "uk": "Золота морква",
+        "ru": "Золотая морковь"
+      }
+    ],
+    "prompt": {
+      "en": "Surround an apple with eight of the item shown. What do you get?",
+      "uk": "Обклади яблуко вісьмома такими предметами. Що вийде?",
+      "ru": "Обложи яблоко восемью такими предметами. Что получится?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "picture",
+      "golden-apple",
+      "crafting"
+    ],
+    "topicId": "farming-and-animals"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "A slimeball on top of a piston crafts a sticky piston, which can pull blocks back.",
+      "uk": "Слизова кулька над поршнем дає липкий поршень, який уміє тягнути блоки назад.",
+      "ru": "Сгусток слизи над поршнем даёт липкий поршень, который умеет тянуть блоки назад."
+    },
+    "id": "pic-slimeball-sticky-piston",
+    "isActive": true,
+    "kind": "picture",
+    "media": {
+      "type": "picture",
+      "sprite": "slimeball"
+    },
+    "options": [
+      {
+        "en": "Sticky Piston",
+        "uk": "Липкий поршень",
+        "ru": "Липкий поршень"
+      },
+      {
+        "en": "Hopper",
+        "uk": "Лійка",
+        "ru": "Воронка"
+      },
+      {
+        "en": "Dispenser",
+        "uk": "Роздавач",
+        "ru": "Раздатчик"
+      },
+      {
+        "en": "Observer",
+        "uk": "Спостерігач",
+        "ru": "Наблюдатель"
+      }
+    ],
+    "prompt": {
+      "en": "Add the item shown to a piston. Which block do you get?",
+      "uk": "Додай показаний предмет до поршня. Який блок вийде?",
+      "ru": "Добавь показанный предмет к поршню. Какой блок получится?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "picture",
+      "piston",
+      "redstone"
+    ],
+    "topicId": "nether-end-and-redstone"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 3,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "Redstone dust above a stick makes a redstone torch, a power source that stays on.",
+      "uk": "Редстоуновий пил над палицею дає редстоуновий смолоскип — джерело сигналу, що не вимикається.",
+      "ru": "Редстоуновая пыль над палкой даёт редстоуновый факел — источник сигнала, который не выключается."
+    },
+    "id": "pic-redstone-torch-recipe",
+    "isActive": true,
+    "kind": "picture",
+    "media": {
+      "type": "picture",
+      "sprite": "redstone"
+    },
+    "options": [
+      {
+        "en": "Torch",
+        "uk": "Смолоскип",
+        "ru": "Факел"
+      },
+      {
+        "en": "Lever",
+        "uk": "Важіль",
+        "ru": "Рычаг"
+      },
+      {
+        "en": "Redstone Repeater",
+        "uk": "Редстоуновий повторювач",
+        "ru": "Редстоуновый повторитель"
+      },
+      {
+        "en": "Redstone Torch",
+        "uk": "Редстоуновий смолоскип",
+        "ru": "Редстоуновый факел"
+      }
+    ],
+    "prompt": {
+      "en": "Put the item shown on top of a stick. What do you craft?",
+      "uk": "Поклади показаний предмет над палицею. Що ти скрафтиш?",
+      "ru": "Положи показанный предмет над палкой. Что ты скрафтишь?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "picture",
+      "redstone",
+      "crafting"
+    ],
+    "topicId": "nether-end-and-redstone"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "Diamond ore needs an iron pickaxe or better; weaker pickaxes break it with no drop.",
+      "uk": "Діамантова руда потребує залізного кайла або кращого, а слабші кайла ламають її без здобичі.",
+      "ru": "Алмазной руде нужна железная кирка или лучше, а слабые кирки ломают её без добычи."
+    },
+    "id": "pic-diamond-ore-needs-iron",
+    "isActive": true,
+    "kind": "picture",
+    "media": {
+      "type": "picture",
+      "sprite": "diamond"
+    },
+    "options": [
+      {
+        "en": "Iron Pickaxe",
+        "uk": "Залізне кайло",
+        "ru": "Железная кирка"
+      },
+      {
+        "en": "Golden Pickaxe",
+        "uk": "Золоте кайло",
+        "ru": "Золотая кирка"
+      },
+      {
+        "en": "Stone Pickaxe",
+        "uk": "Кам'яне кайло",
+        "ru": "Каменная кирка"
+      },
+      {
+        "en": "Diamond Pickaxe",
+        "uk": "Діамантове кайло",
+        "ru": "Алмазная кирка"
+      }
+    ],
+    "prompt": {
+      "en": "What is the weakest pickaxe that mines the ore of the item shown?",
+      "uk": "Яке найслабше кайло здатне добути руду цього предмета?",
+      "ru": "Какая самая слабая кирка может добыть руду этого предмета?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "picture",
+      "pickaxe",
+      "diamond"
+    ],
+    "topicId": "crafting-and-smelting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 2,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "One piece of coal burns for 80 seconds, enough to smelt 8 items.",
+      "uk": "Один шматок вугілля горить 80 секунд, і цього вистачає на 8 предметів.",
+      "ru": "Один кусок угля горит 80 секунд, и этого хватает на 8 предметов."
+    },
+    "id": "pic-coal-smelts-eight",
+    "isActive": true,
+    "kind": "picture",
+    "media": {
+      "type": "picture",
+      "sprite": "coal"
+    },
+    "options": [
+      {
+        "en": "12",
+        "uk": "12",
+        "ru": "12"
+      },
+      {
+        "en": "4",
+        "uk": "4",
+        "ru": "4"
+      },
+      {
+        "en": "8",
+        "uk": "8",
+        "ru": "8"
+      },
+      {
+        "en": "16",
+        "uk": "16",
+        "ru": "16"
+      }
+    ],
+    "prompt": {
+      "en": "How many items can one piece of the fuel shown smelt?",
+      "uk": "Скільки предметів можна переплавити одним шматком показаного палива?",
+      "ru": "Сколько предметов можно переплавить одним куском показанного топлива?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "picture",
+      "fuel",
+      "coal"
+    ],
+    "topicId": "crafting-and-smelting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "Cobblestone smelts into stone, and smelting that stone again gives smooth stone.",
+      "uk": "Кругляк переплавляється на камінь, а камінь після ще однієї плавки стає гладким каменем.",
+      "ru": "Булыжник переплавляется в камень, а камень после ещё одной плавки становится гладким камнем."
+    },
+    "id": "pic-cobblestone-smelts-to-stone",
+    "isActive": true,
+    "kind": "picture",
+    "media": {
+      "type": "picture",
+      "sprite": "cobblestone"
+    },
+    "options": [
+      {
+        "en": "Stone",
+        "uk": "Камінь",
+        "ru": "Камень"
+      },
+      {
+        "en": "Andesite",
+        "uk": "Андезит",
+        "ru": "Андезит"
+      },
+      {
+        "en": "Smooth Stone",
+        "uk": "Гладкий камінь",
+        "ru": "Гладкий камень"
+      },
+      {
+        "en": "Gravel",
+        "uk": "Гравій",
+        "ru": "Гравий"
+      }
+    ],
+    "prompt": {
+      "en": "Smelting the block in the picture gives you which block?",
+      "uk": "Який блок вийде, якщо переплавити блок із картинки?",
+      "ru": "Какой блок получится, если переплавить блок с картинки?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "picture",
+      "smelting",
+      "cobblestone"
+    ],
+    "topicId": "crafting-and-smelting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 2,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "Four sand in a square craft sandstone, a sturdy building block that doesn't fall.",
+      "uk": "Чотири піски квадратом дають пісковик — міцний будівельний блок, що не падає.",
+      "ru": "Четыре песка квадратом дают песчаник — прочный строительный блок, который не падает."
+    },
+    "id": "pic-sand-crafts-sandstone",
+    "isActive": true,
+    "kind": "picture",
+    "media": {
+      "type": "picture",
+      "sprite": "sand"
+    },
+    "options": [
+      {
+        "en": "Terracotta",
+        "uk": "Кераміка",
+        "ru": "Терракота"
+      },
+      {
+        "en": "Gravel",
+        "uk": "Гравій",
+        "ru": "Гравий"
+      },
+      {
+        "en": "Sandstone",
+        "uk": "Пісковик",
+        "ru": "Песчаник"
+      },
+      {
+        "en": "Glass",
+        "uk": "Скло",
+        "ru": "Стекло"
+      }
+    ],
+    "prompt": {
+      "en": "Four of the block shown in a 2×2 square craft what?",
+      "uk": "Що скрафтять чотири такі блоки, складені квадратом 2×2?",
+      "ru": "Что скрафтят четыре таких блока, сложенные квадратом 2×2?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "picture",
+      "sand",
+      "crafting"
+    ],
+    "topicId": "blocks-and-building"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 2,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "Shears break wool much faster than any other tool, and the block still drops.",
+      "uk": "Ножиці ламають вовну набагато швидше за будь-який інший інструмент, і блок усе одно випадає.",
+      "ru": "Ножницы ломают шерсть намного быстрее любого другого инструмента, и блок всё равно выпадает."
+    },
+    "id": "pic-shears-break-wool-fastest",
+    "isActive": true,
+    "kind": "picture",
+    "media": {
+      "type": "picture",
+      "sprite": "wool"
+    },
+    "options": [
+      {
+        "en": "Axe",
+        "uk": "Сокира",
+        "ru": "Топор"
+      },
+      {
+        "en": "Pickaxe",
+        "uk": "Кайло",
+        "ru": "Кирка"
+      },
+      {
+        "en": "Shears",
+        "uk": "Ножиці",
+        "ru": "Ножницы"
+      },
+      {
+        "en": "Sword",
+        "uk": "Меч",
+        "ru": "Меч"
+      }
+    ],
+    "prompt": {
+      "en": "Which tool breaks the block in the picture the fastest?",
+      "uk": "Який інструмент найшвидше ламає блок із картинки?",
+      "ru": "Какой инструмент быстрее всего ломает блок с картинки?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "picture",
+      "wool",
+      "tools"
+    ],
+    "topicId": "blocks-and-building"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 2,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "Wandering traders, like villagers, sell their goods for emeralds; piglins want gold instead.",
+      "uk": "Мандрівні крамарі, як і селяни, продають товари за смарагди, а піґліни хочуть золота.",
+      "ru": "Странствующие торговцы, как и крестьяне, продают товары за изумруды, а пиглины хотят золото."
+    },
+    "id": "pic-emerald-wandering-trader",
+    "isActive": true,
+    "kind": "picture",
+    "media": {
+      "type": "picture",
+      "sprite": "emerald"
+    },
+    "options": [
+      {
+        "en": "Pillager",
+        "uk": "Розбійник",
+        "ru": "Разбойник"
+      },
+      {
+        "en": "Piglin",
+        "uk": "Піґлін",
+        "ru": "Пиглин"
+      },
+      {
+        "en": "Wandering Trader",
+        "uk": "Мандрівний крамар",
+        "ru": "Странствующий торговец"
+      },
+      {
+        "en": "Witch",
+        "uk": "Відьма",
+        "ru": "Ведьма"
+      }
+    ],
+    "prompt": {
+      "en": "Which of these mobs will trade with you for the item shown?",
+      "uk": "Хто з цих мобів торгуватиме з тобою за цей предмет?",
+      "ru": "Кто из этих мобов будет торговать с тобой за этот предмет?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "picture",
+      "emerald",
+      "trading"
+    ],
+    "topicId": "villagers-and-enchanting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "Apprentice fletchers buy flint for emeralds, since they use it to make arrows.",
+      "uk": "Лучники-учні купують кремінь за смарагди, адже з нього роблять стріли.",
+      "ru": "Лучники-ученики покупают кремень за изумруды, ведь из него делают стрелы."
+    },
+    "id": "pic-fletcher-buys-flint",
+    "isActive": true,
+    "kind": "picture",
+    "media": {
+      "type": "picture",
+      "sprite": "flint"
+    },
+    "options": [
+      {
+        "en": "Fletcher",
+        "uk": "Лучник",
+        "ru": "Лучник"
+      },
+      {
+        "en": "Butcher",
+        "uk": "М’ясник",
+        "ru": "Мясник"
+      },
+      {
+        "en": "Farmer",
+        "uk": "Фермер",
+        "ru": "Фермер"
+      },
+      {
+        "en": "Librarian",
+        "uk": "Бібліотекар",
+        "ru": "Библиотекарь"
+      }
+    ],
+    "prompt": {
+      "en": "Which villager will pay you emeralds for the item shown?",
+      "uk": "Який селянин заплатить тобі смарагди за цей предмет?",
+      "ru": "Какой крестьянин заплатит тебе изумруды за этот предмет?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "picture",
+      "villager",
+      "trading"
+    ],
+    "topicId": "villagers-and-enchanting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "A torch is coal or charcoal on top of a stick, and one craft makes 4 torches.",
+      "uk": "Смолоскип — це вугілля чи деревне вугілля над палицею, і один крафт дає 4 смолоскипи.",
+      "ru": "Факел — это уголь или древесный уголь над палкой, и один крафт даёт 4 факела."
+    },
+    "id": "recipe-torch-missing-stick",
+    "isActive": true,
+    "kind": "recipe",
+    "media": {
+      "type": "recipe",
+      "grid": [
+        null,
+        null,
+        null,
+        null,
+        "coal",
+        null,
+        null,
+        null,
+        null
+      ],
+      "missingSlot": 7
+    },
+    "optionIcons": [
+      "stick",
+      "bone",
+      "feather",
+      "sugar-cane"
+    ],
+    "options": [
+      {
+        "en": "Stick",
+        "uk": "Палиця",
+        "ru": "Палка"
+      },
+      {
+        "en": "Bone",
+        "uk": "Кістка",
+        "ru": "Кость"
+      },
+      {
+        "en": "Feather",
+        "uk": "Перо",
+        "ru": "Перо"
+      },
+      {
+        "en": "Sugar Cane",
+        "uk": "Цукрова тростина",
+        "ru": "Сахарный тростник"
+      }
+    ],
+    "prompt": {
+      "en": "Which item is missing from this torch recipe?",
+      "uk": "Якого предмета бракує в цьому рецепті смолоскипа?",
+      "ru": "Какого предмета не хватает в этом рецепте факела?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "recipe",
+      "torch",
+      "crafting"
+    ],
+    "topicId": "survival-basics"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "A wooden pickaxe needs three planks across the top and two sticks down the middle.",
+      "uk": "Дерев'яне кайло — це три дошки зверху й дві палиці посередині.",
+      "ru": "Деревянная кирка — это три доски сверху и две палки посередине."
+    },
+    "id": "recipe-wooden-pickaxe-missing-planks",
+    "isActive": true,
+    "kind": "recipe",
+    "media": {
+      "type": "recipe",
+      "grid": [
+        null,
+        "planks",
+        "planks",
+        null,
+        "stick",
+        null,
+        null,
+        "stick",
+        null
+      ],
+      "missingSlot": 0
+    },
+    "optionIcons": [
+      "planks",
+      "wool",
+      "cobblestone",
+      "stick"
+    ],
+    "options": [
+      {
+        "en": "Planks",
+        "uk": "Дошки",
+        "ru": "Доски"
+      },
+      {
+        "en": "Wool",
+        "uk": "Вовна",
+        "ru": "Шерсть"
+      },
+      {
+        "en": "Cobblestone",
+        "uk": "Кругляк",
+        "ru": "Булыжник"
+      },
+      {
+        "en": "Stick",
+        "uk": "Палиця",
+        "ru": "Палка"
+      }
+    ],
+    "prompt": {
+      "en": "What goes in the empty slot to finish this wooden pickaxe?",
+      "uk": "Що покласти в порожню клітинку, щоб завершити дерев'яне кайло?",
+      "ru": "Что положить в пустую ячейку, чтобы закончить деревянную кирку?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "recipe",
+      "pickaxe",
+      "crafting"
+    ],
+    "topicId": "crafting-and-smelting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 3,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "An iron pickaxe takes three iron ingots on top and two sticks, and all three ingots must match.",
+      "uk": "Залізне кайло — це три залізні злитки зверху й дві палиці, і всі три злитки мають бути однакові.",
+      "ru": "Железная кирка — это три железных слитка сверху и две палки, и все три слитка должны быть одинаковыми."
+    },
+    "id": "recipe-iron-pickaxe-missing-ingot",
+    "isActive": true,
+    "kind": "recipe",
+    "media": {
+      "type": "recipe",
+      "grid": [
+        "iron-ingot",
+        "iron-ingot",
+        null,
+        null,
+        "stick",
+        null,
+        null,
+        "stick",
+        null
+      ],
+      "missingSlot": 2
+    },
+    "optionIcons": [
+      "flint",
+      "gold-ingot",
+      "coal",
+      "iron-ingot"
+    ],
+    "options": [
+      {
+        "en": "Flint",
+        "uk": "Кремінь",
+        "ru": "Кремень"
+      },
+      {
+        "en": "Gold Ingot",
+        "uk": "Золотий злиток",
+        "ru": "Золотой слиток"
+      },
+      {
+        "en": "Coal",
+        "uk": "Вугілля",
+        "ru": "Уголь"
+      },
+      {
+        "en": "Iron Ingot",
+        "uk": "Залізний злиток",
+        "ru": "Железный слиток"
+      }
+    ],
+    "prompt": {
+      "en": "Which ingredient completes this iron pickaxe recipe?",
+      "uk": "Який інгредієнт завершує цей рецепт залізного кайла?",
+      "ru": "Какой ингредиент завершает этот рецепт железной кирки?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "recipe",
+      "pickaxe",
+      "iron"
+    ],
+    "topicId": "crafting-and-smelting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "A stone sword is two cobblestone stacked on top of a stick.",
+      "uk": "Кам'яний меч — це два кругляки один над одним і палиця внизу.",
+      "ru": "Каменный меч — это два булыжника друг над другом и палка внизу."
+    },
+    "id": "recipe-stone-sword-missing-cobblestone",
+    "isActive": true,
+    "kind": "recipe",
+    "media": {
+      "type": "recipe",
+      "grid": [
+        null,
+        null,
+        null,
+        null,
+        "cobblestone",
+        null,
+        null,
+        "stick",
+        null
+      ],
+      "missingSlot": 1
+    },
+    "optionIcons": [
+      "cobblestone",
+      "glass",
+      "flint",
+      "sand"
+    ],
+    "options": [
+      {
+        "en": "Cobblestone",
+        "uk": "Кругляк",
+        "ru": "Булыжник"
+      },
+      {
+        "en": "Glass",
+        "uk": "Скло",
+        "ru": "Стекло"
+      },
+      {
+        "en": "Flint",
+        "uk": "Кремінь",
+        "ru": "Кремень"
+      },
+      {
+        "en": "Sand",
+        "uk": "Пісок",
+        "ru": "Песок"
+      }
+    ],
+    "prompt": {
+      "en": "Fill the gap: what completes this stone sword?",
+      "uk": "Заповни прогалину: що завершує цей кам'яний меч?",
+      "ru": "Заполни пробел: что завершает этот каменный меч?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "recipe",
+      "sword",
+      "crafting"
+    ],
+    "topicId": "mobs-and-combat"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 2,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "Every sword except netherite is two pieces of its material on top of one stick.",
+      "uk": "Кожен меч, крім незеритового, — це два шматки матеріалу над однією палицею.",
+      "ru": "Каждый меч, кроме незеритового, — это два куска материала над одной палкой."
+    },
+    "id": "recipe-diamond-sword-missing-stick",
+    "isActive": true,
+    "kind": "recipe",
+    "media": {
+      "type": "recipe",
+      "grid": [
+        null,
+        "diamond",
+        null,
+        null,
+        "diamond",
+        null,
+        null,
+        null,
+        null
+      ],
+      "missingSlot": 7
+    },
+    "optionIcons": [
+      "bone",
+      "diamond",
+      "stick",
+      "flint"
+    ],
+    "options": [
+      {
+        "en": "Bone",
+        "uk": "Кістка",
+        "ru": "Кость"
+      },
+      {
+        "en": "Diamond",
+        "uk": "Діамант",
+        "ru": "Алмаз"
+      },
+      {
+        "en": "Stick",
+        "uk": "Палиця",
+        "ru": "Палка"
+      },
+      {
+        "en": "Flint",
+        "uk": "Кремінь",
+        "ru": "Кремень"
+      }
+    ],
+    "prompt": {
+      "en": "This diamond sword recipe has a gap. What fills it?",
+      "uk": "У рецепті діамантового меча є прогалина. Що її заповнить?",
+      "ru": "В рецепте алмазного меча есть пробел. Что его заполнит?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "recipe",
+      "sword",
+      "diamond"
+    ],
+    "topicId": "mobs-and-combat"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "A furnace is eight cobblestone in a ring with the middle left empty.",
+      "uk": "Піч — це вісім кругляків по колу з порожньою серединою.",
+      "ru": "Печь — это восемь булыжников по кругу с пустой серединой."
+    },
+    "id": "recipe-furnace-missing-cobblestone",
+    "isActive": true,
+    "kind": "recipe",
+    "media": {
+      "type": "recipe",
+      "grid": [
+        "cobblestone",
+        "cobblestone",
+        "cobblestone",
+        "cobblestone",
+        null,
+        null,
+        "cobblestone",
+        "cobblestone",
+        "cobblestone"
+      ],
+      "missingSlot": 5
+    },
+    "optionIcons": [
+      "cobblestone",
+      "planks",
+      "sand",
+      "coal"
+    ],
+    "options": [
+      {
+        "en": "Cobblestone",
+        "uk": "Кругляк",
+        "ru": "Булыжник"
+      },
+      {
+        "en": "Planks",
+        "uk": "Дошки",
+        "ru": "Доски"
+      },
+      {
+        "en": "Sand",
+        "uk": "Пісок",
+        "ru": "Песок"
+      },
+      {
+        "en": "Coal",
+        "uk": "Вугілля",
+        "ru": "Уголь"
+      }
+    ],
+    "prompt": {
+      "en": "Which item is missing from this furnace recipe?",
+      "uk": "Якого предмета бракує в цьому рецепті печі?",
+      "ru": "Какого предмета не хватает в этом рецепте печи?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "recipe",
+      "furnace",
+      "crafting"
+    ],
+    "topicId": "crafting-and-smelting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 3,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "A chest is eight planks around an empty middle; two chests side by side make a large chest.",
+      "uk": "Скриня — це вісім дощок навколо порожньої середини, а дві скрині поруч стають великою скринею.",
+      "ru": "Сундук — это восемь досок вокруг пустой середины, а два сундука рядом становятся большим сундуком."
+    },
+    "id": "recipe-chest-missing-planks",
+    "isActive": true,
+    "kind": "recipe",
+    "media": {
+      "type": "recipe",
+      "grid": [
+        "planks",
+        "planks",
+        "planks",
+        "planks",
+        null,
+        "planks",
+        "planks",
+        null,
+        "planks"
+      ],
+      "missingSlot": 7
+    },
+    "optionIcons": [
+      "cobblestone",
+      "glass",
+      "iron-ingot",
+      "planks"
+    ],
+    "options": [
+      {
+        "en": "Cobblestone",
+        "uk": "Кругляк",
+        "ru": "Булыжник"
+      },
+      {
+        "en": "Glass",
+        "uk": "Скло",
+        "ru": "Стекло"
+      },
+      {
+        "en": "Iron Ingot",
+        "uk": "Залізний злиток",
+        "ru": "Железный слиток"
+      },
+      {
+        "en": "Planks",
+        "uk": "Дошки",
+        "ru": "Доски"
+      }
+    ],
+    "prompt": {
+      "en": "What goes in the empty slot to finish this chest?",
+      "uk": "Що покласти в порожню клітинку, щоб завершити скриню?",
+      "ru": "Что положить в пустую ячейку, чтобы закончить сундук?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "recipe",
+      "chest",
+      "storage"
+    ],
+    "topicId": "blocks-and-building"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 0,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "A bow is three sticks bent in a curve with three string along one side.",
+      "uk": "Лук — це три палиці, складені дугою, і три нитки вздовж одного боку.",
+      "ru": "Лук — это три палки, сложенные дугой, и три нити вдоль одной стороны."
+    },
+    "id": "recipe-bow-missing-stick",
+    "isActive": true,
+    "kind": "recipe",
+    "media": {
+      "type": "recipe",
+      "grid": [
+        null,
+        null,
+        "string",
+        "stick",
+        null,
+        "string",
+        null,
+        "stick",
+        "string"
+      ],
+      "missingSlot": 1
+    },
+    "optionIcons": [
+      "stick",
+      "feather",
+      "iron-ingot",
+      "sugar-cane"
+    ],
+    "options": [
+      {
+        "en": "Stick",
+        "uk": "Палиця",
+        "ru": "Палка"
+      },
+      {
+        "en": "Feather",
+        "uk": "Перо",
+        "ru": "Перо"
+      },
+      {
+        "en": "Iron Ingot",
+        "uk": "Залізний злиток",
+        "ru": "Железный слиток"
+      },
+      {
+        "en": "Sugar Cane",
+        "uk": "Цукрова тростина",
+        "ru": "Сахарный тростник"
+      }
+    ],
+    "prompt": {
+      "en": "Which ingredient completes this bow recipe?",
+      "uk": "Який інгредієнт завершує цей рецепт лука?",
+      "ru": "Какой ингредиент завершает этот рецепт лука?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "recipe",
+      "bow",
+      "crafting"
+    ],
+    "topicId": "mobs-and-combat"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 2,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "Bread is just three wheat in a row, an easy food once your farm is growing.",
+      "uk": "Хліб — це просто три пшениці в ряд, легка їжа, щойно ферма почне рости.",
+      "ru": "Хлеб — это просто три пшеницы в ряд, лёгкая еда, как только ферма начнёт расти."
+    },
+    "id": "recipe-bread-missing-wheat",
+    "isActive": true,
+    "kind": "recipe",
+    "media": {
+      "type": "recipe",
+      "grid": [
+        null,
+        null,
+        null,
+        "wheat",
+        null,
+        "wheat",
+        null,
+        null,
+        null
+      ],
+      "missingSlot": 4
+    },
+    "optionIcons": [
+      "egg",
+      "sugar-cane",
+      "wheat",
+      "sugar"
+    ],
+    "options": [
+      {
+        "en": "Egg",
+        "uk": "Яйце",
+        "ru": "Яйцо"
+      },
+      {
+        "en": "Sugar Cane",
+        "uk": "Цукрова тростина",
+        "ru": "Сахарный тростник"
+      },
+      {
+        "en": "Wheat",
+        "uk": "Пшениця",
+        "ru": "Пшеница"
+      },
+      {
+        "en": "Sugar",
+        "uk": "Цукор",
+        "ru": "Сахар"
+      }
+    ],
+    "prompt": {
+      "en": "Fill the gap: what completes this bread recipe?",
+      "uk": "Заповни прогалину: що завершує цей рецепт хліба?",
+      "ru": "Заполни пробел: что завершает этот рецепт хлеба?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "recipe",
+      "bread",
+      "food"
+    ],
+    "topicId": "farming-and-animals"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 3,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "A cake needs three milk buckets, two sugar, one egg and three wheat.",
+      "uk": "Для торта потрібні три відра молока, два цукри, яйце й три пшениці.",
+      "ru": "Для торта нужны три ведра молока, два сахара, яйцо и три пшеницы."
+    },
+    "id": "recipe-cake-missing-sugar",
+    "isActive": true,
+    "kind": "recipe",
+    "media": {
+      "type": "recipe",
+      "grid": [
+        "milk-bucket",
+        "milk-bucket",
+        "milk-bucket",
+        "sugar",
+        "egg",
+        null,
+        "wheat",
+        "wheat",
+        "wheat"
+      ],
+      "missingSlot": 5
+    },
+    "optionIcons": [
+      "gunpowder",
+      "wheat",
+      "egg",
+      "sugar"
+    ],
+    "options": [
+      {
+        "en": "Gunpowder",
+        "uk": "Порох",
+        "ru": "Порох"
+      },
+      {
+        "en": "Wheat",
+        "uk": "Пшениця",
+        "ru": "Пшеница"
+      },
+      {
+        "en": "Egg",
+        "uk": "Яйце",
+        "ru": "Яйцо"
+      },
+      {
+        "en": "Sugar",
+        "uk": "Цукор",
+        "ru": "Сахар"
+      }
+    ],
+    "prompt": {
+      "en": "One ingredient is missing from this cake. Which one?",
+      "uk": "У цьому торті бракує одного інгредієнта. Якого?",
+      "ru": "В этом торте не хватает одного ингредиента. Какого?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "recipe",
+      "cake",
+      "food"
+    ],
+    "topicId": "farming-and-animals"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "A book is three paper and one leather, placed anywhere in the grid.",
+      "uk": "Книга — це три папери й одна шкіра в будь-якому місці сітки.",
+      "ru": "Книга — это три бумаги и одна кожа в любом месте сетки."
+    },
+    "id": "recipe-book-missing-leather",
+    "isActive": true,
+    "kind": "recipe",
+    "media": {
+      "type": "recipe",
+      "grid": [
+        "paper",
+        "paper",
+        null,
+        "paper",
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
+      "missingSlot": 4
+    },
+    "optionIcons": [
+      "feather",
+      "leather",
+      "wool",
+      "string"
+    ],
+    "options": [
+      {
+        "en": "Feather",
+        "uk": "Перо",
+        "ru": "Перо"
+      },
+      {
+        "en": "Leather",
+        "uk": "Шкіра",
+        "ru": "Кожа"
+      },
+      {
+        "en": "Wool",
+        "uk": "Вовна",
+        "ru": "Шерсть"
+      },
+      {
+        "en": "String",
+        "uk": "Нитка",
+        "ru": "Нить"
+      }
+    ],
+    "prompt": {
+      "en": "Which item is missing from this book recipe?",
+      "uk": "Якого предмета бракує в цьому рецепті книги?",
+      "ru": "Какого предмета не хватает в этом рецепте книги?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "recipe",
+      "book",
+      "crafting"
+    ],
+    "topicId": "villagers-and-enchanting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 2,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "A bookshelf is six planks with three books across the middle row.",
+      "uk": "Книжкова полиця — це шість дощок і три книги в середньому ряду.",
+      "ru": "Книжная полка — это шесть досок и три книги в среднем ряду."
+    },
+    "id": "recipe-bookshelf-missing-book",
+    "isActive": true,
+    "kind": "recipe",
+    "media": {
+      "type": "recipe",
+      "grid": [
+        "planks",
+        "planks",
+        "planks",
+        "book",
+        null,
+        "book",
+        "planks",
+        "planks",
+        "planks"
+      ],
+      "missingSlot": 4
+    },
+    "optionIcons": [
+      "paper",
+      "leather",
+      "book",
+      "wool"
+    ],
+    "options": [
+      {
+        "en": "Paper",
+        "uk": "Папір",
+        "ru": "Бумага"
+      },
+      {
+        "en": "Leather",
+        "uk": "Шкіра",
+        "ru": "Кожа"
+      },
+      {
+        "en": "Book",
+        "uk": "Книга",
+        "ru": "Книга"
+      },
+      {
+        "en": "Wool",
+        "uk": "Вовна",
+        "ru": "Шерсть"
+      }
+    ],
+    "prompt": {
+      "en": "What belongs in the empty square to craft a bookshelf?",
+      "uk": "Що має бути в порожній клітинці, щоб скрафтити книжкову полицю?",
+      "ru": "Что должно быть в пустой ячейке, чтобы скрафтить книжную полку?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "recipe",
+      "bookshelf",
+      "crafting"
+    ],
+    "topicId": "villagers-and-enchanting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "TNT is five gunpowder and four sand placed in a checkerboard pattern.",
+      "uk": "Динаміт — це п'ять пороху й чотири піски, розкладені в шаховому порядку.",
+      "ru": "Динамит — это пять пороха и четыре песка, разложенные в шахматном порядке."
+    },
+    "id": "recipe-tnt-missing-gunpowder",
+    "isActive": true,
+    "kind": "recipe",
+    "media": {
+      "type": "recipe",
+      "grid": [
+        "gunpowder",
+        "sand",
+        "gunpowder",
+        "sand",
+        null,
+        "sand",
+        "gunpowder",
+        "sand",
+        "gunpowder"
+      ],
+      "missingSlot": 4
+    },
+    "optionIcons": [
+      "redstone",
+      "gunpowder",
+      "sugar",
+      "coal"
+    ],
+    "options": [
+      {
+        "en": "Redstone Dust",
+        "uk": "Редстоуновий пил",
+        "ru": "Редстоуновая пыль"
+      },
+      {
+        "en": "Gunpowder",
+        "uk": "Порох",
+        "ru": "Порох"
+      },
+      {
+        "en": "Sugar",
+        "uk": "Цукор",
+        "ru": "Сахар"
+      },
+      {
+        "en": "Coal",
+        "uk": "Вугілля",
+        "ru": "Уголь"
+      }
+    ],
+    "prompt": {
+      "en": "One ingredient is missing from this TNT recipe. Which?",
+      "uk": "У цьому рецепті динаміту бракує одного інгредієнта. Якого?",
+      "ru": "В этом рецепте динамита не хватает одного ингредиента. Какого?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "recipe",
+      "tnt",
+      "crafting"
+    ],
+    "topicId": "blocks-and-building"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "Flint on top, a stick in the middle and a feather at the bottom craft 4 arrows.",
+      "uk": "Кремінь зверху, палиця посередині й перо внизу дають 4 стріли.",
+      "ru": "Кремень сверху, палка посередине и перо внизу дают 4 стрелы."
+    },
+    "id": "recipe-arrow-missing-feather",
+    "isActive": true,
+    "kind": "recipe",
+    "media": {
+      "type": "recipe",
+      "grid": [
+        null,
+        "flint",
+        null,
+        null,
+        "stick",
+        null,
+        null,
+        null,
+        null
+      ],
+      "missingSlot": 7
+    },
+    "optionIcons": [
+      "paper",
+      "feather",
+      "string",
+      "leather"
+    ],
+    "options": [
+      {
+        "en": "Paper",
+        "uk": "Папір",
+        "ru": "Бумага"
+      },
+      {
+        "en": "Feather",
+        "uk": "Перо",
+        "ru": "Перо"
+      },
+      {
+        "en": "String",
+        "uk": "Нитка",
+        "ru": "Нить"
+      },
+      {
+        "en": "Leather",
+        "uk": "Шкіра",
+        "ru": "Кожа"
+      }
+    ],
+    "prompt": {
+      "en": "What goes in the empty slot to finish these arrows?",
+      "uk": "Що покласти в порожню клітинку, щоб завершити стріли?",
+      "ru": "Что положить в пустую ячейку, чтобы закончить стрелы?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "recipe",
+      "arrow",
+      "crafting"
+    ],
+    "topicId": "mobs-and-combat"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 2,
+    "difficulty": "medium",
+    "explanation": {
+      "en": "A bucket is three iron ingots in a V shape.",
+      "uk": "Відро — це три залізні злитки, викладені галочкою.",
+      "ru": "Ведро — это три железных слитка, выложенные галочкой."
+    },
+    "id": "recipe-bucket-missing-ingot",
+    "isActive": true,
+    "kind": "recipe",
+    "media": {
+      "type": "recipe",
+      "grid": [
+        null,
+        null,
+        null,
+        "iron-ingot",
+        null,
+        "iron-ingot",
+        null,
+        null,
+        null
+      ],
+      "missingSlot": 7
+    },
+    "optionIcons": [
+      "cobblestone",
+      "glass",
+      "iron-ingot",
+      "gold-ingot"
+    ],
+    "options": [
+      {
+        "en": "Cobblestone",
+        "uk": "Кругляк",
+        "ru": "Булыжник"
+      },
+      {
+        "en": "Glass",
+        "uk": "Скло",
+        "ru": "Стекло"
+      },
+      {
+        "en": "Iron Ingot",
+        "uk": "Залізний злиток",
+        "ru": "Железный слиток"
+      },
+      {
+        "en": "Gold Ingot",
+        "uk": "Золотий злиток",
+        "ru": "Золотой слиток"
+      }
+    ],
+    "prompt": {
+      "en": "Which ingredient completes this bucket recipe?",
+      "uk": "Який інгредієнт завершує цей рецепт відра?",
+      "ru": "Какой ингредиент завершает этот рецепт ведра?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "recipe",
+      "bucket",
+      "iron"
+    ],
+    "topicId": "crafting-and-smelting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "A fishing rod is three sticks on a diagonal with two string hanging down the side.",
+      "uk": "Вудка — це три палиці по діагоналі й дві нитки, що звисають збоку.",
+      "ru": "Удочка — это три палки по диагонали и две нити, свисающие сбоку."
+    },
+    "id": "recipe-fishing-rod-missing-string",
+    "isActive": true,
+    "kind": "recipe",
+    "media": {
+      "type": "recipe",
+      "grid": [
+        null,
+        null,
+        "stick",
+        null,
+        "stick",
+        "string",
+        "stick",
+        null,
+        null
+      ],
+      "missingSlot": 8
+    },
+    "optionIcons": [
+      "wool",
+      "string",
+      "slimeball",
+      "paper"
+    ],
+    "options": [
+      {
+        "en": "Wool",
+        "uk": "Вовна",
+        "ru": "Шерсть"
+      },
+      {
+        "en": "String",
+        "uk": "Нитка",
+        "ru": "Нить"
+      },
+      {
+        "en": "Slimeball",
+        "uk": "Слизова кулька",
+        "ru": "Сгусток слизи"
+      },
+      {
+        "en": "Paper",
+        "uk": "Папір",
+        "ru": "Бумага"
+      }
+    ],
+    "prompt": {
+      "en": "Fill the gap: what completes this fishing rod?",
+      "uk": "Заповни прогалину: що завершує цю вудку?",
+      "ru": "Заполни пробел: что завершает эту удочку?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "recipe",
+      "fishing-rod",
+      "crafting"
+    ],
+    "topicId": "crafting-and-smelting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "easy",
+    "explanation": {
+      "en": "A bed is three wool of the same color on top of three planks.",
+      "uk": "Ліжко — це три вовни одного кольору над трьома дошками.",
+      "ru": "Кровать — это три шерсти одного цвета над тремя досками."
+    },
+    "id": "recipe-bed-missing-planks",
+    "isActive": true,
+    "kind": "recipe",
+    "media": {
+      "type": "recipe",
+      "grid": [
+        null,
+        null,
+        null,
+        "wool",
+        "wool",
+        "wool",
+        "planks",
+        null,
+        "planks"
+      ],
+      "missingSlot": 7
+    },
+    "optionIcons": [
+      "wool",
+      "planks",
+      "leather",
+      "cobblestone"
+    ],
+    "options": [
+      {
+        "en": "Wool",
+        "uk": "Вовна",
+        "ru": "Шерсть"
+      },
+      {
+        "en": "Planks",
+        "uk": "Дошки",
+        "ru": "Доски"
+      },
+      {
+        "en": "Leather",
+        "uk": "Шкіра",
+        "ru": "Кожа"
+      },
+      {
+        "en": "Cobblestone",
+        "uk": "Кругляк",
+        "ru": "Булыжник"
+      }
+    ],
+    "prompt": {
+      "en": "What belongs in the empty square to craft a bed?",
+      "uk": "Що має бути в порожній клітинці, щоб скрафтити ліжко?",
+      "ru": "Что должно быть в пустой ячейке, чтобы скрафтить кровать?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "recipe",
+      "bed",
+      "crafting"
+    ],
+    "topicId": "survival-basics"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "Three glass blocks in a V shape craft three glass bottles for water and potions.",
+      "uk": "Три блоки скла галочкою дають три скляні пляшки для води й зілля.",
+      "ru": "Три блока стекла галочкой дают три бутылочки для воды и зелий."
+    },
+    "id": "recipe-glass-bottle-missing-glass",
+    "isActive": true,
+    "kind": "recipe",
+    "media": {
+      "type": "recipe",
+      "grid": [
+        null,
+        null,
+        null,
+        "glass",
+        null,
+        null,
+        null,
+        "glass",
+        null
+      ],
+      "missingSlot": 5
+    },
+    "optionIcons": [
+      "diamond",
+      "glass",
+      "sand",
+      "iron-ingot"
+    ],
+    "options": [
+      {
+        "en": "Diamond",
+        "uk": "Діамант",
+        "ru": "Алмаз"
+      },
+      {
+        "en": "Glass",
+        "uk": "Скло",
+        "ru": "Стекло"
+      },
+      {
+        "en": "Sand",
+        "uk": "Пісок",
+        "ru": "Песок"
+      },
+      {
+        "en": "Iron Ingot",
+        "uk": "Залізний злиток",
+        "ru": "Железный слиток"
+      }
+    ],
+    "prompt": {
+      "en": "Which block is missing from this recipe for potion bottles?",
+      "uk": "Якого блока бракує в цьому рецепті пляшечок для зілля?",
+      "ru": "Какого блока не хватает в этом рецепте бутылочек для зелий?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "recipe",
+      "glass-bottle",
+      "brewing"
+    ],
+    "topicId": "crafting-and-smelting"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 1,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "A compass is four iron ingots around redstone dust; with gold ingots you get a clock instead.",
+      "uk": "Компас — це чотири залізні злитки навколо редстоунового пилу, а із золотими виходить годинник.",
+      "ru": "Компас — это четыре железных слитка вокруг редстоуновой пыли, а с золотыми получаются часы."
+    },
+    "id": "recipe-compass-missing-ingot",
+    "isActive": true,
+    "kind": "recipe",
+    "media": {
+      "type": "recipe",
+      "grid": [
+        null,
+        null,
+        null,
+        "iron-ingot",
+        "redstone",
+        "iron-ingot",
+        null,
+        "iron-ingot",
+        null
+      ],
+      "missingSlot": 1
+    },
+    "optionIcons": [
+      "gold-ingot",
+      "iron-ingot",
+      "diamond",
+      "emerald"
+    ],
+    "options": [
+      {
+        "en": "Gold Ingot",
+        "uk": "Золотий злиток",
+        "ru": "Золотой слиток"
+      },
+      {
+        "en": "Iron Ingot",
+        "uk": "Залізний злиток",
+        "ru": "Железный слиток"
+      },
+      {
+        "en": "Diamond",
+        "uk": "Діамант",
+        "ru": "Алмаз"
+      },
+      {
+        "en": "Emerald",
+        "uk": "Смарагд",
+        "ru": "Изумруд"
+      }
+    ],
+    "prompt": {
+      "en": "What belongs in the empty square of this compass recipe?",
+      "uk": "Що має бути в порожній клітинці цього рецепта компаса?",
+      "ru": "Что должно быть в пустой ячейке этого рецепта компаса?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "recipe",
+      "compass",
+      "crafting"
+    ],
+    "topicId": "survival-basics"
+  },
+  {
+    "ageBand": "8-12",
+    "categoryId": "minecraft",
+    "correctIndex": 3,
+    "difficulty": "hard",
+    "explanation": {
+      "en": "A clock is four gold ingots around one redstone dust, and it shows the time of day.",
+      "uk": "Годинник — це чотири золоті злитки навколо редстоунового пилу, і він показує час доби.",
+      "ru": "Часы — это четыре золотых слитка вокруг редстоуновой пыли, и они показывают время суток."
+    },
+    "id": "recipe-clock-missing-redstone",
+    "isActive": true,
+    "kind": "recipe",
+    "media": {
+      "type": "recipe",
+      "grid": [
+        null,
+        "gold-ingot",
+        null,
+        "gold-ingot",
+        null,
+        "gold-ingot",
+        null,
+        "gold-ingot",
+        null
+      ],
+      "missingSlot": 4
+    },
+    "optionIcons": [
+      "emerald",
+      "diamond",
+      "gunpowder",
+      "redstone"
+    ],
+    "options": [
+      {
+        "en": "Emerald",
+        "uk": "Смарагд",
+        "ru": "Изумруд"
+      },
+      {
+        "en": "Diamond",
+        "uk": "Діамант",
+        "ru": "Алмаз"
+      },
+      {
+        "en": "Gunpowder",
+        "uk": "Порох",
+        "ru": "Порох"
+      },
+      {
+        "en": "Redstone Dust",
+        "uk": "Редстоуновий пил",
+        "ru": "Редстоуновая пыль"
+      }
+    ],
+    "prompt": {
+      "en": "The clock recipe has one empty slot. What goes there?",
+      "uk": "У рецепті годинника одна клітинка порожня. Що туди покласти?",
+      "ru": "В рецепте часов одна ячейка пустая. Что туда положить?"
+    },
+    "sourceVersion": "minecraft-v3-types",
+    "tags": [
+      "recipe",
+      "clock",
+      "redstone"
+    ],
+    "topicId": "nether-end-and-redstone"
   }
 ]

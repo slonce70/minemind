@@ -122,8 +122,9 @@ test('getSoloQuestionSet returns localized questions for the requested difficult
 
   assert.equal(round.length, 8);
   assert.ok(round.every((question) => typeof question.prompt === 'string'));
-  assert.ok(round.every((question) => question.options.length === 4));
-  assert.ok(round.every((question) => question.prompt.length >= 40));
+  assert.ok(round.every((question) => question.options.length === (question.kind === 'true-false' ? 2 : 4)));
+  // Picture and true/false prompts are short by nature.
+  assert.ok(round.every((question) => (question.kind ?? 'choice') !== 'choice' || question.prompt.length >= 40));
 });
 
 test('solo questions carry a valid correctIndex so answers can be scored', () => {
