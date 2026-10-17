@@ -212,7 +212,7 @@ test('ukrainian UX copy stays fully localized in the most visible onboarding and
   assert.equal(uk.home.activeRoomCopy, 'Код {{code}}, {{countLabel}}. Можна повернутися в кімнату й почати матч.');
   assert.equal(
     uk.home.categoryCopy,
-    'Короткі матчі на знання мобів, блоків, рецептів і базових механік Minecraft. {{questionCount}} питань, {{roundLength}}.',
+    'Короткі матчі про мобів, блоки, рецепти й виживання у світі кубиків. {{questionCount}} питань, {{roundLength}}.',
   );
   assert.equal(uk.home.onlineReady, 'Готово до гри онлайн');
   assert.equal(uk.home.ready, 'Усе готово');
@@ -244,7 +244,7 @@ test('english and russian visible copy stays aligned with actual gameplay states
   assert.equal(en.avatars.axolotl, 'Axolotl');
   assert.equal(
     en.home.categoryCopy,
-    'Fast battles about mobs, blocks, recipes, and Minecraft survival basics. {{questionCount}} questions, {{roundLength}}.',
+    'Fast battles about mobs, blocks, recipes and survival in the block world. {{questionCount}} questions, {{roundLength}}.',
   );
   assert.equal(en.home.roundLengthValue, '2-4 min');
   assert.equal(en.results.badges.standardClear, 'Round complete');
@@ -252,7 +252,7 @@ test('english and russian visible copy stays aligned with actual gameplay states
   assert.equal(ru.home.activeRoomCopy, 'Код {{code}}, {{countLabel}}. Можно вернуться в комнату и начать матч.');
   assert.equal(
     ru.home.categoryCopy,
-    'Быстрые баттлы про мобов, блоки, рецепты и базовые механики Minecraft. {{questionCount}} вопросов, {{roundLength}}.',
+    'Быстрые баттлы про мобов, блоки, рецепты и выживание в мире кубиков. {{questionCount}} вопросов, {{roundLength}}.',
   );
   assert.equal(ru.home.roundLengthValue, '2-4 мин');
   assert.equal(ru.home.onlineReady, 'Готово к игре онлайн');
@@ -302,7 +302,7 @@ test('home hero summary is driven by locale-owned copy instead of stitching labe
 
   assert.equal(
     uk.home.categoryCopy,
-    'Короткі матчі на знання мобів, блоків, рецептів і базових механік Minecraft. {{questionCount}} питань, {{roundLength}}.',
+    'Короткі матчі про мобів, блоки, рецепти й виживання у світі кубиків. {{questionCount}} питань, {{roundLength}}.',
   );
   assert.equal(uk.home.roundLengthValue, '2-4 хв');
   assert.match(source, /t\('home\.categoryCopy',\s*\{/);
