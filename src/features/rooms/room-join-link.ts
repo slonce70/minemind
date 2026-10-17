@@ -21,3 +21,10 @@ export function parseRoomCode(input: string | undefined | null): string | null {
 
   return match ? match[1].toUpperCase() : null;
 }
+
+/** Where onboarding sends a new player: into the room whose link brought them here, or home. */
+export function pathAfterOnboarding(pendingRoomCode: string | undefined) {
+  const code = parseRoomCode(pendingRoomCode);
+
+  return code ? ({ params: { join: code }, pathname: '/rooms' } as const) : ('/home' as const);
+}

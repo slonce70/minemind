@@ -69,6 +69,8 @@ type AppState = {
   mergeRemoteProgress: (remote: PlayerProgress) => void;
   /** A friend's challenge opened before the player had a profile; offered on home. */
   pendingChallenge?: ChallengeSpec;
+  /** A room link opened before the player had a profile; onboarding goes there when done. */
+  pendingRoomCode?: string;
   profile?: GuestProfile;
   progress: PlayerProgress;
   recentMatches: MatchRecord[];
@@ -76,6 +78,7 @@ type AppState = {
   saveMatchRecord: (record: MatchRecord) => void;
   setClassroomSession: (session?: ClassroomSession) => void;
   setPendingChallenge: (challenge?: ChallengeSpec) => void;
+  setPendingRoomCode: (roomCode?: string) => void;
   setActiveRoom: (room?: ActiveRoom) => void;
   setActiveRoomRound: (round?: ActiveRoomRound) => void;
   setHasHydrated: (value: boolean) => void;
@@ -200,6 +203,7 @@ export const useAppStore = create<AppState>()(
         })),
       setClassroomSession: (classroomSession) => set({ classroomSession }),
       setPendingChallenge: (pendingChallenge) => set({ pendingChallenge }),
+      setPendingRoomCode: (pendingRoomCode) => set({ pendingRoomCode }),
       updateSettings: (patch) => set((state) => ({ settings: { ...state.settings, ...patch } })),
     }),
     {
@@ -216,6 +220,7 @@ export const useAppStore = create<AppState>()(
         locale: state.locale,
         lastRewards: state.lastRewards,
         pendingChallenge: state.pendingChallenge,
+        pendingRoomCode: state.pendingRoomCode,
         profile: state.profile,
         progress: state.progress,
         recentMatches: state.recentMatches,

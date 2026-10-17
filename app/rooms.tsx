@@ -19,6 +19,7 @@ export default function RoomsRoute() {
   const { t } = useTranslation();
   const hasHydrated = useAppStore((state) => state.hasHydrated);
   const selectedDifficulty = useAppStore((state) => state.selectedDifficulty);
+  const setPendingRoomCode = useAppStore((state) => state.setPendingRoomCode);
   const lobby = useRoomLobby({
     genericError: t('rooms.genericError'),
     onlineUnavailable: t('rooms.onlineUnavailable'),
@@ -39,6 +40,13 @@ export default function RoomsRoute() {
       router.replace('/solo?mode=room');
     }
   }, [liveRoundId]);
+
+  // New players make a profile first; onboarding then brings them back here with the same code.
+  useEffect(() => {
+    if (hasHydrated && !lobby.profile && linkedCode) {
+      setPendingRoomCode(linkedCode);
+    }
+  }, [hasHydrated, linkedCode, lobby.profile, setPendingRoomCode]);
 
   // A room link or QR code (…/rooms?join=AB12CD) joins right away once the player has a profile.
   useEffect(() => {
