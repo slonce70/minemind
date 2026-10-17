@@ -5,6 +5,8 @@ import { useAppStore } from '../../../state/app-store';
 import { difficultyConfig } from '../../content/difficulty-config';
 import { normalizeMatchRecord } from '../../results/normalize-match-record';
 import { loadMinecraftQuestionBank } from '../../content/content-loader';
+import { invokeSupabaseFunction, isSupabaseConfigured } from '../../../lib/supabase';
+import { buildAnswerReport } from '../answer-report';
 import { buildQuizResult } from '../quiz-service';
 import { buildSoloRound, type SoloRoundSpec } from '../solo-round-builder';
 import type { RoundVariant } from '../types';
@@ -12,6 +14,15 @@ import type { ModeContext, ModeController } from './mode-types';
 
 /** Hints per solo round. */
 export const soloLifelines = { fifty: 1, time: 1 };
+
+/** Fire and forget: answer statistics never block or break a round. */
+function reportSoloAnswers(...input: Parameters<typeof buildAnswerReport>) {
+  const answers = buildAnswerReport(...input);
+
+  if (isSupabaseConfigured && answers.length > 0) {
+    void invokeSupabaseFunction('report-answers', { answers }).catch(() => undefined);
+  }
+}
 
 function newSeed() {
   return `${Date.now().toString(36)}-${Math.floor(Math.random() * 1e6).toString(36)}`;
@@ -89,8 +100,9 @@ export function useSoloMode({
         transport: 'local',
       })
     );
+    reportSoloAnswers(round.questions, round.answerMap, round.timeLimit);
     router.replace('/results');
-  }, [built, round.answerMap, round.questions, saveMatchRecord]);
+  }, [built, round.answerMap, round.questions, round.timeLimit, saveMatchRecord]);
 
   return {
     finish,
