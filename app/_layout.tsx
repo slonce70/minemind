@@ -20,6 +20,7 @@ import { appTheme, colors, fonts } from '../src/theme/tokens';
 import { setI18nLanguage } from '../src/i18n';
 import { isQuestionBankLoaded, preloadQuestionBank } from '../src/features/content/content-loader';
 import { syncMusic } from '../src/features/feel/feedback';
+import { ParentalGateHost } from '../src/features/parental/parental-gate-host';
 import { useProgressSync } from '../src/features/progress/use-progress-sync';
 import { initMonitoring } from '../src/lib/monitoring';
 import { useAppStore } from '../src/state/app-store';
@@ -111,6 +112,7 @@ export default function RootLayout() {
           animation: reduceMotion ? 'none' : 'slide_from_right',
         }}
       />
+      <ParentalGateHost />
     </QueryClientProvider>
   );
 }

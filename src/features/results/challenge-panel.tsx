@@ -64,7 +64,11 @@ export function ChallengeShare({ nickname, record }: { nickname: string; record:
               topicId: round.topicId,
             },
             (url) => t('challenge.shareMessage', { score: record.score, url })
-          ).then((outcome) => setShared({ copied: outcome.result === 'copied', url: outcome.url }))
+          ).then((outcome) => {
+            if (outcome.result !== 'cancelled') {
+              setShared({ copied: outcome.result === 'copied', url: outcome.url });
+            }
+          })
         }
         testID="challenge-share"
       />

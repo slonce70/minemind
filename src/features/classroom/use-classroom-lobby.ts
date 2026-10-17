@@ -8,6 +8,7 @@ import {
   buildClassroomRoundManifest,
   toGuestClassroomRound,
 } from './classroom-session-sync';
+import { requestParentalGate } from '../parental/parental-gate';
 import { buildClassroomInviteToken, parseClassroomInviteInput } from './classroom-invite';
 import { deriveClassroomLobbyState } from './classroom-lobby-state';
 import { getSharedLocalHostTransport } from './local-host-transport';
@@ -278,7 +279,7 @@ export function useClassroomLobby(messages?: {
   };
 
   const handleShareInvite = async () => {
-    if (!inviteToken) {
+    if (!inviteToken || !(await requestParentalGate())) {
       return false;
     }
 
