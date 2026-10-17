@@ -4,7 +4,7 @@ Nothing here is automated against the stores: every upload, submission and revie
 by hand. Work top to bottom; each step names the command or the place.
 
 ## 1. Backend (hosted Supabase)
-- [ ] Apply all migrations in order: `npx supabase db push` (phases 0–4, up to `20261018100000_question_reports.sql`).
+- [ ] Apply all migrations in order: `npx supabase db push` (phases 0–4, up to `20261018110000_release_rooms_on_account_deletion.sql`).
 - [ ] Load the question bank: `npm run export:content`, then run `supabase/seed.sql` against the project.
 - [ ] Deploy every Edge Function: `npx supabase functions deploy` (16 functions, including `report-answers`, `report-question`, `export-my-data`, `delete-account`).
 - [ ] Auth: anonymous sign-ins on; email provider on with confirmations; custom SMTP (Supabase's built-in mailer is rate limited); redirect URLs `<web>/auth` and `minemind://auth`.

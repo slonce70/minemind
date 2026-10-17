@@ -12,6 +12,8 @@ export type RoomParticipant = {
 };
 
 export type ActiveRoom = {
+  /** Why a finished room was closed by the server, when it says. */
+  closedReason?: 'host-deleted' | 'inactive';
   createdAt: string;
   id?: string;
   difficulty?: ContentDifficulty;

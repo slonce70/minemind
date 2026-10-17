@@ -18,6 +18,8 @@ import { deriveRoomLobbyState } from './room-lobby-state';
 type RoomLobbyViewProps = {
   activeRoom?: ActiveRoom;
   canResumeRound: boolean;
+  /** Set when the server closed the room: shown instead of the ready and start buttons. */
+  closedNotice?: string;
   difficultyStrings: Record<ContentDifficulty, string>;
   selectedDifficulty: ContentDifficulty;
   errorMessage?: string | null;
@@ -75,6 +77,7 @@ type RoomLobbyViewProps = {
 export function RoomLobbyView({
   activeRoom,
   canResumeRound,
+  closedNotice,
   difficultyStrings,
   selectedDifficulty,
   errorMessage,
@@ -171,17 +174,26 @@ export function RoomLobbyView({
                 value={activeRoom.settings.screenMode}
               />
             ) : null}
+            {closedNotice ? (
+              <Text accessibilityLiveRegion="polite" accessibilityRole="alert" style={styles.errorText}>
+                {closedNotice}
+              </Text>
+            ) : null}
             <View style={styles.commandActionRail}>
               {isOfflineMode && onAddDemoPlayers ? <PrimaryButton label={strings.addDemoPlayers} onPress={onAddDemoPlayers} /> : null}
-              <SecondaryButton
-                label={isBusy ? strings.loading : strings.toggleReady}
-                onPress={onToggleReady}
-              />
-              <PrimaryButton
-                disabled={isStartDisabled}
-                label={isBusy ? strings.loading : roomActionLabel}
-                onPress={onStartBattle}
-              />
+              {closedNotice ? null : (
+                <>
+                  <SecondaryButton
+                    label={isBusy ? strings.loading : strings.toggleReady}
+                    onPress={onToggleReady}
+                  />
+                  <PrimaryButton
+                    disabled={isStartDisabled}
+                    label={isBusy ? strings.loading : roomActionLabel}
+                    onPress={onStartBattle}
+                  />
+                </>
+              )}
               <SecondaryButton label={strings.leaveRoom} onPress={onLeaveRoom} />
             </View>
           </Card>

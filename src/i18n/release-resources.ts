@@ -41,6 +41,11 @@ export const releaseResources = {
       back: 'Назад',
       contactFallback: 'адресу зі сторінки гри в магазині застосунків',
     },
+    roomClosed: {
+      'host-deleted': 'Ведучий видалив акаунт, тому кімнату закрито. Створи нову або приєднайся до іншої.',
+      'inactive': 'Кімнату закрито: у ній довго нічого не відбувалося. Створи нову або приєднайся до іншої.',
+      'other': 'Кімнату закрито. Створи нову або приєднайся до іншої.',
+    },
     report: {
       button: 'Помилка в питанні?',
       cancel: 'Скасувати',
@@ -95,6 +100,11 @@ export const releaseResources = {
       back: 'Back',
       contactFallback: 'the address on the game’s app store page',
     },
+    roomClosed: {
+      'host-deleted': 'The host deleted their account, so the room is closed. Create a new one or join another.',
+      'inactive': 'The room was closed after a long time with no activity. Create a new one or join another.',
+      'other': 'The room is closed. Create a new one or join another.',
+    },
     report: {
       button: 'Something wrong?',
       cancel: 'Cancel',
@@ -148,6 +158,11 @@ export const releaseResources = {
     legal: {
       back: 'Назад',
       contactFallback: 'адрес со страницы игры в магазине приложений',
+    },
+    roomClosed: {
+      'host-deleted': 'Ведущий удалил аккаунт, поэтому комната закрыта. Создай новую или присоединись к другой.',
+      'inactive': 'Комната закрыта: в ней долго ничего не происходило. Создай новую или присоединись к другой.',
+      'other': 'Комната закрыта. Создай новую или присоединись к другой.',
     },
     report: {
       button: 'Ошибка в вопросе?',

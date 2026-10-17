@@ -21,10 +21,11 @@ type RoomParticipantResponse = {
 };
 
 type RoomResponse = {
+  closed_reason?: 'host-deleted' | 'inactive' | null;
   content_pack_version?: string | null;
   current_round_id?: string | null;
   difficulty?: ActiveRoom['difficulty'];
-  host_id: string;
+  host_id: string | null;
   id: string;
   question_count?: number | null;
   room_code: string;
@@ -125,6 +126,7 @@ async function mapRoom(payload: CreateOrJoinRoomResponse) {
   settings.screenMode = payload.room.screen_mode === true;
 
   return {
+    closedReason: payload.room.closed_reason ?? undefined,
     createdAt: new Date().toISOString(),
     difficulty,
     id: payload.room.id,

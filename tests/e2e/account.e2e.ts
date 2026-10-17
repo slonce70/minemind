@@ -4,7 +4,7 @@ import test from 'node:test';
 
 import { supabaseProgressRemote, syncProgressWith } from '../../src/features/progress/cloud-sync';
 import { createEmptyProgress } from '../../src/features/progress/progression';
-import { adminClient, createPlayer, localStack } from './helpers';
+import { adminClient, createPlayer, localStack, openQuestion } from './helpers';
 
 const stack = localStack();
 const admin = adminClient(stack);
@@ -64,4 +64,64 @@ test('export returns the player’s own data and deletion removes all of it', as
 
   const { count: otherRoom } = await admin.from('rooms').select('*', { count: 'exact', head: true }).eq('host_id', other.id);
   assert.equal(otherRoom, 1, 'other players keep their rooms');
+});
+
+test('when the host deletes their account, the earliest-joined player takes the room over', async () => {
+  const host = await createPlayer(stack, 'GoneHost', 'en');
+  const early = await createPlayer(stack, 'EarlyOwl', 'en');
+  const late = await createPlayer(stack, 'LateCat', 'en');
+  const created = await host.call('create-room', { difficulty: 'easy', locale: 'en' });
+  const roomCode = created.body.room.room_code as string;
+  await host.call('update-room-settings', { difficulty: 'easy', roomCode, screenMode: true });
+  await early.call('join-room', { roomCode });
+  await late.call('join-room', { roomCode });
+
+  // A finished match the host played with the others: their answers must survive the deletion.
+  await early.call('set-room-ready', { ready: true, roomCode });
+  await late.call('set-room-ready', { ready: true, roomCode });
+  const started = await host.call('start-room-round', { locale: 'en', roomCode });
+  assert.equal(started.status, 200, JSON.stringify(started.body));
+  const round = started.body.round;
+  await openQuestion(admin, round, 0);
+  const view = await early.call('get-room-round', { locale: 'en', roomCode });
+  await early.call('submit-answer', { questionId: view.body.questions[0].id, roundId: round.id, selectedOption: 0 });
+  await admin.from('round_sessions').update({ ends_at: new Date(Date.now() - 1000).toISOString() }).eq('id', round.id);
+  const done = await early.call('finalize-round', { roundId: round.id });
+  assert.equal(done.body.status, 'completed', JSON.stringify(done.body));
+
+  const deleted = await host.call('delete-account', { confirm: 'delete-everything' });
+  assert.equal(deleted.status, 200, JSON.stringify(deleted.body));
+
+  const state = await late.call('get-room-state', { roomCode });
+  assert.equal(state.status, 200, JSON.stringify(state.body));
+  assert.equal(state.body.room.host_id, early.id, 'the earliest-joined player is the host now');
+  assert.equal(state.body.room.screen_mode, false, 'the big screen left with the old host');
+  assert.notEqual(state.body.room.status, 'finished');
+  assert.deepEqual(
+    state.body.participants.map((entry: { player_id: string }) => entry.player_id),
+    [early.id, late.id]
+  );
+
+  const { count: answers } = await admin
+    .from('answer_submissions')
+    .select('*', { count: 'exact', head: true })
+    .eq('round_id', round.id)
+    .eq('player_id', early.id);
+  assert.equal(answers, 1, 'the others keep their match history');
+
+  await early.call('set-room-ready', { ready: true, roomCode });
+  await late.call('set-room-ready', { ready: true, roomCode });
+  const next = await early.call('start-room-round', { locale: 'en', roomCode });
+  assert.equal(next.status, 200, `the new host can start: ${JSON.stringify(next.body)}`);
+});
+
+test('a room its host was alone in is closed with a reason instead of vanishing', async () => {
+  const host = await createPlayer(stack, 'LonelyHost', 'en');
+  const created = await host.call('create-room', { difficulty: 'easy', locale: 'en' });
+  const roomId = created.body.room.id as string;
+
+  await host.call('delete-account', { confirm: 'delete-everything' });
+
+  const { data: room } = await admin.from('rooms').select('status, closed_reason, host_id').eq('id', roomId).single();
+  assert.deepEqual(room, { closed_reason: 'host-deleted', host_id: null, status: 'finished' });
 });

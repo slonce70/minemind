@@ -71,6 +71,9 @@ export default function RoomsRoute() {
       <RoomLobbyView
         activeRoom={lobby.activeRoom}
         canResumeRound={canResumeRound}
+        closedNotice={
+          lobby.activeRoom?.status === 'finished' ? t(`roomClosed.${lobby.activeRoom.closedReason ?? 'other'}`) : undefined
+        }
         difficultyStrings={{
           easy: t(difficultyConfig.easy.translationKey),
           medium: t(difficultyConfig.medium.translationKey),

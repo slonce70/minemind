@@ -5,7 +5,7 @@ import { assertRoomStatus } from './validation.ts';
 export async function getRoomByCode(roomCode: string) {
   const { data: room, error } = await serviceClient
     .from('rooms')
-    .select('id, room_code, host_id, status, current_round_id, content_pack_version, difficulty, question_count, topic_mode, screen_mode')
+    .select('id, room_code, host_id, status, closed_reason, current_round_id, content_pack_version, difficulty, question_count, topic_mode, screen_mode')
     .eq('room_code', roomCode.toUpperCase())
     .maybeSingle();
 
@@ -64,7 +64,7 @@ export async function assertRoomMembership(roomId: string, playerId: string) {
 
 /** Who plays a room round: everyone, except the host when the host's device is the big screen. */
 export function playingParticipants<T extends { player_id: string }>(
-  room: { host_id: string; screen_mode?: boolean | null },
+  room: { host_id: string | null; screen_mode?: boolean | null },
   participants: T[]
 ) {
   return room.screen_mode ? participants.filter((participant) => participant.player_id !== room.host_id) : participants;
