@@ -117,7 +117,7 @@ test('web layout source allows long translated labels to wrap instead of overlap
   const roomLobbySource = readFileSync(new URL('../src/features/rooms/room-lobby-view.tsx', import.meta.url), 'utf8');
   const resultsSource = readFileSync(new URL('../src/features/results/results-view.tsx', import.meta.url), 'utf8');
 
-  assert.match(buttonSource, /numberOfLines=\{2\}/);
+  assert.doesNotMatch(buttonSource, /numberOfLines/, 'button labels wrap fully, also at large system text sizes');
   assert.match(buttonSource, /flexShrink:\s*1/);
   assert.match(buttonSource, /textAlign:\s*'center'/);
   assert.match(statPillSource, /maxWidth:\s*'100%'/);

@@ -65,7 +65,7 @@ export function LevelBar({ fromXp, xp }: { fromXp?: number; xp: number }) {
         <View style={styles.levelBadge}>
           <Text style={styles.levelBadgeText}>{now.level}</Text>
         </View>
-        <Text numberOfLines={1} style={styles.rankText}>
+        <Text style={styles.rankText}>
           {t(`progress.rank.${rankForLevel(now.level)}`)}
         </Text>
         <Text style={styles.xpText}>
@@ -97,7 +97,7 @@ export function CollectionCard({ count = 1, id, isNew, size = 96 }: { count?: nu
       <View style={styles.cardArt}>
         <PixelSprite size={size} sprite={card.sprite} />
       </View>
-      <Text numberOfLines={2} style={styles.cardName}>
+      <Text style={styles.cardName}>
         {name}
       </Text>
       <Text style={[styles.cardRarity, { color: rarityColors[card.rarity] }]}>{rarity}</Text>
@@ -322,8 +322,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.highlight,
     borderRadius: radii.sm,
-    height: 32,
     justifyContent: 'center',
+    minHeight: 32,
     minWidth: 32,
     paddingHorizontal: spacing.xs,
   },

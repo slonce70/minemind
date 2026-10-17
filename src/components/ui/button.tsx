@@ -54,7 +54,6 @@ export function PrimaryButton({
       {...props}
     >
       <Text
-        numberOfLines={2}
         style={[styles.label, styles.primaryLabel, disabled && styles.disabledLabel]}
       >
         {label}
@@ -101,7 +100,6 @@ export function SecondaryButton({
       {...props}
     >
       <Text
-        numberOfLines={2}
         style={[
           styles.label,
           styles.secondaryLabel,

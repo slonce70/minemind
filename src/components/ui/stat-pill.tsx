@@ -10,10 +10,10 @@ type StatPillProps = {
 export function StatPill({ label, value }: StatPillProps) {
   return (
     <View style={styles.inset}>
-      <Text numberOfLines={2} style={styles.label}>
+      <Text style={styles.label}>
         {label}
       </Text>
-      <Text numberOfLines={2} style={styles.value}>
+      <Text style={styles.value}>
         {value}
       </Text>
     </View>
