@@ -7,6 +7,7 @@ import { avatarLookup } from '../profile/avatar-presets';
 import { PlayerAvatar } from '../profile/player-avatar';
 import type { ContentDifficulty } from '../content/types';
 import { DifficultySelector } from '../home/difficulty-selector';
+import { SettingSwitch } from '../profile/profile-controls';
 import { BadgeChip } from '../ui/badge-chip';
 import { WorldBackground } from '../ui/world-background';
 import type { ActiveRoom } from './types';
@@ -31,6 +32,8 @@ type RoomLobbyViewProps = {
   onSelectDifficulty: (difficulty: ContentDifficulty) => void;
   onStartBattle: () => void;
   onToggleReady: () => void;
+  /** Host only, live rooms: this device becomes the big screen and does not play. */
+  onToggleScreenMode?: (screenMode: boolean) => void;
   /** Players connected to the live room channel; undefined while realtime is unavailable. */
   onlinePlayerIds?: string[];
   roomActionLabel: string;
@@ -52,6 +55,8 @@ type RoomLobbyViewProps = {
     offline: string;
     ready: string;
     readySummary: string;
+    screenMode: string;
+    screenModeCopy: string;
     startBattle: string;
     subtitle: string;
     timerA11y: string;
@@ -76,6 +81,7 @@ export function RoomLobbyView({
   onSelectDifficulty,
   onStartBattle,
   onToggleReady,
+  onToggleScreenMode,
   onlinePlayerIds,
   roomActionLabel,
   strings,
@@ -83,6 +89,10 @@ export function RoomLobbyView({
   const lobbyState = activeRoom ? deriveRoomLobbyState(activeRoom) : null;
   const isStartDisabled = isBusy || (!canResumeRound && !lobbyState?.canStart);
   const displayedDifficulty = activeRoom?.status === 'active' ? activeRoom.settings.difficulty : selectedDifficulty;
+  const canToggleScreenMode =
+    Boolean(onToggleScreenMode) &&
+    activeRoom?.status === 'lobby' &&
+    activeRoom.participants.some((participant) => participant.isLocalPlayer && participant.isHost);
 
   return (
     <View style={styles.container}>
@@ -135,6 +145,15 @@ export function RoomLobbyView({
                   .replace('{{readyCount}}', String(lobbyState.readyCount))
                   .replace('{{participantCount}}', String(lobbyState.participantCount))}
               </Text>
+            ) : null}
+            {canToggleScreenMode && onToggleScreenMode ? (
+              <SettingSwitch
+                description={strings.screenModeCopy}
+                icon="tv"
+                label={strings.screenMode}
+                onChange={onToggleScreenMode}
+                value={activeRoom.settings.screenMode}
+              />
             ) : null}
             <View style={styles.commandActionRail}>
               {isOfflineMode && onAddDemoPlayers ? <PrimaryButton label={strings.addDemoPlayers} onPress={onAddDemoPlayers} /> : null}

@@ -33,6 +33,8 @@ export type RoundStanding = {
 /** Live rooms: everyone follows one server timeline (see questionWindow in game-rules). */
 export type RoundTimeline = {
   questionCount: number;
+  /** Correct option (display order) of each closed question: the big screen reveals it. */
+  revealed?: Record<string, number>;
   /** Server clock minus device clock, measured on the last response. */
   serverOffsetMs: number;
   standings: RoundStanding[];

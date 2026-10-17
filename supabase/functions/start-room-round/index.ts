@@ -5,7 +5,7 @@ import { serviceClient } from '../_shared/client.ts';
 import { GameError } from '../_shared/error-codes.ts';
 import { errorResponse, handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
 import { pickRoundQuestionIds, resolveQuestionLocale } from '../_shared/questions.ts';
-import { getRoomByCode, listRoomParticipants } from '../_shared/rooms.ts';
+import { getRoomByCode, listRoomParticipants, playingParticipants } from '../_shared/rooms.ts';
 import { computeTimelineEndsAt, resolveDifficulty } from '../_shared/round-integrity.ts';
 import { buildRoundView } from '../_shared/round-view.ts';
 
@@ -37,9 +37,10 @@ serve(async (request) => {
       throw new GameError('host_only', 'Only the room host can start the round.');
     }
 
-    const participants = await listRoomParticipants(room.id);
+    const participants = playingParticipants(room, await listRoomParticipants(room.id));
 
-    if (participants.length < 2) {
+    // Two players, or one player and the host's big screen.
+    if (participants.length < (room.screen_mode ? 1 : 2)) {
       throw new GameError('not_enough_players', 'Room needs at least two players.');
     }
 

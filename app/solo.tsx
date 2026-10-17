@@ -12,6 +12,7 @@ import { difficultyConfig } from '../src/features/content/difficulty-config';
 import { minecraftTopicConfig } from '../src/features/content/topic-config';
 import { feedback } from '../src/features/feel/feedback';
 import { stopReadAloud, toggleReadAloud } from '../src/features/feel/read-aloud';
+import { BigScreenView } from '../src/features/quiz/big-screen-view';
 import { QuestionMediaView } from '../src/features/quiz/question-media';
 import { AnswerOption, ProgressPips, TimerBar, optionLetters, type OptionState } from '../src/features/quiz/question-parts';
 import { RoomTimelinePanel } from '../src/features/quiz/room-timeline-panel';
@@ -185,6 +186,27 @@ export default function SoloRoute() {
 
   if (!question) {
     return <Redirect href={round.isRoomMode ? '/rooms' : round.isClassroomMode ? '/classroom' : '/home'} />;
+  }
+
+  // Big-screen room: the host's device shows the question large and does not play.
+  if (round.roomTimeline?.isScreen) {
+    return (
+      <Screen>
+        <Stack.Screen options={{ headerShown: false }} />
+        <BigScreenView
+          answeredCount={round.roomTimeline.answeredCount}
+          correctIndex={round.roomTimeline.revealed[question.id]}
+          index={round.currentIndex}
+          phase={round.roomTimeline.phase}
+          playerCount={round.roomTimeline.playerCount}
+          question={question}
+          standings={round.roomTimeline.standings}
+          standingsQuestionCount={round.roomTimeline.standingsQuestionCount}
+          timeLeft={round.timeLeft}
+          total={round.questionTotal}
+        />
+      </Screen>
+    );
   }
 
   const answer = round.answerMap[question.id];

@@ -1,10 +1,17 @@
 import { serviceClient } from './client.ts';
-import { buildPlayerAnswers, loadQuestionsInOrder, type QuestionLocale, sanitizeQuestionsForClient } from './questions.ts';
+import {
+  buildPlayerAnswers,
+  loadQuestionsInOrder,
+  originalOptions,
+  type QuestionLocale,
+  sanitizeQuestionsForClient,
+} from './questions.ts';
 import {
   buildRoundRanking,
   countClosedQuestions,
   countReleasedQuestions,
   resolveDifficulty,
+  toDisplayOption,
 } from './round-integrity.ts';
 import { filterSubmissionsForRoundQuestions } from './round-questions.ts';
 
@@ -64,6 +71,13 @@ export async function buildRoundView(input: {
     }),
     questionCount: input.round.question_ids.length,
     questions: sanitizeQuestionsForClient(questions, input.round.id),
+    /** Right answers of the closed questions (no more answers are taken): for the big screen. */
+    revealed: questions
+      .filter((question) => closedIds.includes(question.id))
+      .map((question) => ({
+        correctOption: toDisplayOption(question.correct_option, input.round.id, question.id, originalOptions(question).length),
+        questionId: question.id,
+      })),
     serverNow: input.now.toISOString(),
     standings,
     /** How many closed questions the standings cover. */

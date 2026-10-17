@@ -40,8 +40,9 @@ serve(async (request) => {
         room_code: roomCode,
         status: 'lobby',
         topic_mode: settings.topic_mode,
+        screen_mode: settings.screen_mode,
       })
-      .select('id, room_code, host_id, status, current_round_id, content_pack_version, difficulty, question_count, topic_mode')
+      .select('id, room_code, host_id, status, current_round_id, content_pack_version, difficulty, question_count, topic_mode, screen_mode')
       .single();
 
     if (roomError || !room) {

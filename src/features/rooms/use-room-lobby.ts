@@ -7,7 +7,7 @@ import { isSupabaseConfigured } from '../../lib/supabase';
 import { createDemoRoomRound } from './live-room-service';
 import { getSoloQuestionSet } from '../quiz/quiz-service';
 import { canStartOfflineRoom } from './demo-room-service';
-import { createDefaultRoomMatchSettings } from './room-match-settings';
+import { createDefaultRoomMatchSettings, type RoomMatchSettings } from './room-match-settings';
 import { useRoomChannel } from './use-room-channel';
 import {
   createLiveRoom,
@@ -240,9 +240,8 @@ export function useRoomLobby(messages: { genericError: string; onlineUnavailable
     }
   };
 
-  const handleSelectDifficulty = async (difficulty: typeof selectedDifficulty) => {
-    setSelectedDifficulty(difficulty);
-
+  /** The host changes match settings before the round (difficulty, big-screen mode). */
+  const updateHostSettings = async (patch: Partial<RoomMatchSettings>) => {
     if (!activeRoom || !profile || !isSupabaseConfigured || activeRoom.status === 'active') {
       return;
     }
@@ -257,16 +256,18 @@ export function useRoomLobby(messages: { genericError: string; onlineUnavailable
 
     try {
       await ensureGuestSession(profile);
-      const room = await updateLiveRoomSettings(
-        activeRoom,
-        createDefaultRoomMatchSettings(difficulty)
-      );
+      const room = await updateLiveRoomSettings(activeRoom, { ...activeRoom.settings, ...patch });
       setActiveRoom(room);
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : messages.genericError);
     } finally {
       setIsBusy(false);
     }
+  };
+
+  const handleSelectDifficulty = async (difficulty: typeof selectedDifficulty) => {
+    setSelectedDifficulty(difficulty);
+    await updateHostSettings({ difficulty });
   };
 
   return {
@@ -284,6 +285,7 @@ export function useRoomLobby(messages: { genericError: string; onlineUnavailable
     },
     handleSelectDifficulty,
     handleStartBattle,
+    handleToggleScreenMode: (screenMode: boolean) => void updateHostSettings({ screenMode }),
     handleToggleReady,
     canResumeRound,
     isBusy,

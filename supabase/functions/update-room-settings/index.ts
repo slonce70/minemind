@@ -39,7 +39,7 @@ serve(async (request) => {
       .from('rooms')
       .update(settings)
       .eq('id', room.id)
-      .select('id, room_code, host_id, status, current_round_id, content_pack_version, difficulty, question_count, topic_mode')
+      .select('id, room_code, host_id, status, current_round_id, content_pack_version, difficulty, question_count, topic_mode, screen_mode')
       .single();
 
     if (updateError || !updatedRoom) {

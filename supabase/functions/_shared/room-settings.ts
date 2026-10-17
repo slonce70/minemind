@@ -4,6 +4,8 @@ export type RoomMatchSettingsPayload = {
   contentPackVersion?: string;
   difficulty?: ContentDifficulty;
   questionCount?: number;
+  /** The host's device is the big screen and does not play. */
+  screenMode?: boolean;
   topicMode?: 'mixed';
 };
 
@@ -11,6 +13,7 @@ export type RoomMatchSettings = {
   content_pack_version: string;
   difficulty: ContentDifficulty;
   question_count: 8;
+  screen_mode: boolean;
   topic_mode: 'mixed';
 };
 
@@ -29,6 +32,7 @@ export function parseRoomMatchSettingsPayload(
     content_pack_version: payload?.contentPackVersion ?? 'minecraft-v1',
     difficulty: parseDifficulty(payload?.difficulty),
     question_count: 8,
+    screen_mode: payload?.screenMode === true,
     topic_mode: 'mixed',
   };
 }
@@ -37,12 +41,14 @@ export function normalizeRoomMatchSettingsRow(row: {
   content_pack_version?: string | null;
   difficulty?: string | null;
   question_count?: number | null;
+  screen_mode?: boolean | null;
   topic_mode?: string | null;
 }): RoomMatchSettings {
   return {
     content_pack_version: row.content_pack_version ?? 'minecraft-v1',
     difficulty: parseDifficulty(row.difficulty),
     question_count: row.question_count === 8 ? 8 : 8,
+    screen_mode: row.screen_mode === true,
     topic_mode: row.topic_mode === 'mixed' ? 'mixed' : 'mixed',
   };
 }

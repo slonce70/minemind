@@ -374,6 +374,9 @@ export function useRoomMode({ difficulty, dispatch, enabled, locale, messages, r
     }
   });
   const currentQuestion = round.questions[round.currentIndex];
+  const isScreenHost = Boolean(
+    currentRoom?.settings.screenMode && currentRoom.participants.some((participant) => participant.isLocalPlayer && participant.isHost)
+  );
 
   return {
     controller: {
@@ -389,8 +392,11 @@ export function useRoomMode({ difficulty, dispatch, enabled, locale, messages, r
     timeline: timeline
       ? {
           answeredCount: currentQuestion ? (roomChannel.answeredByQuestionId[currentQuestion.id]?.length ?? 0) : 0,
+          isScreen: isScreenHost,
           phase,
-          playerCount: currentRoom?.participants.length ?? 0,
+          // The big screen's host does not answer.
+          playerCount: (currentRoom?.participants.length ?? 0) - (currentRoom?.settings.screenMode ? 1 : 0),
+          revealed: timeline.revealed ?? {},
           standings: timeline.standings,
           standingsQuestionCount: timeline.standingsQuestionCount,
         }

@@ -205,3 +205,35 @@ test('a room round runs on one server timeline and stays fair', async (t) => {
     assert.equal(guestRank.correct_count, 1);
   });
 });
+
+test('a big screen room: the host shows the round, one phone player is enough and only players rank', async () => {
+  const host = await createPlayer(stack, 'TvHost', 'en');
+  const guest = await createPlayer(stack, 'PhonePup', 'en');
+  const created = await host.call('create-room', { difficulty: 'easy', locale: 'en' });
+  const roomCode = created.body.room.room_code as string;
+  const updated = await host.call('update-room-settings', { difficulty: 'easy', roomCode, screenMode: true });
+  assert.equal(updated.status, 200, JSON.stringify(updated.body));
+  assert.equal(updated.body.room.screen_mode, true);
+
+  await guest.call('join-room', { roomCode });
+  await guest.call('set-room-ready', { ready: true, roomCode });
+  const started = await host.call('start-room-round', { locale: 'en', roomCode });
+  assert.equal(started.status, 200, JSON.stringify(started.body));
+  const round = started.body.round;
+
+  await openQuestion(admin, round, 0);
+  const view = await guest.call('get-room-round', { locale: 'en', roomCode });
+  const answer = await guest.call('submit-answer', { questionId: view.body.questions[0].id, roundId: round.id, selectedOption: 0 });
+  assert.equal(answer.status, 200, JSON.stringify(answer.body));
+
+  await openQuestion(admin, round, 1);
+  const screen = await host.call('get-room-round', { locale: 'en', roomCode });
+  assert.deepEqual(screen.body.standings.map((entry: { player_id: string }) => entry.player_id), [guest.id]);
+  assert.equal(screen.body.revealed.length, 1);
+  assert.equal(screen.body.revealed[0].questionId, round.question_ids[0]);
+
+  await admin.from('round_sessions').update({ ends_at: new Date(Date.now() - 1000).toISOString() }).eq('id', round.id);
+  const done = await guest.call('finalize-round', { roundId: round.id });
+  assert.equal(done.body.status, 'completed', JSON.stringify(done.body));
+  assert.deepEqual(done.body.rankings.map((entry: { player_id: string }) => entry.player_id), [guest.id]);
+});

@@ -34,6 +34,7 @@ const legacyRoomResponseSchema = z.object({
   id: z.string(),
   question_count: z.literal(8).nullable().optional(),
   room_code: z.string(),
+  screen_mode: z.boolean().nullable().optional(),
   status: legacyRoomStatusSchema,
   topic_mode: z.enum(['mixed']).nullable().optional(),
 });
@@ -91,6 +92,7 @@ export const startRoomRoundResponseSchema = z.object({
   /** Standings over the questions that are already closed. */
   standings: z.array(roundStandingSchema).optional(),
   standingsQuestionCount: z.number().int().nonnegative().optional(),
+  revealed: z.array(z.object({ correctOption: z.number().int(), questionId: z.string() })).optional(),
   room: legacyRoomResponseSchema.extend({
     status: roomStatusSchema,
   }),

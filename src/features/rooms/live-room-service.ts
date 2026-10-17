@@ -28,6 +28,7 @@ type RoomResponse = {
   id: string;
   question_count?: number | null;
   room_code: string;
+  screen_mode?: boolean | null;
   status: 'active' | 'completed' | 'finalizing' | 'finished' | 'lobby' | 'waiting';
   topic_mode?: 'mixed' | null;
 };
@@ -121,6 +122,8 @@ async function mapRoom(payload: CreateOrJoinRoomResponse) {
     settings.topicMode = payload.room.topic_mode;
   }
 
+  settings.screenMode = payload.room.screen_mode === true;
+
   return {
     createdAt: new Date().toISOString(),
     difficulty,
@@ -145,6 +148,7 @@ export async function createLiveRoom(profile: GuestProfile, settings: RoomMatchS
         difficulty: RoomMatchSettings['difficulty'];
         locale: GuestProfile['locale'];
         questionCount: 8;
+        screenMode: boolean;
         topicMode: 'mixed';
       }
     >(
@@ -154,6 +158,7 @@ export async function createLiveRoom(profile: GuestProfile, settings: RoomMatchS
         difficulty: settings.difficulty,
         locale: profile.locale,
         questionCount: settings.questionCount,
+        screenMode: settings.screenMode,
         topicMode: settings.topicMode,
       }
     );
@@ -173,6 +178,7 @@ export async function updateLiveRoomSettings(activeRoom: ActiveRoom, settings: R
         difficulty: RoomMatchSettings['difficulty'];
         questionCount: 8;
         roomCode: string;
+        screenMode: boolean;
         topicMode: 'mixed';
       }
     >('update-room-settings', {
@@ -180,6 +186,7 @@ export async function updateLiveRoomSettings(activeRoom: ActiveRoom, settings: R
       difficulty: settings.difficulty,
       questionCount: settings.questionCount,
       roomCode: activeRoom.roomCode,
+      screenMode: settings.screenMode,
       topicMode: settings.topicMode,
     });
 
@@ -316,6 +323,7 @@ function mapLiveRound(payload: ReturnType<typeof parseStartRoomRoundResponse>, r
         rank: entry.rank,
         score: entry.score,
       })),
+      revealed: Object.fromEntries((payload.revealed ?? []).map((entry) => [entry.questionId, entry.correctOption])),
       standingsQuestionCount: payload.standingsQuestionCount ?? 0,
       startedAt: payload.round.started_at,
     },
