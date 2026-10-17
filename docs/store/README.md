@@ -31,7 +31,35 @@ Drafts for the MineMind 1.0 store submission. Andrii reviews and submits them hi
 - **Email provider for magic links:** if Supabase uses a custom SMTP service, add it to the privacy policy's processors section.
 - **Settings labels:** the legal texts quote the button labels from `src/i18n/release-resources.ts` ("Download my data", "Delete account and all data" and their uk/ru versions). If those labels change, update `legal-content.ts` too.
 
-## Before building
+## Already done in the app config
 
-- expo-audio plugin: disable microphone and background playback permissions (details in `listing-settings.md`).
-- Make sure no `AD_ID` permission ends up in the Android manifest.
+- expo-audio: no microphone or background playback permission. expo-camera: camera only (room QR), no microphone.
+- Android `blockedPermissions` drops `AD_ID`, `RECORD_AUDIO`, storage and overlay permissions. Check the merged manifest of the first build anyway.
+
+## Screenshots and preview video
+
+`screenshots/<size>/<locale>/` holds six screens per language (uk, en, ru): home, picture question, recipe question, rewards, card collection, friend challenge. PNG, no alpha.
+
+| Folder | Pixels | Store slot |
+|---|---|---|
+| `iphone-6.7` | 1290 × 2796 | App Store, iPhone 6.7" (also used for 6.9") |
+| `iphone-6.5` | 1242 × 2688 | App Store, iPhone 6.5" |
+| `ipad-12.9` | 2048 × 2732 | App Store, iPad 12.9"/13" |
+| `android-phone` | 1080 × 1920 | Google Play, phone |
+| `android-tablet` | 1600 × 2560 | Google Play, 10" tablet |
+
+Captions for each screen are in `metadata.<locale>.md`; add them in the store's frame tool or leave the screens plain.
+
+`video/preview-<locale>.mp4` is an App Preview (886 × 1920, 30 fps, 29 s, no sound): home, a "fix your mistakes" round with a picture and a recipe question, rewards on the results screen, the card collection. Apple accepts it as is for the 6.5"/6.7" slots. Google Play only takes a YouTube link, so upload one there yourself if you want it.
+
+Regenerating (the content and the state are fixed, so the shots come out the same):
+
+```bash
+npm i --no-save playwright@1.58.2 && npx playwright install chromium
+npx expo start --web --port 8081
+npx tsx scripts/store/prepare.ts
+node scripts/store/screenshots.mjs docs/store/screenshots
+node scripts/store/video.mjs <out-dir> uk
+```
+
+The ffmpeg line that turns the recording into the mp4 is at the top of `scripts/store/video.mjs`.
