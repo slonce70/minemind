@@ -5,7 +5,8 @@ import {
 import type { AppLocale } from '../../lib/locale';
 import { loadMinecraftQuestionBank } from '../content/content-loader';
 import { selectQuestionRound } from '../content/content-selection';
-import type { ContentDifficulty, ContentQuestionRecord } from '../content/types';
+import type { ContentDifficulty } from '../content/types';
+import { localizeQuestion } from './solo-round-builder';
 import type {
   QuizAnswerMap,
   QuizQuestion,
@@ -14,17 +15,6 @@ import type {
 
 function buildRoundSeed(locale: AppLocale, difficulty: ContentDifficulty) {
   return `${locale}-${difficulty}-${Date.now().toString().slice(-6)}`;
-}
-
-function localizeQuestion(definition: ContentQuestionRecord, locale: AppLocale): QuizQuestion {
-  return {
-    id: definition.id,
-    correctIndex: definition.correctIndex,
-    explanation: definition.explanation[locale],
-    options: definition.options.map((option) => option[locale]),
-    prompt: definition.prompt[locale],
-    topicId: definition.topicId,
-  };
 }
 
 export function getSoloQuestionSet(
