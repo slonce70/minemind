@@ -22,6 +22,12 @@ MineMind is a mobile quiz app for iOS and Android, built with Expo and React Nat
 - onboarding with a three-question warm-up, then a word nickname (adjective + noun, dice for another) and avatar; nickname filter blocks reserved words only as whole words (`supabase/functions/_shared/nickname-rules.ts`, mirrored in SQL)
 - results review all questions with your answer and the right one; profile screen with stats from recent matches; settings screen
 - accessibility: roles and labels on every control, answers marked with a check or cross (never colour alone), text contrast held at WCAG AA by a test, question read-aloud (`expo-speech`), centred content column and two-column layouts on tablets
+- progression: XP, levels and ranks (wood → netherite), day streak that survives time-zone changes, daily quest, 19 achievements and a collection of 24 original Kubik cards; rewards animate on the results screen
+- cloud save of progress in Supabase (`player_progress`, owner-only RLS), offline-first with merge toward the bigger progress; the guest account can be linked to an email (magic link) and restored on another device
+- solo modes: by topic, smart difficulty, fix your mistakes, friend challenge by link (same seed and questions, results compared); 50/50 and +10 s hints, once per round, cost points
+- question types: multiple choice, true/false, picture and 3×3 recipe grid, drawn with original pixel items
+- answer statistics on the server and `scripts/suggest-difficulty.ts` for recalibrating difficulty
+- big screen rooms: the host's device (TV, projector) shows the question, timer, answer and standings; players answer on their phones
 - room match settings foundation with `contentPackVersion` + difficulty metadata
 - NEXUS-Full planning docs in `docs/`
 - Supabase schema and Edge Function scaffolding in `supabase/`
@@ -58,6 +64,8 @@ EXPO_PUBLIC_SUPABASE_URL=
 EXPO_PUBLIC_SUPABASE_ANON_KEY=
 # Optional: error reporting to a Sentry DSN. Empty = off.
 EXPO_PUBLIC_SENTRY_DSN=
+# Optional: hosted web app address for friend challenge links. Empty = current page, or minemind:// on phones.
+EXPO_PUBLIC_WEB_URL=
 ```
 
 If env vars are missing, solo and classroom play still work offline. Online rooms need Supabase; in development builds an offline demo room with bots is available for testing the flow.
@@ -78,7 +86,7 @@ CI does the same in the `e2e` job.
 
 ## Screenshots
 
-Before and after Phase 2 ("game feel"): `docs/screenshots/phase-2/`.
+Before and after Phase 2 ("game feel"): `docs/screenshots/phase-2/`. Phase 3 (progress, modes, question types): `docs/screenshots/phase-3/`.
 
 ## Next Active Wave
 - connect hosted Supabase project credentials
