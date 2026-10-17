@@ -9,6 +9,7 @@ export type DuplicateLintIssue = {
 
 type DuplicateLintRecord = {
   correctAnswer: string;
+  kind?: string;
   distractors: string[];
   id: string;
   promptEn: string;
@@ -62,7 +63,8 @@ export function findDuplicateQuestionRisks(records: DuplicateLintRecord[]): Dupl
     const previousAnswerSetId = seenAnswerSets.get(answerSetKey);
     // Numeric answers ("3" among 1/2/4) repeat across unrelated facts.
     const isNumericAnswer = /^\d+$/.test(record.correctAnswer.trim());
-    if (previousAnswerSetId && !isNumericAnswer) {
+    // Every true/false question has the same two options.
+    if (previousAnswerSetId && !isNumericAnswer && record.kind !== 'true-false') {
       issues.push({ ids: [previousAnswerSetId, record.id], kind: 'same-answer-set' });
     } else {
       seenAnswerSets.set(answerSetKey, record.id);

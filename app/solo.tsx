@@ -12,6 +12,7 @@ import { difficultyConfig } from '../src/features/content/difficulty-config';
 import { minecraftTopicConfig } from '../src/features/content/topic-config';
 import { feedback } from '../src/features/feel/feedback';
 import { stopReadAloud, toggleReadAloud } from '../src/features/feel/read-aloud';
+import { QuestionMediaView } from '../src/features/quiz/question-media';
 import { AnswerOption, ProgressPips, TimerBar, optionLetters, type OptionState } from '../src/features/quiz/question-parts';
 import { RoomTimelinePanel } from '../src/features/quiz/room-timeline-panel';
 import { extraTimeSeconds } from '../src/features/quiz/round/round-machine';
@@ -331,6 +332,9 @@ export default function SoloRoute() {
             </Pressable>
           </View>
           <Text style={styles.questionPrompt}>{question.prompt}</Text>
+          {question.media ? (
+            <QuestionMediaView labels={{ picture: t('questionMedia.picture'), recipe: t('questionMedia.recipe') }} media={question.media} />
+          ) : null}
         </Card>
       </Animated.View>
 
@@ -344,6 +348,7 @@ export default function SoloRoute() {
             <AnswerOption
               accessibilityLabel={optionA11y(optionIndex, option)}
               disabled={round.isRevealed || round.hiddenOptions.includes(optionIndex)}
+              icon={question.optionIcons?.[optionIndex]}
               index={optionIndex}
               label={option}
               onPress={() => {

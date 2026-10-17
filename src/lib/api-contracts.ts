@@ -1,9 +1,16 @@
 import { z } from 'zod';
 
+import { questionMediaSchema } from '../features/content/content-validator';
+import { questionKinds } from '../features/content/types';
+
+// An app older than the question bank shows an unknown picture or type as plain text.
 export const quizQuestionSchema = z.object({
   correctIndex: z.number().optional(),
   explanation: z.string().optional(),
   id: z.string(),
+  kind: z.enum(questionKinds).optional().catch(undefined),
+  media: questionMediaSchema.optional().catch(undefined),
+  optionIcons: z.array(z.string()).optional().catch(undefined),
   options: z.array(z.string()).min(2),
   prompt: z.string(),
 });

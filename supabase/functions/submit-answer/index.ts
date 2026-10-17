@@ -5,7 +5,7 @@ import { serviceClient } from '../_shared/client.ts';
 import { GameError } from '../_shared/error-codes.ts';
 import { scoreAnswer } from '../_shared/game-rules.ts';
 import { errorResponse, handleCors, jsonResponse, requireJsonBody } from '../_shared/http.ts';
-import { loadQuestionsInOrder, resolveQuestionLocale } from '../_shared/questions.ts';
+import { loadQuestionsInOrder, originalOptions, resolveQuestionLocale } from '../_shared/questions.ts';
 import { broadcastToRoom } from '../_shared/realtime.ts';
 import { assertQuestionBelongsToRound } from '../_shared/round-questions.ts';
 import {
@@ -71,9 +71,16 @@ serve(async (request) => {
       throw new GameError('question_not_open', 'This question has not opened yet.');
     }
 
+    const [question] = await loadQuestionsInOrder([body.questionId], resolveQuestionLocale(body.locale));
+
+    if (!question) {
+      throw new Error('Question not found.');
+    }
+
     // Answers after the question closed count as a miss; options are stored in original order.
+    const optionCount = originalOptions(question).length;
     const selectedOption =
-      timeLeftMs === null ? -1 : toOriginalOption(body.selectedOption ?? -1, round.id, body.questionId);
+      timeLeftMs === null ? -1 : toOriginalOption(body.selectedOption ?? -1, round.id, body.questionId, optionCount);
     // One answer per question: the unique (round, player, question) index rejects a second one.
     const { error: insertError } = await serviceClient.from('answer_submissions').insert({
       player_id: user.id,
@@ -90,12 +97,6 @@ serve(async (request) => {
         : insertError;
     }
 
-    const [question] = await loadQuestionsInOrder([body.questionId], resolveQuestionLocale(body.locale));
-
-    if (!question) {
-      throw new Error('Question not found.');
-    }
-
     const isCorrect = selectedOption === question.correct_option;
 
     if (round.room_id) {
@@ -105,7 +106,7 @@ serve(async (request) => {
 
     return jsonResponse({
       accepted: true,
-      correctOption: toDisplayOption(question.correct_option, round.id, body.questionId),
+      correctOption: toDisplayOption(question.correct_option, round.id, body.questionId, optionCount),
       explanation: question.explanation,
       isCorrect,
       scoreDelta: scoreAnswer({ difficulty, isCorrect, timeLeftMs: timeLeftMs ?? 0 }),

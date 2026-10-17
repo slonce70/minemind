@@ -2,6 +2,10 @@
 // resources in ./index.ts; tests/progress-copy.test.ts keeps the three locales in sync.
 export const progressResources = {
   uk: {
+    questionMedia: {
+      picture: 'Піксельне зображення предмета',
+      recipe: 'Сітка крафту 3 на 3, в одній клітинці знак питання',
+    },
     cloud: {
       done: 'Готово! Прогрес на цьому пристрої.',
       emailLabel: 'Пошта (попроси дорослого)',
@@ -142,6 +146,10 @@ export const progressResources = {
     },
   },
   en: {
+    questionMedia: {
+      picture: 'Pixel picture of an item',
+      recipe: 'A 3 by 3 crafting grid with a question mark in one slot',
+    },
     cloud: {
       done: 'Done! Your progress is on this device.',
       emailLabel: 'Email (ask a grown-up)',
@@ -282,6 +290,10 @@ export const progressResources = {
     },
   },
   ru: {
+    questionMedia: {
+      picture: 'Пиксельное изображение предмета',
+      recipe: 'Сетка крафта 3 на 3, в одной клетке знак вопроса',
+    },
     cloud: {
       done: 'Готово! Прогресс на этом устройстве.',
       emailLabel: 'Почта (попроси взрослого)',

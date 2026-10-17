@@ -50,25 +50,26 @@ export function computeTimelineTimeLeftMs(input: {
   return Math.max(0, Math.min(timerMs, closesAt.getTime() - now));
 }
 
-// Options are shown in a per-round order; the database keeps the original order.
-function optionOrder(roundId: string, questionId: string) {
-  return seededPermutation(4, `${roundId}:${questionId}`);
+// Options are shown in a per-round order; the database keeps the original order. Two-option
+// (true/false) questions always read "true, false".
+function optionOrder(roundId: string, questionId: string, optionCount = 4) {
+  return optionCount === 2 ? [0, 1] : seededPermutation(optionCount, `${roundId}:${questionId}`);
 }
 
-export function toOriginalOption(displayIndex: number, roundId: string, questionId: string) {
-  if (!Number.isInteger(displayIndex) || displayIndex < 0 || displayIndex > 3) {
+export function toOriginalOption(displayIndex: number, roundId: string, questionId: string, optionCount = 4) {
+  if (!Number.isInteger(displayIndex) || displayIndex < 0 || displayIndex >= optionCount) {
     return -1;
   }
 
-  return optionOrder(roundId, questionId)[displayIndex];
+  return optionOrder(roundId, questionId, optionCount)[displayIndex];
 }
 
-export function toDisplayOption(originalIndex: number, roundId: string, questionId: string) {
-  return optionOrder(roundId, questionId).indexOf(originalIndex);
+export function toDisplayOption(originalIndex: number, roundId: string, questionId: string, optionCount = 4) {
+  return optionOrder(roundId, questionId, optionCount).indexOf(originalIndex);
 }
 
-export function toDisplayOptions(options: string[], roundId: string, questionId: string) {
-  return optionOrder(roundId, questionId).map((originalIndex) => options[originalIndex]);
+export function toDisplayOptions<T>(options: T[], roundId: string, questionId: string) {
+  return optionOrder(roundId, questionId, options.length).map((originalIndex) => options[originalIndex]);
 }
 
 /** Picks `count` ids in a seeded random order (no repeats). */
