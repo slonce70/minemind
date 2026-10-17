@@ -18,6 +18,7 @@ import '../src/i18n';
 
 import { appTheme, colors, fonts } from '../src/theme/tokens';
 import { setI18nLanguage } from '../src/i18n';
+import { isQuestionBankLoaded, preloadQuestionBank } from '../src/features/content/content-loader';
 import { syncMusic } from '../src/features/feel/feedback';
 import { useProgressSync } from '../src/features/progress/use-progress-sync';
 import { initMonitoring } from '../src/lib/monitoring';
@@ -40,6 +41,26 @@ export default function RootLayout() {
     Nunito_900Black,
     Tiny5_400Regular,
   });
+
+  const [bankLoaded, setBankLoaded] = useState(isQuestionBankLoaded);
+
+  useEffect(() => {
+    let retry: ReturnType<typeof setTimeout> | undefined;
+    const load = () =>
+      preloadQuestionBank().then(
+        () => setBankLoaded(true),
+        // A dropped connection: try again shortly.
+        () => {
+          retry = setTimeout(load, 2000);
+        }
+      );
+
+    if (!isQuestionBankLoaded()) {
+      void load();
+    }
+
+    return () => clearTimeout(retry);
+  }, []);
 
   useEffect(() => {
     void setI18nLanguage(locale);
@@ -68,7 +89,7 @@ export default function RootLayout() {
   }, [hasHydrated, musicEnabled]);
 
   // A missing font falls back to the system one rather than blocking the app.
-  if (!fontsLoaded && !fontError) {
+  if ((!fontsLoaded && !fontError) || !bankLoaded) {
     return null;
   }
 

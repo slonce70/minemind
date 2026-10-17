@@ -18,3 +18,12 @@ export function loadMinecraftQuestionBank(): ContentQuestionBank {
   cachedQuestionBank = canonicalRecords;
   return cachedQuestionBank;
 }
+
+/** Native bundles carry the bank inline; the web loads it as a separate chunk (content-loader.web.ts). */
+export function preloadQuestionBank(): Promise<void> {
+  return Promise.resolve();
+}
+
+export function isQuestionBankLoaded() {
+  return true;
+}
