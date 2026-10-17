@@ -19,7 +19,7 @@ const base = {
   sourceVersion: 'test',
   tags: ['test'],
   topicId: 'crafting-and-smelting',
-} as const;
+} satisfies Omit<ContentQuestionRecord, 'correctIndex' | 'id' | 'options'>;
 
 const trueFalse: ContentQuestionRecord = { ...base, correctIndex: 1, id: 'tf', kind: 'true-false', options: [text('True'), text('False')] };
 const recipe: ContentQuestionRecord = {
